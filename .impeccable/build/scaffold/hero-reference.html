@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Scaffold reference: layered-roles.png</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Doto:wght@400&family=Encode+Sans+Semi+Condensed:wght@700&display=swap">
+  <link rel="stylesheet" href="layout.css">
+  <style>html,body{margin:0}body{background:#f0f4f6}.region{box-sizing:border-box}.region.text p{white-space:pre-wrap}</style>
+</head>
+<body>
+<!-- Reference only. Every region sits at its measured box inside a comp-aspect frame. Take the boxes (layout.css), keep your own semantic structure. -->
+<main class="comp-frame" style="max-width:1487px">
+  <div class="r-nav-rail region chrome" data-region="nav-rail"><!-- deep navy vertical navigation rail --></div>
+  <div class="r-nav-brand region text" data-region="nav-brand"><!-- Berkeley Hackathons at Berkeley brand lockup --><p style="font-size:var(--r-nav-brand-font);font-family:var(--r-nav-brand-family),sans-serif;font-weight:var(--r-nav-brand-weight);line-height:1.05;margin:0">nav-brand</p></div>
+  <div class="r-nav-links region text" data-region="nav-links"><!-- stack of primary navigation labels with small icons --><p style="line-height:1.05;margin:0">nav-links</p></div>
+  <figure class="r-tower-illustration region plate" data-region="tower-illustration"><img src="../../../assets/plates/tower-illustration.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:top left"></figure>
+  <div class="r-top-greeting region text" data-region="top-greeting"><!-- Good afternoon greeting and multi-role subtitle --><p style="line-height:1.05;margin:0">top-greeting</p></div>
+  <div class="r-top-search region control" data-region="top-search"><!-- search field in top utility bar: rebuild the control's chrome from the crop (comp-spec.mjs --crop top-search); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-top-profile region control" data-region="top-profile"><!-- user avatar name and account menu: rebuild the control's chrome from the crop (comp-spec.mjs --crop top-profile); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-hacker-tab region control" data-region="hacker-tab"><!-- active blue HACKER credential tab with supporting words: rebuild the control's chrome from the crop (comp-spec.mjs --crop hacker-tab); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-judge-tab region control" data-region="judge-tab"><!-- cream JUDGE credential tab: rebuild the control's chrome from the crop (comp-spec.mjs --crop judge-tab); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-mentor-tab region control" data-region="mentor-tab"><!-- gold MENTOR credential tab: rebuild the control's chrome from the crop (comp-spec.mjs --crop mentor-tab); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-volunteer-tab region control" data-region="volunteer-tab"><!-- coral VOLUNTEER credential tab: rebuild the control's chrome from the crop (comp-spec.mjs --crop volunteer-tab); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <figure class="r-tab-mascot region plate" data-region="tab-mascot"><img src="../../../assets/plates/tab-mascot.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:top left"></figure>
+  <div class="r-active-sheet-header region chrome" data-region="active-sheet-header"><!-- front application sheet header with a flat cool-white fill and fine navy rules --></div>
+  <div class="r-active-sheet-body region chrome" data-region="active-sheet-body"><!-- front application checklist sheet with a flat cool-white fill and fine navy rules --></div>
+  <div class="r-application-kicker region text" data-region="application-kicker"><!-- Hackathons at Berkeley application identifier kicker --><p style="font-size:var(--r-application-kicker-font);line-height:1.05;margin:0">application-kicker</p></div>
+  <div class="r-application-title region text" data-region="application-title"><!-- Hacker application in progress lead headline --><p style="font-size:var(--r-application-title-font);font-family:var(--r-application-title-family),sans-serif;font-weight:var(--r-application-title-weight);line-height:1.05;margin:0">application-title</p></div>
+  <div class="r-event-meta region text" data-region="event-meta"><!-- AI Hackathon event name date location and format --><p style="line-height:1.05;margin:0">event-meta</p></div>
+  <div class="r-progress-ring region control" data-region="progress-ring"><!-- 72 percent circular completion indicator and small ideas people possibilities legend: rebuild the control's chrome from the crop (comp-spec.mjs --crop progress-ring); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-checklist-heading region text" data-region="checklist-heading"><!-- step details status checklist column headings --><p style="line-height:1.05;margin:0">checklist-heading</p></div>
+  <div class="r-profile-row region text" data-region="profile-row"><!-- profile checklist row with complete status and edit action --><p style="line-height:1.05;margin:0">profile-row</p></div>
+  <div class="r-experience-row region text" data-region="experience-row"><!-- experience checklist row with complete status and edit action --><p style="line-height:1.05;margin:0">experience-row</p></div>
+  <div class="r-logistics-row region text" data-region="logistics-row"><!-- logistics checklist row with needs-attention status and review action --><p style="font-size:var(--r-logistics-row-font);line-height:1.05;margin:0">logistics-row</p></div>
+  <div class="r-final-review-row region text" data-region="final-review-row"><!-- final review checklist row with locked status --><p style="font-size:var(--r-final-review-row-font);line-height:1.05;margin:0">final-review-row</p></div>
+  <div class="r-continue-action region control" data-region="continue-action"><!-- blue Continue application primary button: rebuild the control's chrome from the crop (comp-spec.mjs --crop continue-action); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <div class="r-autosave-note region text" data-region="autosave-note"><!-- next required step and automatic save message --><p style="font-size:var(--r-autosave-note-font);line-height:1.05;margin:0">autosave-note</p></div>
+  <div class="r-active-sheet-footer region text" data-region="active-sheet-footer"><!-- small go bolder and Hackathons at Berkeley footer marks --><p style="line-height:1.05;margin:0">active-sheet-footer</p></div>
+  <div class="r-judge-sheet region chrome" data-region="judge-sheet"><!-- partly visible judge application sheet with draft stamp and action --></div>
+  <div class="r-mentor-sheet region chrome" data-region="mentor-sheet"><!-- partly visible mentor application sheet with not-started stamp and action --></div>
+  <div class="r-volunteer-sheet region chrome" data-region="volunteer-sheet"><!-- partly visible volunteer application sheet with not-started stamp and action --></div>
+  <div class="r-queued-sheet-statuses region text" data-region="queued-sheet-statuses"><!-- draft and not-started stamps plus short role taglines on queued sheets --><p style="font-size:var(--r-queued-sheet-statuses-font);line-height:1.05;margin:0">queued-sheet-statuses</p></div>
+  <div class="r-queued-sheet-actions region control" data-region="queued-sheet-actions"><!-- start application outline actions on queued sheets: rebuild the control's chrome from the crop (comp-spec.mjs --crop queued-sheet-actions); its ink box, border, fill, radius, and label size are the comp's --></div>
+  <figure class="r-queued-sheet-notes region plate" data-region="queued-sheet-notes"><img src="../../../assets/plates/queued-sheet-notes.png" alt="" style="width:100%;height:100%;object-fit:contain;object-position:top left"></figure>
+  <div class="r-footer-docket region chrome" data-region="footer-docket"><!-- fixed bottom event docket strip --></div>
+  <div class="r-footer-docket-text region text" data-region="footer-docket-text"><!-- next event deadline team eligibility and event-details action --><p style="font-size:var(--r-footer-docket-text-font);line-height:1.05;margin:0">footer-docket-text</p></div>
+  <div class="r-paper-sample region texture" data-region="paper-sample" style="background-image:url('../../../assets/plates/paper-sample.png');background-repeat:repeat"></div>
+</main>
+</body>
+</html>

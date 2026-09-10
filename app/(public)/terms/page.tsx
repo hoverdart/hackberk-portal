@@ -1,0 +1,1 @@
+export default function TermsPage() { return <article className="legal-sheet"><h1>Terms</h1><p>This placeholder must be replaced with organizer-approved terms before a public launch. Synthetic demonstration data is labeled and is not an application decision.</p></article>; }

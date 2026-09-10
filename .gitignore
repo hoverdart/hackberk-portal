@@ -12,6 +12,12 @@
 
 # testing
 /coverage
+/test-results
+/playwright-report
+/.impeccable/review
+/.impeccable/build/crops
+/.impeccable/build/*.png
+/.impeccable/questions
 
 # next.js
 /.next/

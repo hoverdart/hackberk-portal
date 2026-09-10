@@ -1,0 +1,39 @@
+{
+  "title": "Choose the Run of Show dashboard composition",
+  "question": "All three keep the same Hackathons @ Berkeley identity. Choose the layout that should become the measured implementation contract.",
+  "options": [
+    {
+      "id": "open-binder",
+      "label": "Open binder",
+      "kicker": "RECOMMENDED",
+      "thesis": "One broad active-work sheet and a narrow next-cues rail make the daily job unmistakable.",
+      "palette": ["#3D68BB", "#0A2457", "#F5F7FB", "#CA841D", "#E68A6D"],
+      "materials": ["cool paper sheets", "credential tabs", "review stamps"],
+      "viewport": "A blue mast frames a large application sheet beside a compact run-of-show rail.",
+      "risk": "The familiar information split needs precise details to avoid reading as an ordinary dashboard.",
+      "comp": ".impeccable/mocks/open-binder.png"
+    },
+    {
+      "id": "cue-strip",
+      "label": "Cue strip",
+      "thesis": "A dominant numbered cue sequence turns application progress into the event's live production order.",
+      "palette": ["#3D68BB", "#0A2457", "#F5F7FB", "#CA841D", "#E68A6D"],
+      "materials": ["production cue strip", "attendee credential", "ruled work sheet"],
+      "viewport": "A horizontal four-step cue dominates the mast above a focused logistics sheet.",
+      "risk": "The wide sequence must collapse carefully on small screens.",
+      "comp": ".impeccable/mocks/cue-strip.png"
+    },
+    {
+      "id": "layered-roles",
+      "label": "Layered roles",
+      "thesis": "Four staggered application sheets make the multi-role account model visible at a glance.",
+      "palette": ["#3D68BB", "#0A2457", "#F5F7FB", "#CA841D", "#E68A6D"],
+      "materials": ["layered application sheets", "exposed index tabs", "status stamps"],
+      "viewport": "The active hacker sheet pulls forward while three role sheets remain visibly queued behind it.",
+      "risk": "The strongest concept is also the hardest to preserve responsively without crowding.",
+      "comp": ".impeccable/mocks/layered-roles.png"
+    }
+  ],
+  "buildPath": {"value": "comp", "toggle": true},
+  "steer": true
+}
