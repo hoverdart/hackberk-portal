@@ -38,6 +38,11 @@ export type Database = {
     Functions: {
       assign_application_reviewer: { Args: { target_application: string; target_reviewer: string }; Returns: string };
       decide_application: { Args: { target_application: string; target_decision: ApplicationStatus }; Returns: undefined };
+      team_match_candidates: { Args: { target_event: string }; Returns: Array<{ user_id: string; score: number; reasons: Json }> };
+      create_hacker_team: { Args: { target_event: string; team_name: string }; Returns: string };
+      respond_team_invitation: { Args: { target_invitation: string; accept_invitation: boolean }; Returns: undefined };
+      claim_mentor_request: { Args: { target_request: string }; Returns: undefined };
+      join_volunteer_shift: { Args: { target_shift: string }; Returns: undefined };
     };
     Enums: { application_role: ApplicationRole; application_status: ApplicationStatus; staff_role: "organizer" | "reviewer"; review_status: "draft" | "submitted" | "conflict"; invitation_status: "pending" | "accepted" | "declined" | "cancelled"; request_status: "open" | "claimed" | "resolved" | "cancelled" };
     CompositeTypes: Record<string, never>;

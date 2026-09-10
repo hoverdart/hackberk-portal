@@ -19,8 +19,8 @@ test("Run of Show fixture exposes all four role tabs", async ({ page }) => {
 });
 
 test("protected applicant and organizer routes redirect anonymous visitors", async ({ page }) => {
-  await page.goto("/applications/hacker");
-  await expect(page).toHaveURL(/\/sign-in\?next=%2Fapplications%2Fhacker/);
-  await page.goto("/organizer/applications");
-  await expect(page).toHaveURL(/\/sign-in\?next=%2Forganizer%2Fapplications/);
+  for (const route of ["/applications/hacker", "/teams", "/projects", "/ops", "/organizer/applications"]) {
+    await page.goto(route);
+    await expect(page).toHaveURL(new RegExp(`/sign-in\\?next=${encodeURIComponent(route)}`));
+  }
 });
