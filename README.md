@@ -10,7 +10,20 @@ cp .env.example .env
 npm run dev
 ```
 
-The app requires a Supabase project with email verification enabled. Apply `supabase/migrations` and `supabase/seed.sql` before testing authenticated workflows. Supabase's default SMTP is intentionally limited; configure project email delivery before a public launch.
+The app requires a Supabase project with email verification enabled. Supabase's default SMTP is intentionally limited; configure project email delivery before a public launch.
+
+## Migrations
+
+Link once per machine, then push whenever `supabase/migrations` changes:
+
+```bash
+npx supabase link --project-ref <your-project-ref>
+npm run db:push      # applies every migration the remote is missing
+npm run db:status    # lists local vs. remote migration versions
+npm run db:new <name>  # scaffolds a new timestamped migration
+```
+
+`CONNECTION_URL` must be the **session pooler** string from Dashboard → Project Settings → Database, not the `db.<ref>.supabase.co` direct string. The direct host is IPv6-only and is unreachable from most home and office networks.
 
 ## Verification
 
