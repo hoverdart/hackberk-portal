@@ -4,6 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 import { getPublicSupabaseConfig } from "@/lib/supabase/shared";
+import type { Database } from "@/lib/supabase/database.types";
 
 /**
  * Request-scoped SSR client. Cookie writes can be unavailable during a pure Server
@@ -13,7 +14,7 @@ export async function createClient() {
   const cookieStore = await cookies();
   const { url, publishableKey } = getPublicSupabaseConfig();
 
-  return createServerClient(url, publishableKey, {
+  return createServerClient<Database>(url, publishableKey, {
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll(cookiesToSet) {
