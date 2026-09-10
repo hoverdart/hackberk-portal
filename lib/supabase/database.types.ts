@@ -29,8 +29,16 @@ export type Database = {
       event_milestones: Table<GenericRow>; mentor_requests: Table<GenericRow>; volunteer_shifts: Table<GenericRow>;
       volunteer_shift_assignments: Table<GenericRow>;
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Views: {
+      organizer_application_queue: {
+        Row: { application_id: string; event_id: string; applicant_id: string; applicant_name: string; role: ApplicationRole; status: ApplicationStatus; created_at: string; submitted_at: string | null; assigned_reviewers: number; submitted_reviews: number; aggregate_score: number | null };
+        Relationships: [];
+      };
+    };
+    Functions: {
+      assign_application_reviewer: { Args: { target_application: string; target_reviewer: string }; Returns: string };
+      decide_application: { Args: { target_application: string; target_decision: ApplicationStatus }; Returns: undefined };
+    };
     Enums: { application_role: ApplicationRole; application_status: ApplicationStatus; staff_role: "organizer" | "reviewer"; review_status: "draft" | "submitted" | "conflict"; invitation_status: "pending" | "accepted" | "declined" | "cancelled"; request_status: "open" | "claimed" | "resolved" | "cancelled" };
     CompositeTypes: Record<string, never>;
   };

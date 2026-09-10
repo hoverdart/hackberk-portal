@@ -33,3 +33,13 @@ export async function requireOrganizer(eventId?: string) {
   if (!data) redirect("/dashboard?notice=organizer-required");
   return { ...user, eventId: data.event_id as string };
 }
+
+export async function requireEventStaff(eventId?: string) {
+  const user = await requireUser();
+  const supabase = await createClient();
+  let query = supabase.from("staff_members").select("event_id,role").eq("user_id", user.id).limit(1);
+  if (eventId) query = query.eq("event_id", eventId);
+  const { data } = await query.maybeSingle();
+  if (!data) redirect("/dashboard?notice=staff-required");
+  return { ...user, eventId: data.event_id as string, staffRole: data.role };
+}
