@@ -10,6 +10,13 @@ import { applicationStatuses, type ApplicationStatus } from "@/lib/domain/applic
 
 type PageProps = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
+/**
+ * The organizer application queue.
+ *
+ * Filters live in the query string, so a filtered view is a shareable URL and the
+ * back button works. Reads the `organizer_application_queue` view, which is what
+ * decides the visible columns.
+ */
 export default async function OrganizerApplicationsPage({ searchParams }: PageProps) {
   const organizer = await requireOrganizer();
   const params = await searchParams;

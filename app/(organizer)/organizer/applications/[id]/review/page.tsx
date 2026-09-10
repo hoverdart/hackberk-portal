@@ -7,6 +7,12 @@ import { reviewIdSchema } from "@/lib/validation/reviews";
 
 type PageProps = { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; success?: string }> };
 
+/**
+ * One application's blind review sheet.
+ *
+ * The identity-sensitive answers are dropped by the query, not by this page, so
+ * they are absent from the payload rather than merely unrendered.
+ */
 export default async function ReviewPage({ params, searchParams }: PageProps) {
   const applicationId = reviewIdSchema.parse((await params).id);
   const staff = await requireEventStaff();

@@ -5,6 +5,12 @@ import { assignProjectJudgeAction, createVolunteerShiftAction, resolveMentorRequ
 import { requireOrganizer } from "@/lib/auth/guards";
 import { getOrganizerOperations } from "@/lib/data/organizer-ops";
 
+/**
+ * The organizer control sheet: judge assignment, mentor triage, shifts, audit.
+ *
+ * Assigning a judge to a project is what grants that judge access to it, so this
+ * page is issuing authorization, not just scheduling.
+ */
 export default async function OrganizerOperationsPage({ searchParams }: { searchParams: Promise<{ success?: string; error?: string }> }) {
   const organizer = await requireOrganizer();
   const data = await getOrganizerOperations(organizer.eventId);

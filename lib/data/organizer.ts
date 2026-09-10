@@ -5,11 +5,24 @@ import type { ApplicationRole, ApplicationStatus } from "@/lib/domain/applicatio
 
 export type QueueFilters = { query?: string; role?: ApplicationRole; status?: ApplicationStatus; page?: number };
 
+/**
+ * The organizer application queue: filtered, paginated, newest first.
+ *
+ * Reads `organizer_application_queue`, a database view rather than the raw table.
+ * The view is what decides which columns an organizer may see, so the projection
+ * cannot drift from the policy by someone adding a column to the select below.
+ *
+ * The second `.order("application_id")` is not cosmetic: `submitted_at` ties are
+ * common (bulk submissions), and without a tiebreaker Postgres may order ties
+ * differently between pages, which makes rows appear twice or vanish as an
+ * organizer pages through.
+ */
 export async function getApplicationQueue(eventId: string, filters: QueueFilters) {
   const supabase = await createClient();
   const page = Math.max(1, filters.page ?? 1);
   const pageSize = 25;
   let query = supabase.from("organizer_application_queue").select("*", { count: "exact" }).eq("event_id", eventId).order("submitted_at", { ascending: false, nullsFirst: false }).order("application_id", { ascending: false });
+  // Organizers search by name or paste an application id, so accept both shapes.
   if (filters.query) {
     const safeQuery = escapePostgrest(filters.query);
     query = /^[0-9a-f-]{36}$/i.test(safeQuery)
@@ -23,6 +36,19 @@ export async function getApplicationQueue(eventId: string, filters: QueueFilters
   return { rows: data ?? [], count: count ?? 0, page, pageSize, error: error?.message };
 }
 
+/**
+ * Everything one reviewer needs to review one application — and nothing more.
+ *
+ * This is the blind-review boundary. The answers query filters
+ * `is_identity_sensitive = false`, so the applicant's name, school, graduation
+ * year and accommodations are never fetched, never serialised, and never sent to
+ * the browser. Hiding them in the component would not be equivalent: the data
+ * would still be in the page payload for anyone who opened devtools.
+ *
+ * `assignments` (all reviewers) is separate from `ownAssignment` (this reviewer)
+ * because the page shows review *progress* — how many of the two required reviews
+ * are done — while only ever letting you edit your own.
+ */
 export async function getReviewWorkspace(applicationId: string, reviewerId: string) {
   const supabase = await createClient();
   const { data: application } = await supabase.from("applications").select("id,event_id,role,status,form_version").eq("id", applicationId).maybeSingle();
@@ -38,6 +64,13 @@ export async function getReviewWorkspace(applicationId: string, reviewerId: stri
   return { application, event, answers: answers ?? [], assignments: assignments ?? [], ownAssignment, review, submittedReviews: submittedReviews ?? [] };
 }
 
+/**
+ * Strip the characters that carry meaning inside a PostgREST `or(...)` filter.
+ *
+ * `%` is the wildcard, and commas and parentheses delimit the filter grammar, so
+ * an unescaped value could otherwise break out of its own clause and rewrite the
+ * query. The length cap bounds what an attacker can push into the query string.
+ */
 function escapePostgrest(value: string) {
   return value.replaceAll(/[%,()]/g, "").slice(0, 120);
 }

@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import path from "node:path";
 
-test("public and Run of Show surfaces have no serious axe violations", async ({ page }) => {
+test("public and portal surfaces have no serious axe violations", async ({ page }) => {
   for (const route of ["/", "/design/hero"]) {
     await page.goto(route);
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();

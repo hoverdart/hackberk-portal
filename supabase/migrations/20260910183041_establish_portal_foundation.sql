@@ -1,4 +1,4 @@
--- Hackathons @ Berkeley Portal: multi-event foundation.
+-- Backathons at Herkeley Portal: multi-event foundation.
 --
 -- The browser always connects as anon/authenticated. Every exposed table therefore
 -- combines explicit grants with RLS; privileged staff membership is never inferred

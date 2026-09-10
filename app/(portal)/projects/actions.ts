@@ -10,9 +10,23 @@ import { githubRepositoryUrlSchema } from "@/lib/github/url";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/database.types";
 
+/**
+ * Project Lens actions: connect a repository, refresh its metadata, submit it.
+ *
+ * The GitHub URL is parsed by `githubRepositoryUrlSchema`, which is an allowlist
+ * — see `lib/github/url.ts` for why that matters. Nothing here executes anything
+ * from the repository; it only ever reads and renders.
+ */
+
 const idSchema = z.string().uuid();
 const projectSchema = z.object({ name: z.string().trim().min(2).max(120), summary: z.string().trim().min(20).max(1200), githubUrl: githubRepositoryUrlSchema, demoUrl: z.string().trim().refine((value) => !value || /^https?:\/\//.test(value), "Use a full URL.") });
 
+/**
+ * Create or update the team's project record.
+ *
+ * The repository URL is canonicalised during validation, so the same repo entered
+ * with a trailing slash or a `.git` suffix is stored one way.
+ */
 export async function saveProjectAction(teamIdValue: string, eventIdValue: string, projectIdValue: string | null, formData: FormData) {
   await requireUser();
   const teamId = idSchema.parse(teamIdValue);
@@ -27,6 +41,12 @@ export async function saveProjectAction(teamIdValue: string, eventIdValue: strin
   redirect(`/projects/${result.data.id}?refresh=1`);
 }
 
+/**
+ * Re-fetch the repository snapshot and cache it on the project row.
+ *
+ * Caching matters during judging: without it, every judge opening the project
+ * would issue its own GitHub API calls and burn the rate limit.
+ */
 export async function refreshProjectMetadataAction(projectIdValue: string) {
   await requireUser();
   const projectId = idSchema.parse(projectIdValue);
@@ -43,6 +63,7 @@ export async function refreshProjectMetadataAction(projectIdValue: string) {
   redirect(`/projects/${projectId}`);
 }
 
+/** Mark the project submitted, which is what makes it visible to assigned judges. */
 export async function submitProjectAction(projectIdValue: string) {
   await requireUser();
   const projectId = idSchema.parse(projectIdValue);

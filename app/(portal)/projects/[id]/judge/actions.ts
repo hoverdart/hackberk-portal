@@ -10,6 +10,14 @@ import { scoreSchema } from "@/lib/validation/reviews";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/database.types";
 
+/**
+ * Project judging: save or submit one judge's scorecard.
+ *
+ * Scoped to the judge's own assignment, so a judge cannot score a project they
+ * were not assigned. The matching RLS policy on `project_review_assignments`
+ * enforces the same restriction at the database, and the pgTAP suite covers it.
+ */
+
 const idSchema = z.string().uuid();
 
 export async function saveProjectReviewAction(projectIdValue: string, assignmentIdValue: string, submit: boolean, formData: FormData) {

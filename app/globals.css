@@ -1,5 +1,30 @@
+/* =============================================================================
+   Backathons at Herkeley — interface system.
+
+   The visual world is an event-operations binder: a navy control rail, cool paper
+   sheets, role tabs, stamped statuses and a docket strip. Reading order:
+
+     1. Tokens          the palette, type and shadow vocabulary
+     2. Primitives      the wordmark and the primary button
+     3. Portal shell    the signed-in binder (rail, tabs, sheets, docket)
+     4. Public surfaces auth, landing, legal, about
+     5. Feature pages   application wizard, organizer queue, teams, lens, ops
+     6. About           the Read surface
+     7. Motion          the arrival sequences and interaction feedback
+     8. Breakpoints     950px and 620px, then the reduced-motion path
+
+   Tailwind supplies the reset and the token bridge; everything with a material
+   quality — sheets, tabs, stamps, rules — is authored by hand below, because it
+   is a coherent system rather than a set of utility combinations.
+   ============================================================================= */
+
 @import "tailwindcss";
 
+/* -----------------------------------------------------------------------------
+   1. Tokens. These are the source of truth and are mirrored in DESIGN.md; the
+   @theme block below re-exports them to Tailwind so utility classes and authored
+   CSS cannot drift apart.
+   -------------------------------------------------------------------------- */
 :root {
   --berkeley-blue: #3d68bb;
   --ink-navy: #0a2457;
@@ -34,6 +59,10 @@
   --font-mono: var(--font-data);
 }
 
+/* Browser surfaces the design system still owns: selection, caret and focus ring.
+   Left at their defaults these belong to no design system and are the cheapest
+   tell that a page was assembled rather than built. The focus ring is Keyboard
+   Gold at 3px with a 3px offset so it stays visible on both paper and navy. */
 * { box-sizing: border-box; }
 html { background: var(--paper-cool); }
 body {
@@ -67,15 +96,20 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+/* -----------------------------------------------------------------------------
+   2. Primitives shared by every surface.
+   -------------------------------------------------------------------------- */
+
+/* The wordmark stacks "Backathons" over a gold "at Herkeley". Two lines, not
+   three — an earlier version repeated the place name on a leading serif line. */
 .brand-lockup { display: inline-flex; flex-direction: column; color: inherit; text-decoration: none; line-height: .9; }
-.brand-lockup strong { font-family: Georgia, serif; font-size: 2rem; font-weight: 400; letter-spacing: -.04em; }
-.brand-lockup span { font: 600 1.05rem/1 var(--font-display); }
-.brand-lockup em { color: var(--ddoski-gold); font: 600 1.05rem/1.25 var(--font-display); font-style: normal; }
+.brand-lockup span { font: 700 1.5rem/1 var(--font-display); letter-spacing: -.035em; }
+.brand-lockup em { margin-top: 6px; color: var(--ddoski-gold); font: 600 .9rem/1 var(--font-display); font-style: normal; letter-spacing: .015em; }
 .primary-button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: .75rem; border: 0; border-radius: 3px; background: var(--berkeley-blue); color: white; padding: .75rem 1.5rem; font: 700 1rem/1 var(--font-body); text-decoration: none; box-shadow: 0 9px 20px rgb(30 83 171 / 18%); transition: transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease, background 180ms ease; }
 .primary-button:hover { background: #2f5caa; transform: translateY(-1px); box-shadow: 0 12px 24px rgb(30 83 171 / 24%); }
 .primary-button:disabled { cursor: not-allowed; opacity: .58; transform: none; box-shadow: none; }
 
-/* Run of Show shell */
+/* Portal shell */
 .runbook-shell { min-height: 100svh; display: grid; grid-template-columns: 210px minmax(0, 1fr); overflow: hidden; background: #f0f4f6; }
 .runbook-rail { position: relative; z-index: 10; min-height: 100svh; overflow: hidden; background: linear-gradient(150deg, #082856 0%, #07376f 100%); color: #f3f5f7; box-shadow: 8px 0 24px rgb(5 28 65 / 16%); }
 .runbook-rail .brand-lockup { margin: 20px 22px 25px; }
@@ -88,8 +122,8 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .runbook-rail-bottom { position: absolute; left: 0; right: 0; bottom: 178px; display: grid; border-top: 1px solid rgb(163 198 240 / 35%); padding-top: 12px; }
 .runbook-rail-bottom form { margin: 0; }
 .runbook-rail-bottom button { width: 100%; }
-.runbook-tower { position: absolute; width: 210px; height: auto; left: -22px; bottom: -2px; object-fit: contain; }
-.runbook-motto { position: absolute; left: 82px; bottom: 20px; margin: 0; color: white; font: 700 .72rem/1.45 var(--font-data); letter-spacing: .14em; }
+.runbook-tower { position: absolute; z-index: 1; width: 86px; height: auto; left: 4px; bottom: 0; object-fit: contain; opacity: .92; }
+.runbook-motto { position: absolute; z-index: 2; left: 98px; bottom: 24px; margin: 0; color: #d9e6fa; font: 700 .68rem/1.5 var(--font-data); letter-spacing: .13em; }
 .runbook-stage { position: relative; min-width: 0; min-height: 100svh; padding: 0 16px 82px; }
 .runbook-header { height: 72px; display: grid; grid-template-columns: 1fr 308px 174px; align-items: center; gap: 30px; padding: 0 12px; background: rgb(247 250 252 / 86%); }
 .runbook-header h1 { margin: 0; font: 700 1.35rem/1.1 var(--font-display); letter-spacing: -.02em; }
@@ -105,16 +139,16 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .preview-label { position: absolute; z-index: 25; top: 72px; right: 24px; margin: 0; background: var(--coral); color: #4d160f; padding: 5px 8px; font: 700 .52rem var(--font-data); letter-spacing: .1em; }
 
 .role-deck { position: relative; z-index: 4; height: 102px; display: grid; grid-template-columns: 2.25fr 1.85fr 1.65fr 1.55fr; align-items: end; margin: 16px 0 -10px; padding-right: 8px; }
-.role-tab { position: relative; min-width: 0; height: 84px; display: grid; grid-template-columns: 48px minmax(88px, auto) 1fr; align-items: center; gap: 10px; border: 1px solid rgb(10 36 87 / 16%); border-bottom: 0; border-radius: 9px 9px 0 0; padding: 7px 22px; color: var(--ink-navy); text-decoration: none; text-transform: uppercase; box-shadow: 0 -6px 18px rgb(10 36 87 / 10%); transform-origin: bottom; transition: transform 220ms cubic-bezier(.2,.8,.2,1), filter 180ms ease; }
+.role-tab { position: relative; z-index: 1; min-width: 0; height: 84px; display: grid; grid-template-columns: 48px minmax(88px, auto) 1fr; align-items: center; gap: 10px; border: 1px solid rgb(10 36 87 / 16%); border-bottom: 0; border-radius: 9px 9px 0 0; padding: 7px 22px; color: var(--ink-navy); text-decoration: none; text-transform: uppercase; box-shadow: 0 -6px 18px rgb(10 36 87 / 10%); transform-origin: bottom; transition: transform 220ms cubic-bezier(.2,.8,.2,1), filter 180ms ease; }
 .role-tab:hover { filter: brightness(1.025); transform: translateY(2px); }
 .role-tab svg { width: 36px; height: 36px; stroke-width: 2; }
 .role-tab strong { font: 700 1.32rem/1 var(--font-data); letter-spacing: .04em; }
 .role-tab > span { display: grid; color: currentColor; font: 700 .52rem/1.35 var(--font-data); letter-spacing: .12em; }
 .role-tab--hacker { height: 102px; border-color: #1d5fb6; background: #2a6ac6; color: white; }
 .role-tab--judge { background: #f4ede0; }.role-tab--mentor { height: 76px; background: #e9d0a7; color: #714018; }.role-tab--volunteer { height: 66px; background: #f2c6bd; color: #7d291f; }
-.role-mascot { position: absolute; z-index: 5; top: -25px; left: 14%; width: 420px; height: 165px; object-fit: contain; object-position: top left; clip-path: inset(0 0 22px 0); pointer-events: none; }
-.role-tab--judge { z-index: 6; border-color: transparent; background: transparent; box-shadow: none; }
-.role-tab--judge > svg { visibility: hidden; }
+/* The mascot peeks from behind the deck: the tabs overlap its lower half, which
+   is what makes it read as peeking rather than floating. */
+.role-mascot { position: absolute; z-index: 0; top: -62px; left: 28%; width: 150px; height: auto; pointer-events: none; }
 .role-tab--judge, .role-tab--mentor, .role-tab--volunteer { margin-left: -20px; clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%); padding-left: 34px; }
 .role-tab--volunteer { grid-template-columns: 38px minmax(88px, auto) 1fr; gap: 6px; padding-inline: 13px; }
 .role-tab--volunteer strong { font-size: 1.05rem; }
@@ -156,10 +190,26 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .event-docket { position: absolute; left: 16px; right: 16px; bottom: 0; min-height: 74px; display: grid; grid-template-columns: 36px 1.2fr 1.5fr 36px 1.6fr auto auto; align-items: center; gap: 15px; border: 1px solid #c7d3de; background: #f9fbfc; padding: 10px 22px; box-shadow: 0 -5px 20px rgb(10 36 87 / 7%); }.event-docket > div { border-right: 1px solid #35597d; padding-right: 18px; }.event-docket small, .event-docket strong { display: block; }.event-docket small { font-size: .72rem; }.event-docket strong { margin-top: 3px; font-size: .84rem; }.event-docket > a { color: #1e65c5; font-weight: 700; font-size: .8rem; }.synthetic-label { background: var(--coral); color: #4d160f; padding: 5px 7px; font: 700 .55rem var(--font-data); letter-spacing: .1em; }
 
 /* Authentication and public pages reuse the binder's paper and rail materials. */
-.auth-shell { min-height: 100svh; display: grid; grid-template-columns: minmax(230px, 30vw) 1fr; background: var(--paper-cool); }.auth-rail { position: relative; overflow: hidden; background: #082856; color: white; padding: 28px; }.auth-rail .brand-lockup { position: relative; z-index: 2; }.auth-rail-copy { position: absolute; z-index: 2; left: 52%; bottom: 8%; display: grid; font: 700 .74rem/1.55 var(--font-data); letter-spacing: .16em; }.auth-tower { position: absolute; left: -60px; bottom: -20px; width: 75%; height: auto; }.auth-stage { display: grid; place-items: center; padding: 32px; }.auth-sheet, .legal-sheet { width: min(100%, 520px); background: var(--paper); padding: clamp(28px, 5vw, 58px); box-shadow: var(--shadow-sheet); }.auth-docket, .landing-docket { font: 700 .65rem var(--font-data); letter-spacing: .2em; }.auth-sheet h1, .legal-sheet h1 { margin: 18px 0 8px; font: 700 clamp(2.2rem, 5vw, 4rem)/.98 var(--font-display); letter-spacing: -.035em; }.auth-intro { margin: 0 0 28px; color: #526e91; }.auth-form { display: grid; gap: 18px; }.field { display: grid; gap: 7px; font-weight: 700; }.field input { min-height: 46px; border: 1px solid #9db0c3; border-radius: 3px; background: #fff; padding: 0 12px; color: var(--ink-navy); font: 500 1rem var(--font-body); }.field input[aria-invalid="true"] { border-color: var(--danger); }.field small { color: var(--danger); }.form-message { min-height: 20px; margin: 0; font-weight: 600; }.form-message--error { color: var(--danger); }.form-message--success { color: var(--success); }.auth-helper { margin: 24px 0 0; }.auth-helper a, .auth-forgot { color: #185fc0; text-underline-offset: 3px; }.auth-forgot { display: inline-block; margin-top: 10px; }.legal-sheet { line-height: 1.65; }
-.landing { min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; background: linear-gradient(90deg, #082856 0 28%, transparent 28%), url("../assets/plates/paper-sample.png") repeat; }.landing nav { display: flex; justify-content: space-between; align-items: center; padding: 28px clamp(24px, 5vw, 72px); }.landing nav .brand-lockup { color: white; }.landing nav > div { display: flex; align-items: center; gap: 24px; }.landing nav > div > a:first-child { color: var(--ink-navy); }.landing section { align-self: center; max-width: 850px; margin-left: 28%; padding: 60px clamp(28px, 7vw, 110px); }.landing h1 { max-width: 750px; margin: 20px 0; font: 700 clamp(3rem, 7vw, 6rem)/.92 var(--font-display); letter-spacing: -.04em; text-wrap: balance; }.landing section > p:not(.landing-docket) { max-width: 62ch; color: #445f81; font-size: 1.25rem; line-height: 1.5; }.landing section > div { display: flex; align-items: center; gap: 24px; margin-top: 32px; }.landing section > div > a:last-child { color: #185fc0; font-weight: 700; }.landing footer { display: flex; gap: 22px; padding: 22px clamp(24px, 5vw, 72px); color: #446181; font-size: .82rem; }.landing footer span { margin-left: auto; }
+/* -----------------------------------------------------------------------------
+   4. Public surfaces. Auth, landing and legal pages reuse the binder's materials
+   so the product does not change identity at the sign-in boundary.
+   -------------------------------------------------------------------------- */
+.auth-shell { min-height: 100svh; display: grid; grid-template-columns: minmax(230px, 30vw) 1fr; background: var(--paper-cool) url("../assets/plates/paper-sample.png") repeat; }.auth-rail { position: relative; z-index: 1; overflow: hidden; display: flex; flex-direction: column; align-items: start; background: linear-gradient(150deg, #082856 0%, #07376f 100%); color: white; padding: 28px; box-shadow: 8px 0 24px rgb(5 28 65 / 16%); }.auth-rail .brand-lockup { position: relative; z-index: 2; }.auth-rail-copy { position: relative; z-index: 2; margin-top: 34px; display: grid; color: #d9e6fa; font: 700 .72rem/1.62 var(--font-data); letter-spacing: .15em; }.auth-tower { position: absolute; z-index: 1; left: 8%; bottom: 0; width: min(68%, 190px); height: auto; opacity: .92; }.auth-stage { display: grid; place-items: center; padding: 32px; }.auth-sheet, .legal-sheet { position: relative; overflow: hidden; width: min(100%, 520px); border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 58px); box-shadow: var(--shadow-sheet); }
+.auth-sheet::before, .legal-sheet::before { content: ""; position: absolute; inset: 0; opacity: .14; pointer-events: none; background: url("../assets/plates/paper-sample.png") repeat; mix-blend-mode: multiply; }
+.auth-sheet > *, .legal-sheet > * { position: relative; z-index: 1; }.auth-docket, .landing-docket { font: 700 .65rem var(--font-data); letter-spacing: .2em; }.auth-sheet h1, .legal-sheet h1 { margin: 18px 0 8px; font: 700 clamp(2.2rem, 5vw, 4rem)/.98 var(--font-display); letter-spacing: -.035em; }.auth-intro { margin: 0 0 28px; color: #526e91; }.auth-form { display: grid; gap: 18px; }.field { display: grid; gap: 7px; font-weight: 700; }.field input { min-height: 46px; border: 1px solid #9db0c3; border-radius: 3px; background: #fcfdfa; padding: 0 12px; color: var(--ink-navy); font: 500 1rem var(--font-body); }.field input[aria-invalid="true"] { border-color: var(--danger); }.field small { color: var(--danger); }.form-message { min-height: 20px; margin: 0; font-weight: 600; }.form-message--error { color: var(--danger); }.form-message--success { color: var(--success); }.auth-helper { margin: 24px 0 0; }.auth-helper a, .auth-forgot { color: #185fc0; text-decoration: underline; text-underline-offset: 3px; }.auth-forgot { display: inline-block; margin-top: 10px; }.legal-sheet { line-height: 1.65; }
+.landing { position: relative; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; background: url("../assets/plates/paper-sample.png") repeat; }
+.landing::before { content: ""; position: absolute; z-index: 0; inset: 0 auto 0 0; width: 28%; background: linear-gradient(160deg, #082856 0%, #07376f 100%); }
+.landing > * { position: relative; z-index: 1; }.landing nav { display: flex; justify-content: space-between; align-items: center; padding: 28px clamp(24px, 5vw, 72px); }.landing nav .brand-lockup { color: white; }.landing nav > div { display: flex; align-items: center; gap: 24px; }.landing nav > div > a:not(.primary-button) { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink-navy); font-weight: 600; text-underline-offset: 4px; }.landing nav > div > a:not(.primary-button):hover { text-decoration: underline; }.landing section { align-self: center; max-width: 850px; margin-left: 28%; padding: 60px clamp(28px, 7vw, 110px); }.landing h1 { max-width: 750px; margin: 20px 0; font: 700 clamp(3rem, 7vw, 6rem)/.92 var(--font-display); letter-spacing: -.04em; text-wrap: balance; }.landing section > p:not(.landing-docket) { max-width: 62ch; color: #445f81; font-size: 1.25rem; line-height: 1.5; }.landing section > div { display: flex; align-items: center; gap: 24px; margin-top: 32px; }.landing-secondary { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; color: #17539f; font-weight: 700; text-underline-offset: 4px; }
+.landing-secondary span { transition: translate 200ms cubic-bezier(.16,1,.3,1); }
+.landing-secondary:hover span { translate: 4px 0; }.landing footer a { color: #b9cbe6; text-underline-offset: 3px; }
+.landing footer a:hover { color: #ffffff; }
+.landing footer { display: flex; gap: 22px; padding: 22px clamp(24px, 5vw, 72px); color: #446181; font-size: .82rem; }.landing footer span { margin-left: auto; }
 
 /* Multi-role application engine */
+/* -----------------------------------------------------------------------------
+   5. Feature pages. Each keeps the same navy-to-paper relationship as the shell
+   even where its working grid differs.
+   -------------------------------------------------------------------------- */
 .form-workspace { min-height: 100svh; display: grid; grid-template-columns: 310px minmax(0, 1fr); grid-template-rows: 62px 1fr; background: #e7edf2; }
 .workspace-header { grid-column: 1 / -1; z-index: 4; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #c3cfda; background: #f7f9f9; padding: 0 28px; }
 .workspace-header a { display: inline-flex; align-items: center; gap: 9px; color: var(--ink-navy); font-weight: 700; text-decoration: none; }.workspace-header svg { width: 19px; }
@@ -318,16 +368,170 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 
 @keyframes page-arrive { from { opacity: .3; transform: translateY(12px); } }
 
+/* ---------------------------------------------------------------------------
+   About: a Read surface. The binder still frames it — navy mast, paper desk,
+   one wide work sheet — but the sheet is sized for a 65-72ch reading measure
+   instead of a dense operational grid.
+   --------------------------------------------------------------------------- */
+
+.about-page { position: relative; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; background: var(--paper-cool) url("../assets/plates/paper-sample.png") repeat; }
+.about-mast { display: flex; justify-content: space-between; align-items: center; gap: 24px; background: linear-gradient(150deg, #082856 0%, #07376f 100%); padding: 20px clamp(20px, 5vw, 64px); color: white; box-shadow: 0 8px 24px rgb(5 28 65 / 16%); }
+.about-mast nav { display: flex; align-items: center; gap: clamp(14px, 2vw, 26px); }
+.about-mast nav a { min-height: 44px; display: inline-flex; align-items: center; color: #dbe8fa; font-weight: 600; text-decoration: none; text-underline-offset: 4px; }
+.about-mast nav a:hover { color: white; text-decoration: underline; }
+.about-mast nav a.primary-button { color: white; text-decoration: none; }
+
+.about-sheet { position: relative; overflow: hidden; width: min(100% - 40px, 900px); justify-self: center; margin: clamp(24px, 4vw, 52px) 0; border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 68px); box-shadow: var(--shadow-sheet); }
+.about-sheet::before { content: ""; position: absolute; inset: 0; opacity: .14; pointer-events: none; background: url("../assets/plates/paper-sample.png") repeat; mix-blend-mode: multiply; }
+.about-sheet > * { position: relative; z-index: 1; }
+.about-docket { max-width: none; margin: 0; border-bottom: 1px solid #768ba4; padding-bottom: 9px; color: #294d79; font: 700 .6rem/1 var(--font-data); letter-spacing: .2em; }
+.about-sheet h1 { max-width: 20ch; margin: 26px 0 20px; font: 700 clamp(2.4rem, 5vw, 3.9rem)/.98 var(--font-display); letter-spacing: -.04em; text-wrap: balance; }
+.about-lede { max-width: 68ch; margin: 0 0 18px; color: #3d5878; font-size: 1.12rem; line-height: 1.6; }
+.about-sheet section { margin-top: clamp(38px, 5vw, 58px); }
+.about-sheet h2 { margin: 0 0 20px; border-top: 1px solid #9aaec6; padding-top: 26px; font: 700 clamp(1.6rem, 2.4vw, 2.2rem)/1.1 var(--font-comp); letter-spacing: -.025em; }
+.about-sheet p { max-width: 68ch; color: #43607f; line-height: 1.65; }
+.about-sheet code { background: rgb(61 104 187 / 10%); padding: 2px 5px; color: #234a86; font: 500 .88em var(--font-data); }
+
+/* Numbered because the sequence is the information: this is the order a
+   participant actually meets the product. */
+.about-steps { display: grid; margin: 0; padding: 0; list-style: none; }
+.about-steps li { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 14px; border-bottom: 1px solid #c4cfd8; padding: 20px 0; }
+.about-steps li:first-child { border-top: 1px solid #c4cfd8; }
+.about-steps li > span { color: #7d93ad; font: 700 .95rem/1.5 var(--font-data); }
+.about-steps strong { display: block; margin-bottom: 6px; font: 700 1.1rem var(--font-display); letter-spacing: -.01em; }
+.about-steps p { margin: 0; font-size: .95rem; }
+
+.about-stack { display: grid; margin: 0; }
+.about-stack > div { display: grid; grid-template-columns: minmax(190px, .8fr) minmax(0, 1.6fr); gap: 14px 26px; border-bottom: 1px solid #c4cfd8; padding: 20px 0; }
+.about-stack > div:first-child { border-top: 1px solid #c4cfd8; }
+.about-stack dt small { display: block; margin-bottom: 5px; color: #4d6a8c; font: 700 .55rem var(--font-data); letter-spacing: .17em; text-transform: uppercase; }
+.about-stack dt strong { font: 700 1.02rem var(--font-display); letter-spacing: -.01em; }
+.about-stack dd { margin: 0; color: #43607f; font-size: .93rem; line-height: 1.6; }
+.about-stack code { font-size: .9em; }
+
+.about-notes { display: grid; gap: 16px; margin: 22px 0 0; padding: 0; list-style: none; }
+.about-notes li { max-width: 70ch; border-left: 1px solid #9aaec6; padding-left: 18px; color: #43607f; line-height: 1.65; }
+.about-notes strong { color: var(--ink-navy); }
+.about-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 26px; }
+.about-footer { display: flex; flex-wrap: wrap; gap: 22px; padding: 22px clamp(20px, 5vw, 64px); color: #446181; font-size: .82rem; }
+.about-footer a { color: inherit; text-underline-offset: 3px; }
+.about-footer span { margin-left: auto; }
+
+/* ---------------------------------------------------------------------------
+   Motion: "the binder is opened and the top sheet is dealt."
+
+   Arrival is one rehearsed sequence per surface — the navy cover opens, the
+   role tabs seat into their slots, the active sheet is dealt onto the desk,
+   and the stamp presses last. Everything after arrival is fast, quiet
+   feedback. Entrances use the independent `translate`/`scale` properties so
+   they compose with the layout transforms the sheets and tabs already carry.
+
+   `--motion-shift` scales every distance; reduced motion sets it to 0, which
+   keeps the fades and state changes while removing all travel.
+   --------------------------------------------------------------------------- */
+
+@property --progress { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+@property --reveal { syntax: "<percentage>"; inherits: false; initial-value: 100%; }
+
+:root {
+  --motion-shift: 1;
+  --ease-settle: cubic-bezier(.16, 1, .3, 1);
+}
+
+@keyframes cover-open { from { clip-path: inset(0 100% 0 0); } }
+@keyframes rail-establish { from { clip-path: inset(0 0 100% 0); } }
+@keyframes deal-in { from { opacity: 0; translate: 0 calc(16px * var(--motion-shift)); } }
+@keyframes tab-seat { from { opacity: 0; translate: 0 calc(20px * var(--motion-shift)); } }
+@keyframes sheet-deal { from { opacity: 0; translate: 0 calc(30px * var(--motion-shift)); rotate: calc(-.4deg * var(--motion-shift)); } }
+@keyframes queued-slide { from { opacity: 0; translate: calc(-14px * var(--motion-shift)) calc(20px * var(--motion-shift)); } }
+@keyframes stamp-press { from { opacity: 0; scale: calc(1 + .16 * var(--motion-shift)); } }
+@keyframes seal-sweep { from { --progress: 0%; } }
+@keyframes tower-draw { from { opacity: 0; --reveal: 0%; } }
+@keyframes docket-rise { from { opacity: 0; translate: 0 calc(14px * var(--motion-shift)); } }
+
+/* Landing: the cover opens, then the statement is set down on it. */
+.landing::before { animation: cover-open 620ms var(--ease-settle) both; }
+.landing nav { animation: deal-in 500ms 260ms var(--ease-settle) both; }
+.landing section > * { animation: deal-in 620ms var(--ease-settle) both; }
+.landing section > *:nth-child(1) { animation-delay: 300ms; }
+.landing section > *:nth-child(2) { animation-delay: 370ms; }
+.landing section > *:nth-child(3) { animation-delay: 440ms; }
+.landing section > *:nth-child(4) { animation-delay: 510ms; }
+.landing footer { animation: deal-in 500ms 580ms var(--ease-settle) both; }
+
+/* Access desk: the rail establishes, the Campanile draws up from its base,
+   and the credential sheet is set down on the paper. */
+.auth-rail { animation: rail-establish 640ms var(--ease-settle) both; }
+.auth-rail .brand-lockup { animation: deal-in 520ms 180ms var(--ease-settle) both; }
+.auth-rail-copy { animation: deal-in 520ms 260ms var(--ease-settle) both; }
+.auth-tower {
+  mask-image: linear-gradient(to top, #000 var(--reveal), transparent calc(var(--reveal) + 14%));
+  animation: tower-draw 1000ms 260ms var(--ease-settle) both;
+}
+.auth-sheet, .legal-sheet { animation: sheet-deal 640ms 200ms var(--ease-settle) both; }
+.about-mast { animation: deal-in 520ms var(--ease-settle) both; }
+.about-sheet { animation: sheet-deal 660ms 160ms var(--ease-settle) both; }
+.about-footer { animation: deal-in 500ms 380ms var(--ease-settle) both; }
+
+/* Portal shell: cover, tabs, active sheet, queued sheets, then the stamps. */
+.runbook-rail { animation: rail-establish 620ms var(--ease-settle) both; }
+.runbook-tower { animation: tower-draw 900ms 420ms var(--ease-settle) both; mask-image: linear-gradient(to top, #000 var(--reveal), transparent calc(var(--reveal) + 14%)); }
+.runbook-header { animation: deal-in 520ms 200ms var(--ease-settle) both; }
+.role-tab { animation: tab-seat 500ms var(--ease-settle) both; }
+.role-deck .role-tab:nth-child(2) { animation-delay: 240ms; }
+.role-deck .role-tab:nth-child(3) { animation-delay: 300ms; }
+.role-deck .role-tab:nth-child(4) { animation-delay: 360ms; }
+.role-deck .role-tab:nth-child(5) { animation-delay: 420ms; }
+.role-mascot { animation: deal-in 560ms 500ms var(--ease-settle) both; }
+.active-sheet { animation: sheet-deal 680ms 420ms var(--ease-settle) both; }
+.queued-sheet { animation: queued-slide 620ms var(--ease-settle) both; }
+.queued-sheet:nth-child(1) { animation-delay: 520ms; }
+.queued-sheet:nth-child(2) { animation-delay: 580ms; }
+.queued-sheet:nth-child(3) { animation-delay: 640ms; }
+.queued-notes { animation: deal-in 620ms 720ms var(--ease-settle) both; }
+.progress-seal { animation: seal-sweep 1100ms 620ms var(--ease-settle) both; }
+.status-stamp { animation: stamp-press 340ms 760ms var(--ease-settle) both; }
+.event-docket { animation: docket-rise 560ms 700ms var(--ease-settle) both; }
+
+/* Feedback: the smallest change that makes cause and result unmistakable. */
+.primary-button:hover { translate: 0 -1px; background: #2f5caa; box-shadow: 0 12px 24px rgb(30 83 171 / 24%); }
+.primary-button:active { translate: 0 0; box-shadow: 0 5px 12px rgb(30 83 171 / 22%); }
+.primary-button span { transition: translate 200ms var(--ease-settle); }
+.primary-button:hover span { translate: 3px 0; }
+.field input { transition: border-color 160ms ease, box-shadow 160ms ease; }
+.field input:focus { border-color: var(--berkeley-blue); box-shadow: 0 0 0 3px rgb(61 104 187 / 22%); }
+.checklist-row { transition: background 160ms ease; }
+.checklist-row:hover { background: rgb(61 104 187 / 5%); }
+.runbook-rail nav a, .runbook-rail-bottom a, .runbook-rail-bottom button { transition: background 150ms ease, color 150ms ease; }
+.runbook-rail nav a.is-current::before { animation: rail-establish 420ms 320ms var(--ease-settle) both; }
+.queued-sheet { transition: translate 220ms var(--ease-settle), box-shadow 220ms ease; }
+.queued-sheet:hover { translate: 0 -3px; box-shadow: 0 18px 34px rgb(10 36 87 / 18%); }
+.status-stamp { transition: color 160ms ease; }
+
+/* Role switching keeps the sheet identity across the navigation. */
+::view-transition-old(*), ::view-transition-new(*) { animation-duration: 320ms; animation-timing-function: var(--ease-settle); }
+
+/* -----------------------------------------------------------------------------
+   8. Breakpoints.
+
+   The mobile system unfolds the binder rather than shrinking it. At 950px the
+   persistent rail becomes a top mast and the layered sheets become one column; at
+   620px the role tabs become an equal four-item selector and the checklist rows
+   reorganise around title, status, detail and action. Geometry changes; the
+   information hierarchy does not.
+   -------------------------------------------------------------------------- */
+
 @media (max-width: 950px) {
-  .runbook-shell { display: block; overflow: visible; }.runbook-rail { position: sticky; top: 0; z-index: 30; min-height: 64px; height: 64px; display: flex; align-items: center; }.runbook-rail .brand-lockup { margin: 0 18px; }.runbook-rail .brand-lockup strong { font-size: 1.4rem; }.runbook-rail .brand-lockup span, .runbook-rail .brand-lockup em { display: none; }.runbook-rail nav { margin-left: auto; display: flex; }.runbook-rail nav a { width: 48px; padding: 0; justify-content: center; }.runbook-rail nav a span, .runbook-rail nav a b, .runbook-rail-bottom, .runbook-tower, .runbook-motto { display: none; }.runbook-header { grid-template-columns: 1fr auto; }.runbook-search { display: none; }.application-deck { grid-template-columns: 1fr; }.queued-sheets { min-height: 380px; margin: 12px 0 0; }.active-sheet { min-width: 0; }.event-docket { position: relative; left: auto; right: auto; grid-template-columns: 28px 1fr 1fr; margin-top: 16px; }.event-docket > *:nth-child(n+4) { display: none; }.runbook-stage { padding-bottom: 16px; }
+  .runbook-shell { display: block; overflow: visible; }.runbook-rail { position: sticky; top: 0; z-index: 30; min-height: 64px; height: 64px; display: flex; align-items: center; }.runbook-rail .brand-lockup { margin: 0 18px; flex-direction: row; align-items: baseline; gap: 7px; }.runbook-rail .brand-lockup span { font-size: 1.12rem; }.runbook-rail .brand-lockup em { margin-top: 0; font-size: .74rem; }.runbook-rail nav { margin-left: auto; display: flex; }.runbook-rail nav a { width: 48px; padding: 0; justify-content: center; }.runbook-rail nav a span, .runbook-rail nav a b, .runbook-rail-bottom, .runbook-tower, .runbook-motto { display: none; }.runbook-header { grid-template-columns: 1fr auto; }.runbook-search { display: none; }.application-deck { grid-template-columns: 1fr; }.queued-sheets { min-height: 380px; margin: 12px 0 0; }.active-sheet { min-width: 0; }.event-docket { position: relative; left: auto; right: auto; grid-template-columns: 28px 1fr 1fr; margin-top: 16px; }.event-docket > *:nth-child(n+4) { display: none; }.runbook-stage { padding-bottom: 16px; }
   .form-workspace { grid-template-columns: 240px minmax(0, 1fr); }.form-steps { padding: 30px 18px; }.form-progress { left: 18px; right: 18px; }.form-sheet { width: calc(100% - 32px); margin: 24px 16px; }.section-heading, .section-form { padding-left: 30px; padding-right: 30px; }.form-pagination { padding-left: 30px; padding-right: 30px; }
   .queue-filters { grid-template-columns: 1fr 1fr; }.review-columns { grid-template-columns: 1fr; }.rubric-sheet { order: -1; }
   .team-layout { grid-template-columns: 1fr; }.matching-sheet { order: 2; }.project-intake { grid-template-columns: 1fr; }.open-lens { grid-column: 1; }.lens-layout { grid-template-columns: 1fr; }.file-tree { min-height: 0; }.file-tree nav { max-height: 280px; }.ops-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 620px) {
-  .runbook-rail nav a:nth-child(n+4) { display: none; }.runbook-header { height: 82px; padding: 0; }.runbook-header h1 { font-size: 1.1rem; }.runbook-header p { font-size: .82rem; }.profile-menu > span:nth-child(2), .profile-menu svg { display: none; }.profile-menu { display: block; }.role-deck { height: auto; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; margin: 10px 0 0; }.role-mascot { display: none; }.role-tab, .role-tab--hacker, .role-tab--judge, .role-tab--volunteer { height: 62px; display: grid; grid-template-columns: 1fr; place-items: center; border-color: rgb(10 36 87 / 16%); border-bottom: 0; border-radius: 6px 6px 0 0; padding: 6px 2px; box-shadow: 0 -6px 18px rgb(10 36 87 / 10%); }.role-tab--judge { background: #f4ede0; }.role-tab--judge > svg { visibility: visible; }.role-tab svg { width: 22px; height: 22px; }.role-tab strong, .role-tab--volunteer strong { font-size: .62rem; }.role-tab > span { display: none; }.application-deck { min-height: 0; }.active-sheet__header { min-height: 0; padding: 20px 18px; }.sheet-docket { font-size: .45rem; }.sheet-title-row { grid-template-columns: minmax(0, 1fr) 82px; padding-top: 18px; }.sheet-title-row h2 { font-size: 1.85rem; }.sheet-title-row h3 { font-size: 1.15rem; }.progress-seal { width: 82px; height: 82px; }.progress-seal::after { inset: 8px; }.event-facts { display: grid; gap: 8px; margin-top: 22px; }.active-sheet__body { padding: 18px; }.checklist-head { display: none; }.checklist-row { grid-template-columns: 22px 1fr auto; padding: 14px 0; }.checklist-row > p { grid-column: 2 / -1; }.checklist-row .checklist-status { grid-column: 3; grid-row: 1; font-size: 0; width: 25px; height: 25px; padding: 0; }.checklist-row > a { grid-column: 3; grid-row: 2; }.sheet-actions { align-items: stretch; flex-direction: column; }.sheet-footer { grid-template-columns: 1fr auto; }.sheet-footer span:nth-child(2) { display: none; }.queued-sheets { grid-template-columns: 1fr; min-height: 0; }.queued-sheet { min-height: 210px; transform: none; padding: 28px; }.queued-sheet p { min-height: 0; margin: 30px 0 10px; }.queued-progress { position: absolute; right: 22px; top: 66px; margin: 0; }.queued-sheet > a { width: 150px; margin-top: 30px; }.queued-notes { height: 150px; }.event-docket { grid-template-columns: 26px 1fr; }.event-docket > div:nth-child(3) { display: none; }.auth-shell { grid-template-columns: 1fr; }.auth-rail { min-height: 150px; }.auth-tower { width: 180px; left: auto; right: -15px; bottom: -65px; }.auth-rail-copy { display: none; }.auth-stage { padding: 18px; }.landing { background: url("../assets/plates/paper-sample.png") repeat; }.landing nav .brand-lockup { color: var(--ink-navy); }.landing nav { padding: 18px; }.landing nav > div > a:first-child { display: none; }.landing section { margin-left: 0; padding: 48px 22px; }.landing h1 { font-size: 3.4rem; }.landing section > div { align-items: stretch; flex-direction: column; }.landing footer { flex-wrap: wrap; padding: 18px; }.landing footer span { width: 100%; margin-left: 0; }
+  .runbook-rail nav a:nth-child(n+4) { display: none; }.runbook-header { height: 82px; padding: 0; }.runbook-header h1 { font-size: 1.1rem; }.runbook-header p { font-size: .82rem; }.profile-menu > span:nth-child(2), .profile-menu svg { display: none; }.profile-menu { display: block; }.role-deck { height: auto; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; margin: 10px 0 0; }.role-mascot { display: none; }.role-tab, .role-tab--hacker, .role-tab--judge, .role-tab--volunteer { height: 62px; display: grid; grid-template-columns: 1fr; place-items: center; border-color: rgb(10 36 87 / 16%); border-bottom: 0; border-radius: 6px 6px 0 0; padding: 6px 2px; box-shadow: 0 -6px 18px rgb(10 36 87 / 10%); }.role-tab--judge { background: #f4ede0; }.role-tab--judge > svg { visibility: visible; }.role-tab svg { width: 22px; height: 22px; }.role-tab strong, .role-tab--volunteer strong { font-size: .62rem; }.role-tab > span { display: none; }.application-deck { min-height: 0; }.active-sheet__header { min-height: 0; padding: 20px 18px; }.sheet-docket { font-size: .45rem; }.sheet-title-row { grid-template-columns: minmax(0, 1fr) 82px; padding-top: 18px; }.sheet-title-row h2 { font-size: 1.85rem; }.sheet-title-row h3 { font-size: 1.15rem; }.progress-seal { width: 82px; height: 82px; }.progress-seal::after { inset: 8px; }.event-facts { display: grid; gap: 8px; margin-top: 22px; }.active-sheet__body { padding: 18px; }.checklist-head { display: none; }.checklist-row { grid-template-columns: 22px 1fr auto; padding: 14px 0; }.checklist-row > p { grid-column: 2 / -1; }.checklist-row .checklist-status { grid-column: 3; grid-row: 1; font-size: 0; width: 25px; height: 25px; padding: 0; }.checklist-row > a { grid-column: 3; grid-row: 2; }.sheet-actions { align-items: stretch; flex-direction: column; }.sheet-footer { grid-template-columns: 1fr auto; }.sheet-footer span:nth-child(2) { display: none; }.queued-sheets { grid-template-columns: 1fr; min-height: 0; }.queued-sheet { min-height: 210px; transform: none; padding: 28px; }.queued-sheet p { min-height: 0; margin: 30px 0 10px; }.queued-progress { position: absolute; right: 22px; top: 66px; margin: 0; }.queued-sheet > a { width: 150px; margin-top: 30px; }.queued-notes { height: 150px; }.event-docket { grid-template-columns: 26px 1fr; }.event-docket > div:nth-child(3) { display: none; }.auth-shell { grid-template-columns: 1fr; }.auth-rail { min-height: 96px; flex-direction: row; align-items: center; padding: 16px 22px; }.auth-tower { width: auto; height: 92px; left: auto; right: 22px; bottom: 0; }.auth-rail-copy { display: none; }.auth-stage { padding: 18px; }.landing::before { display: none; }.landing footer a { color: #446181; }.landing nav .brand-lockup { color: var(--ink-navy); }.landing nav { padding: 18px; }.landing-signin { display: none; }.landing section { margin-left: 0; padding: 48px 22px; }.landing h1 { font-size: 3.4rem; }.landing section > div { align-items: stretch; flex-direction: column; }.landing footer { flex-wrap: wrap; padding: 18px; }.landing footer span { width: 100%; margin-left: 0; }
   .preview-label { top: 62px; right: 8px; }
+  .about-mast { align-items: start; flex-direction: column; gap: 16px; }.about-mast nav { flex-wrap: wrap; gap: 16px; }.about-sheet { width: calc(100% - 20px); margin: 12px 0; }.about-steps li { grid-template-columns: 34px minmax(0, 1fr); gap: 10px; }.about-stack > div { grid-template-columns: 1fr; gap: 8px; }.about-actions { align-items: stretch; flex-direction: column; }.about-footer span { width: 100%; margin-left: 0; }
   .role-tab--judge, .role-tab--mentor, .role-tab--volunteer { height: 62px; margin-left: 0; clip-path: none; padding: 6px 2px; }
   .mobile-continue { display: inline-flex; width: 100%; margin-top: 18px; }
   .checklist-row .checklist-status::before { font: 700 .75rem var(--font-data); }
@@ -348,14 +552,23 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Travel is removed, not feedback: distances collapse to zero and the
+     sequence compresses, but fades, colour, and state changes still read. */
+  :root { --motion-shift: 0; }
   *, *::before, *::after {
     scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: 240ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 120ms !important;
   }
+  .landing::before, .runbook-rail, .auth-rail, .runbook-rail nav a.is-current::before { animation-name: fade-in; clip-path: none; }
+  .auth-tower, .runbook-tower { animation-name: fade-in; mask-image: none; }
+  .primary-button:hover, .queued-sheet:hover, .primary-button:hover span, .landing-secondary:hover span { translate: none; }
   ::view-transition-old(*), ::view-transition-new(*), ::view-transition-group(*) {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
   }
 }
+
+@keyframes fade-in { from { opacity: 0; } }

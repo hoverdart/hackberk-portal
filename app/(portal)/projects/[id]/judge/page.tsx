@@ -8,6 +8,12 @@ import { requireUser } from "@/lib/auth/guards";
 import { parseRubric } from "@/lib/reviews/rubric";
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * A judge's scorecard for one assigned project.
+ *
+ * Access follows the assignment row; the RLS policy on
+ * `project_review_assignments` denies a judge any project they were not given.
+ */
 export default async function ProjectJudgePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ success?: string; error?: string }> }) {
   const user = await requireUser();
   const projectId = z.string().uuid().safeParse((await params).id);

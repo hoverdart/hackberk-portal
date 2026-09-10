@@ -7,8 +7,24 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Team Match actions: matching profile, team creation, invitations.
+ *
+ * Team membership is invitation-based in both directions — nobody is added to a
+ * team without an invitation they accepted — and the four-member cap is enforced
+ * by a database constraint rather than by a check here, so a race between two
+ * simultaneous acceptances cannot produce a team of five.
+ */
+
 const idSchema = z.string().uuid();
 
+/**
+ * Save the matching profile that drives the ranking.
+ *
+ * `opted_in` is the consent switch. Nobody appears in anyone else's candidate
+ * list until they set it, which is why Team Match is opt-in rather than
+ * automatic.
+ */
 export async function saveMatchingProfileAction(eventIdValue: string, formData: FormData) {
   const user = await requireUser();
   const eventId = idSchema.parse(eventIdValue);
@@ -24,6 +40,7 @@ export async function saveMatchingProfileAction(eventIdValue: string, formData: 
   redirect(error ? "/teams?error=profile" : "/teams?success=profile");
 }
 
+/** Create a team and add the creator as its first member. */
 export async function createTeamAction(eventIdValue: string, formData: FormData) {
   await requireUser();
   const eventId = idSchema.parse(eventIdValue);
@@ -34,6 +51,7 @@ export async function createTeamAction(eventIdValue: string, formData: FormData)
   redirect(error ? "/teams?error=create" : "/teams?success=created");
 }
 
+/** Invite one hacker to a team. Creates a pending invitation, not a membership. */
 export async function inviteToTeamAction(teamIdValue: string, recipientIdValue: string) {
   const user = await requireUser();
   const teamId = idSchema.parse(teamIdValue);
@@ -44,6 +62,12 @@ export async function inviteToTeamAction(teamIdValue: string, recipientIdValue: 
   redirect(error ? "/teams?error=invite" : "/teams?success=invited");
 }
 
+/**
+ * Accept or decline an invitation.
+ *
+ * Accepting is the only path into a team, and it is where the capacity constraint
+ * is finally tested.
+ */
 export async function respondInvitationAction(invitationIdValue: string, accept: boolean) {
   await requireUser();
   const invitationId = idSchema.parse(invitationIdValue);

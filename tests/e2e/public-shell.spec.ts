@@ -2,14 +2,14 @@ import { expect, test } from "@playwright/test";
 
 test("public application entry points remain usable", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Your whole hackathon, in one runbook." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Welcome to Herkeley's Smallest Collegiate Hackathon!" })).toBeVisible();
   await page.getByRole("link", { name: "Start an application" }).click();
   await expect(page.getByRole("heading", { name: "Get your credentials" })).toBeVisible();
   await expect(page.getByLabel("Full name")).toBeEditable();
   await expect(page.getByLabel("Email")).toHaveAttribute("type", "email");
 });
 
-test("Run of Show fixture exposes all four role tabs", async ({ page }) => {
+test("Portal shell fixture exposes all four role tabs", async ({ page }) => {
   await page.goto("/design/hero");
   await expect(page.getByRole("heading", { name: /Hacker application/ })).toBeVisible();
   for (const role of ["hacker", "judge", "mentor", "volunteer"]) {

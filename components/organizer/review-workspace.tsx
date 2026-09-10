@@ -8,6 +8,18 @@ import { decideApplicationAction, reportConflictAction, saveReviewAction } from 
 import type { RubricCriterion } from "@/lib/reviews/rubric";
 import { initialReviewState } from "@/lib/validation/reviews";
 
+/**
+ * The blind review workspace.
+ *
+ * `answers` arrives already filtered — the query in `lib/data/organizer.ts`
+ * excludes identity-sensitive sections, so the applicant's name and school are
+ * not in this component's props and never reach the browser. Do not add a lookup
+ * here to "enrich" the display; that would defeat the entire mechanism.
+ *
+ * `canDecide` is separate from being able to review: a reviewer scores, and only
+ * an organizer resolves the reviews into a decision.
+ */
+
 type ReviewWorkspaceProps = {
   application: { id: string; role: string; status: string };
   eventName: string;
@@ -22,6 +34,9 @@ type ReviewWorkspaceProps = {
 };
 
 export function ReviewWorkspace({ application, eventName, answers, assignment, review, criteria, aggregate, submittedReviewCount, canDecide, notice }: ReviewWorkspaceProps) {
+  // A submitted review is final, and declaring a conflict withdraws you from this
+  // application — either way the form becomes read-only rather than disappearing,
+  // so the reviewer can still see what they recorded.
   const locked = review?.status === "submitted" || assignment.status === "conflict";
   const [showConflict, setShowConflict] = useState(false);
   const saveAction = saveReviewAction.bind(null, application.id, assignment.id, false);

@@ -2,6 +2,15 @@ import { z } from "zod";
 
 import type { ApplicationRole } from "@/lib/domain/applications";
 
+/**
+ * The application form definitions.
+ *
+ * The forms are data, not JSX: every question for every role is declared here and
+ * the wizard renders whatever it finds. Adding a question means editing this file
+ * only, and the same definitions drive validation and the progress calculation,
+ * so the three can never disagree about what a complete application looks like.
+ */
+
 export type FieldDefinition = {
   key: string;
   label: string;
@@ -12,6 +21,15 @@ export type FieldDefinition = {
   maxLength?: number;
 };
 
+/**
+ * A wizard step.
+ *
+ * `identitySensitive` is the important flag. Sections marked true are stored with
+ * `is_identity_sensitive = true` and are excluded from the blind review packet by
+ * the query in `lib/data/organizer.ts`. This is where the blind-review promise is
+ * actually configured — mark a section wrong and identifying answers reach
+ * reviewers.
+ */
 export type SectionDefinition = {
   key: string;
   title: string;

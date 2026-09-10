@@ -9,6 +9,19 @@ import type { FieldDefinition, SectionDefinition } from "@/lib/applications/defi
 import type { ApplicationRole, ApplicationStatus } from "@/lib/domain/applications";
 import { initialApplicationState } from "@/lib/validation/applications";
 
+/**
+ * The multi-step application wizard.
+ *
+ * A Client Component because the step navigation and the autosave timer are
+ * genuinely interactive. Everything that touches data still runs in Server
+ * Actions — this component holds no application state of its own beyond which
+ * step is on screen.
+ *
+ * The section heading tells the applicant whether the answers they are typing are
+ * identity-sensitive and therefore withheld from blind reviewers. That promise is
+ * only worth making if it is visible at the moment those answers are entered.
+ */
+
 type ApplicationWorkspaceProps = {
   application: { id: string; role: ApplicationRole; status: ApplicationStatus; progress: number; answers: Record<string, Record<string, unknown>>; answerVersions: Record<string, number> };
   eventName: string;
@@ -18,6 +31,8 @@ type ApplicationWorkspaceProps = {
 };
 
 export function ApplicationWorkspace({ application, eventName, sections, initialSection, notice }: ApplicationWorkspaceProps) {
+  // `findIndex` returns -1 for an unknown section key, so clamp to 0 rather than
+  // letting a hand-edited `?section=` produce an undefined step.
   const initialIndex = Math.max(0, sections.findIndex((section) => section.key === initialSection));
   const [step, setStep] = useState(initialIndex);
   const section = sections[step];
@@ -35,6 +50,8 @@ export function ApplicationWorkspace({ application, eventName, sections, initial
       <section className="form-sheet" aria-labelledby="section-title">
         {notice ? <p className={`workspace-notice workspace-notice--${notice.tone}`} role="status">{notice.message}</p> : null}
         <div className="section-heading"><p>STEP {step + 1} OF {sections.length}</p><h2 id="section-title">{section.title}</h2><span>{section.summary}</span>{section.identitySensitive ? <small><LockKeyhole aria-hidden /> Identity-sensitive — excluded from blind review</small> : <small><Check aria-hidden /> Included in blind review without your identity</small>}</div>
+        {/* `key` forces a fresh editor per section, so React remounts rather than
+            reusing the previous section's form state and autosave timer. */}
         <SectionEditor key={section.key} applicationId={application.id} role={application.role} section={section} values={application.answers[section.key] ?? {}} answerVersion={application.answerVersions[section.key] ?? 0} locked={locked} />
         <nav className="form-pagination" aria-label="Application section navigation"><button type="button" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}><ChevronLeft aria-hidden />Previous</button>{step < sections.length - 1 ? <button type="button" onClick={() => setStep((current) => Math.min(sections.length - 1, current + 1))}>Next section<ChevronRight aria-hidden /></button> : locked ? <Withdrawal applicationId={application.id} role={application.role} /> : <Submission applicationId={application.id} role={application.role} progress={application.progress} />}</nav>
       </section>
@@ -42,6 +59,14 @@ export function ApplicationWorkspace({ application, eventName, sections, initial
   );
 }
 
+/**
+ * The form for one section, with debounced autosave.
+ *
+ * The `answerVersion` hidden input is what makes concurrent editing safe: it is
+ * posted with every save, and the action refuses the write if the stored version
+ * has moved on. `state.answerVersion` then replaces it, so consecutive autosaves
+ * chain correctly instead of the second one going stale against the first.
+ */
 function SectionEditor({ applicationId, role, section, values, answerVersion, locked }: { applicationId: string; role: ApplicationRole; section: SectionDefinition; values: Record<string, unknown>; answerVersion: number; locked: boolean }) {
   const action = saveApplicationSectionAction.bind(null, applicationId, role, section.key);
   const [state, formAction, pending] = useActionState(action, { ...initialApplicationState, answerVersion });
@@ -49,10 +74,15 @@ function SectionEditor({ applicationId, role, section, values, answerVersion, lo
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const version = state.answerVersion ?? answerVersion;
 
+  // A stale save means the on-screen answers may be out of date. Move focus into
+  // the form so a keyboard or screen-reader user is taken to the message rather
+  // than left on a button whose label silently changed.
   useEffect(() => {
     if (state.status === "stale") formRef.current?.querySelector<HTMLElement>("input, textarea, select")?.focus();
   }, [state.status]);
 
+  // Cancel a pending autosave on unmount, or switching section mid-debounce
+  // would fire a save for a form that no longer exists.
   useEffect(() => () => {
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
   }, []);
@@ -62,11 +92,16 @@ function SectionEditor({ applicationId, role, section, values, answerVersion, lo
       if (locked) return;
       if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
       const form = event.currentTarget;
+      // 900ms after typing stops: long enough not to save every keystroke, short
+      // enough that a closed tab rarely loses work. `requestSubmit` (not
+      // `submit`) is used so the action pipeline and validation still run.
       autosaveTimer.current = setTimeout(() => form.requestSubmit(), 900);
     }}>
       <input type="hidden" name="answerVersion" value={version} />
       <fieldset disabled={locked || pending}>{section.fields.map((field) => <ApplicationField key={field.key} field={field} value={values[field.key]} error={state.errors?.[field.key]?.[0]} />)}</fieldset>
       <button type="submit" className="save-draft" disabled={locked || pending}>{pending ? <Cloud aria-hidden className="is-saving" /> : state.status === "error" || state.status === "stale" ? <CloudOff aria-hidden /> : <Cloud aria-hidden />}{pending ? "Saving…" : state.message ?? (locked ? "Answers locked" : "Save draft")}</button>
+      {/* Autosave is silent by design, so its outcome has to be announced
+          somewhere a screen reader will hear it. */}
       <p className={`save-announcement save-announcement--${state.status}`} aria-live="polite">{state.status === "saved" ? "Your answers are saved." : state.status === "error" || state.status === "stale" ? state.message : ""}</p>
     </form>
   );
@@ -93,6 +128,7 @@ function Withdrawal({ applicationId, role }: { applicationId: string; role: Appl
   return <form action={withdrawApplicationAction.bind(null, applicationId, role)}><button type="submit" className="withdraw-button">Withdraw application</button></form>;
 }
 
+/** A section is complete when every required field has a non-empty answer. */
 function isComplete(section: SectionDefinition, values: Record<string, unknown> | undefined) {
   if (!values) return false;
   return section.fields.filter((field) => field.required).every((field) => Array.isArray(values[field.key]) ? (values[field.key] as unknown[]).length > 0 : Boolean(values[field.key]));

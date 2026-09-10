@@ -7,9 +7,23 @@ import { z } from "zod";
 import { requireOrganizer } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Organizer event-day operations: judge assignment, mentor triage, shift setup.
+ *
+ * These are the write side of the organizer control sheet in
+ * `app/(organizer)/organizer/operations/page.tsx`.
+ */
+
 const idSchema = z.string().uuid();
 const shiftSchema = z.object({ title: z.string().trim().min(3).max(120), location: z.string().trim().min(2).max(160), startsAt: z.coerce.date(), endsAt: z.coerce.date(), capacity: z.coerce.number().int().min(1).max(500) }).refine((shift) => shift.startsAt < shift.endsAt, { message: "Shift end must follow its start." });
 
+/**
+ * Assign a judge to a project.
+ *
+ * Assignment is what grants the judge read access to that project — the RLS
+ * policy keys off this row — so this action is an authorization decision, not
+ * just scheduling.
+ */
 export async function assignProjectJudgeAction(projectIdValue: string, formData: FormData) {
   const projectId = idSchema.parse(projectIdValue);
   const judgeId = idSchema.parse(formData.get("judgeId"));
@@ -22,6 +36,7 @@ export async function assignProjectJudgeAction(projectIdValue: string, formData:
   redirect(error ? "/organizer/operations?error=assignment" : "/organizer/operations?success=assignment");
 }
 
+/** Close out a mentor request an organizer has handled or triaged away. */
 export async function resolveMentorRequestAction(requestIdValue: string) {
   const requestId = idSchema.parse(requestIdValue);
   const supabase = await createClient();
@@ -33,6 +48,7 @@ export async function resolveMentorRequestAction(requestIdValue: string) {
   redirect(error ? "/organizer/operations?error=request" : "/organizer/operations?success=request");
 }
 
+/** Publish a volunteer shift. The schema rejects a shift that ends before it starts. */
 export async function createVolunteerShiftAction(eventIdValue: string, formData: FormData) {
   const eventId = idSchema.parse(eventIdValue);
   await requireOrganizer(eventId);

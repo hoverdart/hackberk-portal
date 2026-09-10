@@ -9,8 +9,18 @@ import tower from "@/assets/plates/tower-illustration.png";
 import { signOutAction } from "@/app/(public)/auth-actions";
 import { StatusStamp } from "@/components/ui/status-stamp";
 import { roleCopy, statusLabel, type ApplicationRole, type ApplicationSummary } from "@/lib/domain/applications";
+import { Wordmark } from "@/components/ui/wordmark";
 
-type RunOfShowProps = {
+/**
+ * The portal shell — the signed-in surface at `/dashboard`.
+ *
+ * Presentational only: it receives everything it renders and performs no queries
+ * and no authorization of its own. That is what lets the visual fixture at
+ * `/design/hero` render the identical component with synthetic props, so design
+ * work and the production page can never drift apart.
+ */
+
+type PortalShellProps = {
   profileName: string;
   event: { name: string; venue: string; startsAt: string; closesAt: string; synthetic: boolean };
   applications: ApplicationSummary[];
@@ -19,6 +29,8 @@ type RunOfShowProps = {
   preview?: boolean;
 };
 
+// Rail destinations, in priority order. The 950px breakpoint keeps the first
+// three and the 620px one keeps the first three as icons, so order is meaningful.
 const navItems = [
   ["My applications", "/dashboard", Folder], ["Events", "/ops", CalendarDays], ["Opportunities", "/teams", Users],
   ["Resources", "/projects", BookOpen], ["Messages", "/ops#messages", Mail], ["Profile", "/dashboard#profile", UserRound],
@@ -26,7 +38,7 @@ const navItems = [
 const roleIcons = { hacker: Laptop, judge: Scale, mentor: UserRoundCog, volunteer: Heart };
 
 /** Shared application shell: the production page and visual fixture render the same component. */
-export function RunOfShow({ profileName, event, applications, databaseAvailable = true, activeRole = "hacker", preview = false }: RunOfShowProps) {
+export function PortalShell({ profileName, event, applications, databaseAvailable = true, activeRole = "hacker", preview = false }: PortalShellProps) {
   const active = applications.find((application) => application.role === activeRole) ?? applications[0];
   const eventDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "America/Los_Angeles" }).format(new Date(event.startsAt));
   const deadline = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/Los_Angeles" }).format(new Date(event.closesAt));
@@ -34,7 +46,7 @@ export function RunOfShow({ profileName, event, applications, databaseAvailable 
   return (
     <main className="runbook-shell">
       <aside className="runbook-rail">
-        <Link href="/dashboard" className="brand-lockup"><strong>Berkeley</strong><span>Hackathons</span><em>@ Berkeley</em></Link>
+        <Wordmark href="/dashboard" />
         <nav aria-label="Primary navigation">
           {navItems.map(([label, href, Icon], index) => <Link key={label} href={href} aria-label={label} aria-current={index === 0 ? "page" : undefined} className={index === 0 ? "is-current" : undefined}><Icon aria-hidden size={21} /><span>{label}</span>{label === "Messages" ? <b>3</b> : null}</Link>)}
         </nav>
@@ -45,7 +57,7 @@ export function RunOfShow({ profileName, event, applications, databaseAvailable 
 
       <section className="runbook-stage">
         <header className="runbook-header">
-          <div><h1>Good afternoon, {profileName}.</h1><p>Four ways to contribute. One bigger Berkeley.</p></div>
+          <div><h1>Good afternoon, {profileName}.</h1><p>Four ways to contribute. One bigger Herkeley.</p></div>
           <label className="runbook-search"><Search aria-hidden size={20} /><span className="sr-only">Search</span><input placeholder="Search events, resources, or help…" /></label>
           <button className="profile-menu" type="button" aria-label="Open account menu"><span>{initials(profileName)}</span><span><strong>{profileName}</strong><small>{preview ? "Undergraduate" : "Applicant"}</small></span><ChevronDown aria-hidden size={17} /></button>
         </header>
@@ -60,11 +72,14 @@ export function RunOfShow({ profileName, event, applications, databaseAvailable 
           })}
         </div>
 
+        {/* Naming the transition after the active role lets the browser tie the
+            outgoing and incoming sheets together when the role changes, so the
+            switch reads as one sheet being replaced rather than a full repaint. */}
         <ViewTransition name={`application-${activeRole}`}>
           <section className="application-deck" aria-label={`${activeRole} application overview`}>
             <article className="active-sheet">
               <header className="active-sheet__header">
-                <div className="sheet-docket"><span>HACKATHONS @ BERKELEY</span><span>APPLICATION {preview ? "2026—01" : "2027—01"}</span></div>
+                <div className="sheet-docket"><span>BACKATHONS AT HERKELEY</span><span>APPLICATION {preview ? "2026—01" : "2027—01"}</span></div>
                 <div className="sheet-title-row"><div><h2>{capitalize(activeRole)} application — {preview ? "in progress" : active?.status === "not_started" ? "ready to start" : statusLabel(active?.status ?? "draft").toLowerCase()}</h2><h3>{event.name}</h3></div><div className="progress-seal" style={{ "--progress": `${active?.progress ?? 0}%` } as CSSProperties}><strong>{active?.progress ?? 0}%</strong><span>complete</span></div></div>
                 <dl className="event-facts"><div><CalendarDays aria-hidden /><dt className="sr-only">Date</dt><dd>{eventDate}</dd></div><div><MapPin aria-hidden /><dt className="sr-only">Venue</dt><dd>{event.venue}</dd></div><div><Users aria-hidden /><dt className="sr-only">Format</dt><dd>In person</dd></div></dl>
                 <Link className="mobile-continue primary-button" href={`/applications/${activeRole}`}>{active?.status === "not_started" ? "Start" : "Continue"} application <span aria-hidden>→</span></Link>
@@ -76,9 +91,12 @@ export function RunOfShow({ profileName, event, applications, databaseAvailable 
                 <ChecklistRow index={3} title="Logistics" subtitle="Availability, travel, accommodation" details="Your attendance, housing needs, dietary needs" status="attention" />
                 <ChecklistRow index={4} title="Final review" subtitle="Submit your application" details="Check your information and submit when ready" status="locked" />
                 <div className="sheet-actions"><Link className="primary-button" href={`/applications/${activeRole}`}>{active?.status === "not_started" ? "Start" : "Continue"} application <span aria-hidden>→</span></Link><p><strong>Next: Complete your logistics information</strong><span>Your progress is saved automatically.</span></p></div>
-                <footer className="sheet-footer"><span>GO BOLDER</span><span>HACKATHONS @ BERKELEY<br />EST. 2012</span><span>PEOPLE<br />IDEAS<br />COMMUNITY<br />IMPACT</span></footer>
+                <footer className="sheet-footer"><span>GO BOLDER</span><span>BACKATHONS AT HERKELEY<br />EST. 2012</span><span>PEOPLE<br />IDEAS<br />COMMUNITY<br />IMPACT</span></footer>
               </div>
             </article>
+            {/* The roles you are not currently working on stay visible but
+                structurally queued behind the active sheet — the binder metaphor's
+                central idea, and why this is not a grid of equal cards. */}
             <div className="queued-sheets" aria-label="Other role applications">
               {applications.filter((application) => application.role !== activeRole).map((application, index) => <article key={application.role} className={`queued-sheet queued-sheet--${application.role}`} style={{ "--sheet-index": index } as CSSProperties}><strong className="queued-role">{capitalize(application.role)}</strong><StatusStamp status={application.status} /><p>{roleCopy[application.role].tagline}</p><div className="queued-progress"><strong>{application.progress}%</strong><span /></div><Link href={`/applications/${application.role}`}>{application.status === "not_started" ? "Start" : "Open"} application</Link></article>)}
               <Image src={notes} alt="Handwritten notes: mentors multiply possibilities; different roles, a stronger community" className="queued-notes" />
@@ -92,9 +110,16 @@ export function RunOfShow({ profileName, event, applications, databaseAvailable 
   );
 }
 
+/**
+ * One row of the application checklist.
+ *
+ * Status is carried by the written label as well as by colour and a shaped
+ * marker, so it survives both colour-blindness and a greyscale print.
+ */
 function ChecklistRow({ index, title, subtitle, details, status }: { index: number; title: string; subtitle: string; details: string; status: "complete" | "attention" | "locked" }) {
   const labels = { complete: "Complete", attention: "Needs attention", locked: "Locked" };
   return <div className="checklist-row"><span>{index}.</span><div><strong>{title}</strong><small>{subtitle}</small></div><p>{details}</p><span className={`checklist-status checklist-status--${status}`}>{labels[status]}</span><Link href="#">{status === "locked" ? "—" : status === "attention" ? "Review" : "Edit"}</Link></div>;
 }
+/** First letters of the first two words, for the avatar chip. */
 function initials(name: string) { return name.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase(); }
 function capitalize(value: string) { return value.charAt(0).toUpperCase() + value.slice(1); }

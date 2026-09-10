@@ -2,6 +2,18 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Read model for Role Ops — the event-day action feed.
+ *
+ * One page serves every role, so it loads every feed at once and lets the page
+ * decide which sections to show based on the roles the user actually holds. All
+ * seven reads are independent, so they go out in parallel.
+ *
+ * Nothing here filters for authorization. Each of these tables has its own RLS
+ * policy, so a volunteer issuing the judging query simply gets no rows back.
+ * That is the intended design: the queries describe what the page wants, and
+ * Postgres decides what the caller may see.
+ */
 export async function getOpsHub(userId: string, eventId: string) {
   const supabase = await createClient();
   const [{ data: applications }, { data: milestones }, { data: projectAssignments }, { data: mentorRequests }, { data: shifts }, { data: shiftAssignments }, { data: staff }] = await Promise.all([

@@ -6,9 +6,9 @@ insert into public.events (
 ) values (
   '00000000-0000-4000-8000-000000000001',
   'berkeley-build-2027-demo',
-  'Berkeley Build 2027 — Synthetic Demo',
+  'Herkeley Build 2027 — Synthetic Demo',
   'Ideas, people, possibilities.',
-  'UC Berkeley · Pauley Ballroom',
+  'Herkeley · Pauley Ballroom',
   '2027-03-06 17:00:00-08',
   '2027-03-08 17:00:00-08',
   '2026-10-01 09:00:00-07',

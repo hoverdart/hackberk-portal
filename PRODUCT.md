@@ -18,7 +18,7 @@ Next.js 16.3 App Router, React 19.2, Tailwind CSS 4, and hosted Supabase for Pos
 
 ## Product Purpose
 
-Give Hackathons @ Berkeley one coherent operating system for the full path from application through event participation and project judging. Success means every role can understand its next action, organizers can make defensible decisions quickly, and authorization remains correct even when data is accessed outside the UI.
+Give Backathons at Herkeley one coherent operating system for the full path from application through event participation and project judging. Success means every role can understand its next action, organizers can make defensible decisions quickly, and authorization remains correct even when data is accessed outside the UI.
 
 ## Positioning
 
@@ -30,7 +30,7 @@ Applicants often complete forms between classes or on mobile. Organizers review 
 
 ## Capabilities and Constraints
 
-- Multi-event schema with one seeded synthetic Hackathons @ Berkeley event.
+- Multi-event schema with one seeded synthetic Backathons at Herkeley event.
 - Verified email/password authentication with cookie-based server rendering.
 - Separate, versioned applications for hacker, judge, mentor, and volunteer roles.
 - Two independent blind organizer reviews per application and explicit final decisions.
@@ -41,11 +41,13 @@ Applicants often complete forms between classes or on mobile. Organizers review 
 
 ## Brand Commitments
 
-The product is for Hackathons @ Berkeley. Preserve its primary blue, ink navy, Ddoski gold and brown, coral accents, and its established Space Grotesk, Karla, and Space Mono type lineage. The selected visual world is **Run of Show**: an event operations binder expressed through role tabs, credential strips, review stamps, and queue sheets.
+The product is for Backathons at Herkeley, a fictional organization. The name is a deliberate near-miss of a real one so this portal can never be mistaken for it; it is a portfolio build whose purpose is to demonstrate the engineering, and every surface says so. Preserve the primary blue, ink navy, Ddoski gold and brown, coral accents, and the established Space Grotesk, Karla, and Space Mono type lineage.
+
+"Run of Show" is the name of the interface world only — an event operations binder expressed through role tabs, credential strips, review stamps, and queue sheets. It is not the product name and must not appear in user-facing copy.
 
 ## Evidence on Hand
 
-The current public Hackathons @ Berkeley site and supplied project brief establish the organization, roles, visual palette, and workflow goals. All event, applicant, review, team, project, and operations content shipped as seed data must be labeled synthetic; no attendance, acceptance, or impact claim may be invented.
+The supplied project brief establishes the roles, visual palette, and workflow goals; the problem shape is drawn from how student hackathon organizations actually run, but the organization itself is invented. All event, applicant, review, team, project, and operations content shipped as seed data must be labeled synthetic; no attendance, acceptance, or impact claim may be invented, and nothing may imply affiliation with a real institution.
 
 ## Product Principles
 

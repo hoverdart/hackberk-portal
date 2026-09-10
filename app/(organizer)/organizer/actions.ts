@@ -10,6 +10,22 @@ import { createClient } from "@/lib/supabase/server";
 import type { ApplicationStatus } from "@/lib/domain/applications";
 import type { Json } from "@/lib/supabase/database.types";
 
+/**
+ * Organizer review and decision actions.
+ *
+ * Note the order in each function: look the record up first, then authorize
+ * against the event it belongs to. Organizer rights are per-event, so
+ * `requireOrganizer()` with no argument would let an organizer of event A act on
+ * event B. Reading the row first is what makes the check specific.
+ */
+
+/**
+ * Assign a reviewer to an application.
+ *
+ * Delegates to the `assign_application_reviewer` function in Postgres rather than
+ * inserting directly, so the rules — two reviewers maximum, no self-assignment,
+ * no duplicates — live next to the data and hold for every caller.
+ */
 export async function assignReviewerAction(applicationIdValue: string, reviewerIdValue: string) {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
   const reviewerId = reviewIdSchema.parse(reviewerIdValue);
@@ -22,6 +38,15 @@ export async function assignReviewerAction(applicationIdValue: string, reviewerI
   revalidatePath(`/organizer/applications/${applicationId}/review`);
 }
 
+/**
+ * Save or submit one reviewer's scores.
+ *
+ * The assignment lookup filters on `reviewer_id` as well as the assignment id, so
+ * a staff member cannot post to somebody else's assignment by guessing its id.
+ *
+ * `submit` distinguishes a draft from a final review: only submitted reviews
+ * count toward the aggregate, and submitting is one-way.
+ */
 export async function saveReviewAction(applicationIdValue: string, assignmentIdValue: string, submit: boolean, _: ReviewActionState, formData: FormData): Promise<ReviewActionState> {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
   const assignmentId = reviewIdSchema.parse(assignmentIdValue);
@@ -50,6 +75,12 @@ export async function saveReviewAction(applicationIdValue: string, assignmentIdV
   return { status: submit ? "submitted" : "saved", message: submit ? "Independent review submitted and locked." : "Review draft saved." };
 }
 
+/**
+ * Declare a conflict of interest and hand the application back to the queue.
+ *
+ * Recusal is a first-class action rather than an informal note. Recording the
+ * reason is what makes a decision defensible later.
+ */
 export async function reportConflictAction(applicationIdValue: string, assignmentIdValue: string, formData: FormData) {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
   const assignmentId = reviewIdSchema.parse(assignmentIdValue);
@@ -61,6 +92,14 @@ export async function reportConflictAction(applicationIdValue: string, assignmen
   revalidatePath(`/organizer/applications/${applicationId}/review`);
 }
 
+/**
+ * Record the final decision on an application.
+ *
+ * Separate from the reviews on purpose: reviewers recommend, an organizer
+ * decides. The status transition is validated by a database trigger, so an
+ * illegal move (deciding an application that was never submitted, for instance)
+ * fails in Postgres.
+ */
 export async function decideApplicationAction(applicationIdValue: string, decisionValue: string) {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
   const decision = reviewRecommendationSchema.parse(decisionValue) as ApplicationStatus;

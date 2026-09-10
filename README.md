@@ -1,4 +1,4 @@
-# Hackathons @ Berkeley · Run of Show
+# Backathons at Herkeley 
 
 A multi-event portal for hacker, judge, mentor, and volunteer applications; blind organizer review; team formation; safe public GitHub project review; and event-day operations.
 

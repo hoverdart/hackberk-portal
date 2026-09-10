@@ -7,6 +7,12 @@ import { refreshProjectMetadataAction, submitProjectAction } from "@/app/(portal
 import { requireUser } from "@/lib/auth/guards";
 import { getProjectLens } from "@/lib/data/projects";
 
+/**
+ * The repository viewer.
+ *
+ * Source is tokenised into HTML by Shiki on the server, so what the browser
+ * receives is markup. Nothing from the repository is ever executed.
+ */
 export default async function ProjectLensPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ path?: string; error?: string; success?: string }> }) {
   await requireUser();
   const idResult = z.string().uuid().safeParse((await params).id);

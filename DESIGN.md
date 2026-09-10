@@ -1,5 +1,5 @@
 ---
-name: "Hackathons @ Berkeley Portal"
+name: "Backathons at Herkeley Portal"
 description: "A live event-operations binder that keeps every role oriented to its next cue."
 colors:
   berkeley-blue: "#3d68bb"
@@ -122,7 +122,7 @@ components:
     height: "74px"
 ---
 
-# Design System: Hackathons @ Berkeley Portal
+# Design System: Backathons at Herkeley Portal
 
 ## Overview
 
