@@ -29,8 +29,12 @@ async function githubApi(path: string) {
   try {
     const response = await fetch(`https://api.github.com${path}`, { headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}) }, signal: controller.signal, next: { revalidate: 300 } });
     if (!response.ok) throw new Error(response.status === 404 ? "Public repository not found." : "GitHub could not provide this repository.");
-    const length = Number(response.headers.get("content-length") ?? 0);
-    if (length > 2_000_000) throw new Error("GitHub response exceeded the preview limit.");
-    return response.json();
+    const declaredLength = Number(response.headers.get("content-length") ?? 0);
+    if (declaredLength > 2_000_000) throw new Error("GitHub response exceeded the preview limit.");
+    // Content-Length can be absent on compressed responses, so enforce the same
+    // boundary again on the bytes received before JSON parsing allocates deeply.
+    const body = await response.arrayBuffer();
+    if (body.byteLength > 2_000_000) throw new Error("GitHub response exceeded the preview limit.");
+    return JSON.parse(new TextDecoder().decode(body)) as unknown;
   } finally { clearTimeout(timeout); }
 }

@@ -6,6 +6,6 @@ import { applicationRoles } from "@/lib/domain/applications";
  */
 export default function HeroReproductionPage() {
   return (
-    <RunOfShow preview profileName="Alex Chen" event={{ name: "Berkeley Build 2027 — Synthetic Demo", venue: "Berkeley, CA", startsAt: "2027-03-06T17:00:00-08:00", closesAt: "2027-01-19T23:59:00-08:00", synthetic: true }} applications={applicationRoles.map((role, index) => ({ id: index < 2 ? `preview-${role}` : null, role, status: index === 0 || index === 1 ? "draft" : "not_started", progress: index === 0 ? 72 : 0 }))} />
+    <RunOfShow preview profileName="Alex Chen" event={{ name: "AI Hackathon 2026", venue: "Berkeley, CA", startsAt: "2026-02-06T17:00:00-08:00", closesAt: "2026-01-23T23:59:00-08:00", synthetic: true }} applications={applicationRoles.map((role, index) => ({ id: index < 2 ? `preview-${role}` : null, role, status: index === 0 || index === 1 ? "draft" : "not_started", progress: index === 0 ? 72 : 0 }))} />
   );
 }

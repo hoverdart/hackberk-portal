@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Next.js 16.2 App Router, React 19.2, Tailwind CSS 4, and hosted Supabase for PostgreSQL, Auth, and Row Level Security.
+Next.js 16.3 App Router, React 19.2, Tailwind CSS 4, and hosted Supabase for PostgreSQL, Auth, and Row Level Security.
 
 ## Users
 

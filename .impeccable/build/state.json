@@ -55,94 +55,93 @@
       "status": "open",
       "openedAt": "2026-09-10T18:27:38.578Z",
       "closedAt": null,
-      "attempts": 0,
+      "attempts": 2,
       "notes": [],
       "gate": {
         "ok": false,
         "reasons": [
-          "region volunteer-tab is missing (detail 6%, structure 53%): the comp shows material the build does not",
           "region progress-ring is missing (detail 5%, structure 58%): the comp shows material the build does not",
           "region queued-sheet-actions is missing (detail 0%, structure 63%): the comp shows material the build does not",
-          "region judge-tab (control) is contradicted (structure 49%, detail added 20%): this control does not read as the comp's: rebuild its chrome from the crop (border, fill, radius, chevron or arrow, label size) rather than from a component default",
-          "region mentor-tab (control) is contradicted (structure 45%, detail added 26%): this control does not read as the comp's: rebuild its chrome from the crop (border, fill, radius, chevron or arrow, label size) rather than from a component default",
-          "region application-kicker (text) is contradicted (structure 47%, detail added 35%): the composition of this text region differs from the comp; re-derive it from the spec box",
-          "region application-title (text) is contradicted (structure 42%, detail added 27%): the composition of this text region differs from the comp; re-derive it from the spec box",
-          "control top-profile drifts to 49% (structure 52%, color 58%): its chrome differs from the comp's; open .impeccable/review/diff/hero/regions/top-profile.png and match the border, fill, radius, chevron or arrow, and label size",
-          "control hacker-tab drifts to 60% (structure 59%, color 76%): its chrome differs from the comp's; open .impeccable/review/diff/hero/regions/hacker-tab.png and match the border, fill, radius, chevron or arrow, and label size",
+          "region hacker-tab (control) is contradicted (structure 49%, detail added 25%): this control does not read as the comp's: rebuild its chrome from the crop (border, fill, radius, chevron or arrow, label size) rather than from a component default",
+          "region volunteer-tab (control) is contradicted (structure 59%, detail added 22%): this control does not read as the comp's: rebuild its chrome from the crop (border, fill, radius, chevron or arrow, label size) rather than from a component default",
+          "region application-kicker (text) is contradicted (structure 35%, detail added 36%): the composition of this text region differs from the comp; re-derive it from the spec box",
+          "control top-profile drifts to 50% (structure 52%, color 59%): its chrome differs from the comp's; open .impeccable/review/diff/hero/regions/top-profile.png and match the border, fill, radius, chevron or arrow, and label size",
+          "control judge-tab drifts to 51% (structure 51%, color 67%): its chrome differs from the comp's; open .impeccable/review/diff/hero/regions/judge-tab.png and match the border, fill, radius, chevron or arrow, and label size",
+          "control mentor-tab drifts to 46% (structure 51%, color 53%): its chrome differs from the comp's; open .impeccable/review/diff/hero/regions/mentor-tab.png and match the border, fill, radius, chevron or arrow, and label size",
           "control continue-action drifts to 64% (structure 68%, color 58%): its chrome differs from the comp's; open .impeccable/review/diff/hero/regions/continue-action.png and match the border, fill, radius, chevron or arrow, and label size",
-          "plate tab-mascot is clipped at the bottom: the comp's artwork keeps a margin there (ink box 595x177 at 0,15 in the region) and the build's runs to the edge (595x198 at 0,14); size the box to the artwork's aspect and use object-fit: contain, or place the <img> at the artwork's own size, never cover on a narrower box",
-          "the build carries ink in 3 grid cells where the comp is calm (H8, J8, G9); nothing exists on the page that the comp does not show (a kicker, an extra nav item, a divider, a second row of controls); remove it or name it in a stated decision after the hero passes"
+          "plate tab-mascot is clipped at the bottom: the comp's artwork keeps a margin there (ink box 595x177 at 0,15 in the region) and the build's runs to the edge (595x198 at 0,14); size the box to the artwork's aspect and use object-fit: contain, or place the <img> at the artwork's own size, never cover on a narrower box"
         ],
         "summary": "hero 74% (drift)",
-        "score": 0.7437,
+        "score": 0.7397,
         "verdict": "drift",
         "report": ".impeccable/review/diff/hero/report.json",
         "sideBySide": "/Users/shauryaverma/Documents/GitHub/hackberk-portal/.impeccable/review/diff/hero/side-by-side.png",
         "worst": [
-          "volunteer-tab missing 42%",
-          "mentor-tab contradicted 42%",
-          "queued-sheet-notes drift 48%"
+          "application-kicker contradicted 45%",
+          "mentor-tab drift 46%",
+          "volunteer-tab contradicted 48%"
         ],
         "worstIds": [
-          "volunteer-tab",
+          "application-kicker",
           "mentor-tab",
-          "queued-sheet-notes"
+          "volunteer-tab"
         ],
         "worstCrops": [
           {
-            "id": "volunteer-tab",
-            "verdict": "missing",
+            "id": "application-kicker",
+            "verdict": "contradicted",
             "score": {
-              "overall": 0.4212,
-              "structure": 0.5331,
-              "color": 0.4821,
-              "colorIntersection": 0.0988,
-              "paletteMatch": 0.6885,
-              "detail": 0.0626,
-              "detailRaw": 0.172,
-              "detailAdded": 0.2188,
-              "bands": 0
+              "overall": 0.4478,
+              "structure": 0.3473,
+              "color": 0.8145,
+              "colorIntersection": 0.704,
+              "paletteMatch": 0.874,
+              "detail": 0.122,
+              "detailRaw": 0.3043,
+              "detailAdded": 0.3646,
+              "bands": 0.5222
             },
-            "file": ".impeccable/review/diff/hero/regions/volunteer-tab.png"
+            "file": ".impeccable/review/diff/hero/regions/application-kicker.png"
           },
           {
             "id": "mentor-tab",
-            "verdict": "contradicted",
+            "verdict": "drift",
             "score": {
-              "overall": 0.4217,
-              "structure": 0.4519,
-              "color": 0.5512,
-              "colorIntersection": 0.3557,
-              "paletteMatch": 0.6565,
-              "detail": 0.1271,
-              "detailRaw": 0.2573,
-              "detailAdded": 0.2604,
-              "bands": 0.3905
+              "overall": 0.4627,
+              "structure": 0.5078,
+              "color": 0.5349,
+              "colorIntersection": 0.3357,
+              "paletteMatch": 0.6422,
+              "detail": 0.2346,
+              "detailRaw": 0.3127,
+              "detailAdded": 0.1563,
+              "bands": 0.6
             },
             "file": ".impeccable/review/diff/hero/regions/mentor-tab.png"
           },
           {
-            "id": "queued-sheet-notes",
-            "verdict": "drift",
+            "id": "volunteer-tab",
+            "verdict": "contradicted",
             "score": {
-              "overall": 0.4832,
-              "structure": 0.6159,
-              "color": 0.6492,
-              "colorIntersection": 0.3095,
-              "paletteMatch": 0.8321,
-              "detail": 0.2987,
-              "detailRaw": 0.4289,
-              "detailAdded": 0.2604,
-              "bands": 1
+              "overall": 0.4821,
+              "structure": 0.5873,
+              "color": 0.4824,
+              "colorIntersection": 0.0984,
+              "paletteMatch": 0.6892,
+              "detail": 0.2449,
+              "detailRaw": 0.3543,
+              "detailAdded": 0.2188,
+              "bands": 0.1667
             },
-            "file": ".impeccable/review/diff/hero/regions/queued-sheet-notes.png"
+            "file": ".impeccable/review/diff/hero/regions/volunteer-tab.png"
           }
         ],
         "advisories": [
-          "(advisory, above the 72% bar; fix in the polish pass before responsive) 3 readings:",
-          "  text logistics-row: letter-spacing is wider than the comp's (gap 0.157 vs 0.073 of the cap height); set letter-spacing to close it by about 1px",
-          "  text autosave-note: the face renders 25% lighter than the comp's (ink density 0.18 vs 0.24); raise a weight step or use the ranked face",
-          "  text queued-sheet-statuses: ink is #904639 in the build, #c1a098 in the comp; use the comp's colour"
+          "(advisory, above the 72% bar; fix in the polish pass before responsive) 1 reading:",
+          "  control mentor-tab: its rule sits 75px into the box in the comp and 1px in the build (-74px), so the strip is shorter than the comp's; match the height, not only the position",
+          "(advisory, unchanged for 3+ attempts) text logistics-row: letter-spacing is wider than the comp's (gap 0.157 vs 0.073 of the cap height); set letter-spacing to close it by about 1px",
+          "(advisory, unchanged for 3+ attempts) text autosave-note: the face renders 25% lighter than the comp's (ink density 0.18 vs 0.24); raise a weight step or use the ranked face",
+          "(advisory, unchanged for 3+ attempts) text queued-sheet-statuses: ink is #904639 in the build, #c1a098 in the comp; use the comp's colour"
         ],
         "regionVerdicts": {
           "nav-rail": "drift",
@@ -152,15 +151,15 @@
           "top-greeting": "match",
           "top-search": "drift",
           "top-profile": "drift",
-          "hacker-tab": "drift",
-          "judge-tab": "contradicted",
-          "mentor-tab": "contradicted",
-          "volunteer-tab": "missing",
+          "hacker-tab": "contradicted",
+          "judge-tab": "drift",
+          "mentor-tab": "drift",
+          "volunteer-tab": "contradicted",
           "tab-mascot": "drift",
           "active-sheet-header": "drift",
           "active-sheet-body": "drift",
           "application-kicker": "contradicted",
-          "application-title": "contradicted",
+          "application-title": "drift",
           "event-meta": "drift",
           "progress-ring": "missing",
           "checklist-heading": "drift",
@@ -181,7 +180,7 @@
           "footer-docket-text": "drift",
           "paper-sample": "drift"
         },
-        "at": "2026-09-10T18:46:52.076Z"
+        "at": "2026-09-10T19:50:06.099Z"
       },
       "forced": null,
       "readingsSeen": {
@@ -202,11 +201,61 @@
         "control judge-tab: its rule sits 81px into the box in the comp and 24px in the build (-57px), so the strip is shorter than the comp's; match the height, not only the position": 1,
         "control mentor-tab: its rule sits 75px into the box in the comp and 17px in the build (-58px), so the strip is shorter than the comp's; match the height, not only the position": 1,
         "control continue-action: its rule sits 8px into the box in the comp and 28px in the build (+20px), so the strip is taller than the comp's; match the height, not only the position": 1,
-        "text logistics-row: letter-spacing is wider than the comp's (gap 0.157 vs 0.073 of the cap height); set letter-spacing to close it by about 1px": 1,
-        "text autosave-note: the face renders 25% lighter than the comp's (ink density 0.18 vs 0.24); raise a weight step or use the ranked face": 1,
-        "text queued-sheet-statuses: ink is #904639 in the build, #c1a098 in the comp; use the comp's colour": 1
+        "text logistics-row: letter-spacing is wider than the comp's (gap 0.157 vs 0.073 of the cap height); set letter-spacing to close it by about 1px": 4,
+        "text autosave-note: the face renders 25% lighter than the comp's (ink density 0.18 vs 0.24); raise a weight step or use the ranked face": 4,
+        "text queued-sheet-statuses: ink is #904639 in the build, #c1a098 in the comp; use the comp's colour": 4,
+        "control mentor-tab: its rule sits 75px into the box in the comp and 1px in the build (-74px), so the strip is shorter than the comp's; match the height, not only the position": 1
       },
-      "records": 3
+      "records": 5,
+      "history": [
+        {
+          "at": "2026-09-10T19:37:30.787Z",
+          "score": 0.7357,
+          "worstIds": [
+            "volunteer-tab",
+            "application-kicker",
+            "mentor-tab"
+          ],
+          "regionVerdicts": {
+            "nav-rail": "drift",
+            "nav-brand": "drift",
+            "nav-links": "drift",
+            "tower-illustration": "drift",
+            "top-greeting": "match",
+            "top-search": "drift",
+            "top-profile": "drift",
+            "hacker-tab": "contradicted",
+            "judge-tab": "drift",
+            "mentor-tab": "contradicted",
+            "volunteer-tab": "missing",
+            "tab-mascot": "drift",
+            "active-sheet-header": "drift",
+            "active-sheet-body": "drift",
+            "application-kicker": "contradicted",
+            "application-title": "drift",
+            "event-meta": "drift",
+            "progress-ring": "missing",
+            "checklist-heading": "drift",
+            "profile-row": "drift",
+            "experience-row": "drift",
+            "logistics-row": "drift",
+            "final-review-row": "drift",
+            "continue-action": "drift",
+            "autosave-note": "drift",
+            "active-sheet-footer": "match",
+            "judge-sheet": "drift",
+            "mentor-sheet": "drift",
+            "volunteer-sheet": "drift",
+            "queued-sheet-statuses": "drift",
+            "queued-sheet-actions": "missing",
+            "queued-sheet-notes": "drift",
+            "footer-docket": "drift",
+            "footer-docket-text": "drift",
+            "paper-sample": "drift"
+          },
+          "artifactHash": null
+        }
+      ]
     },
     "sections": {
       "status": "pending",

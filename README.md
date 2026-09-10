@@ -19,13 +19,13 @@ npm run lint
 npm run typecheck
 npm test
 npm run build
+npm run test:e2e
 ```
 
-Database and browser suites are separate because they require Docker and test identities:
+Database tests require Docker. The pgTAP suite covers status transitions, team capacity, organizer and reviewer access, blind-answer filtering, judge project scope, and cross-user RLS denial:
 
 ```bash
 npm run db:reset && npm run db:test
-npm run test:e2e
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for security boundaries and organizer bootstrap instructions. `PRODUCT.md` records product truth; the final verified interface system will be documented in `DESIGN.md`.

@@ -30,7 +30,7 @@ export function ApplicationWorkspace({ application, eventName, sections, initial
         <p>APPLICATION · {application.role.toUpperCase()}</p>
         <h1>{eventName}</h1>
         <ol>{sections.map((candidate, index) => <li key={candidate.key}><button type="button" onClick={() => setStep(index)} aria-current={step === index ? "step" : undefined}><span>{index + 1}</span><span><strong>{candidate.title}</strong><small>{isComplete(candidate, application.answers[candidate.key]) ? "Complete" : "Needs answers"}</small></span>{isComplete(candidate, application.answers[candidate.key]) ? <Check aria-hidden /> : null}</button></li>)}</ol>
-        <div className="form-progress"><span style={{ width: `${application.progress}%` }} /><strong>{application.progress}% ready</strong></div>
+        <div className="form-progress"><span style={{ transform: `scaleX(${application.progress / 100})` }} /><strong>{application.progress}% ready</strong></div>
       </aside>
       <section className="form-sheet" aria-labelledby="section-title">
         {notice ? <p className={`workspace-notice workspace-notice--${notice.tone}`} role="status">{notice.message}</p> : null}
