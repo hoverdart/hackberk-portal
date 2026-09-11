@@ -120,7 +120,6 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .runbook-rail nav a:hover, .runbook-rail-bottom a:hover, .runbook-rail-bottom button:hover { background: rgb(255 255 255 / 8%); color: white; }
 .runbook-rail nav a.is-current { position: relative; background: #245da9; color: white; }
 .runbook-rail nav a.is-current::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: #62a2ff; }
-.runbook-rail nav b { display: grid; place-items: center; width: 20px; height: 20px; margin-left: auto; border-radius: 50%; background: #ef794a; font: 700 .68rem/1 var(--font-data); }
 .runbook-rail-bottom { position: absolute; left: 0; right: 0; bottom: 178px; display: grid; border-top: 1px solid rgb(163 198 240 / 35%); padding-top: 12px; }
 .runbook-rail-bottom form { margin: 0; }
 .runbook-rail-bottom button { width: 100%; }
@@ -130,11 +129,11 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
    stretched row lets a route that draws its own panel (the wizard rail, the
    review band) reach the bottom of the desk instead of stopping short. */
 .runbook-stage { position: relative; z-index: 1; min-width: 0; min-height: 100svh; display: grid; grid-template-rows: minmax(0, 1fr); }
+.stage-loading { min-height: 100svh; background: var(--paper-cool); }
 .runbook-header { padding: 26px 12px 4px; }
 .runbook-header h1 { margin: 0; font: 700 1.35rem/1.1 var(--font-display); letter-spacing: -.02em; }
 .runbook-header p { margin: 4px 0 0; color: var(--ink-4); font-size: var(--text-md); }
 .database-notice { margin: 8px 12px 0; border: 1px solid #9b6116; background: #fff3cf; padding: 10px 14px; color: #69400c; font-weight: 700; font-size: var(--text-sm); }
-.preview-label { margin: 8px 12px 0; color: var(--ink-3); font: 700 .62rem var(--font-data); letter-spacing: .12em; }
 
 .dashboard-page { position: relative; padding: 0 16px 96px; }
 .role-deck { position: relative; z-index: 4; height: 102px; display: grid; grid-template-columns: 2.25fr 1.85fr 1.65fr 1.55fr; align-items: end; margin: 16px 0 -10px; padding-right: 8px; }
@@ -410,23 +409,12 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .project-scorecard > fieldset { position: relative; display: grid; gap: 24px; margin: 0; border: 0; padding: 0; }
 .project-scorecard h2 { margin: 0; font: 700 2rem var(--font-display); }
 
-/* Movement only. The crossfade belongs to the view transition below, and
-   animating opacity in both places would compound into a visible dip. */
-@keyframes page-arrive { from { translate: 0 calc(10px * var(--motion-shift)); } }
-
-/* Every routed surface arrives the same way, so a rail click always reads as a
-   page being set down rather than swapped. */
-.dashboard-page, .feature-page, .ops-page, .organizer-page, .lens-page,
-.project-judge, .profile-page, .start-application, .form-workspace, .review-workspace {
-  animation: page-arrive 340ms var(--ease-settle) both;
-}
-
 /* The outgoing page clears quickly; the incoming one is the part worth
    watching, so it gets the longer half of the crossfade. */
 ::view-transition-old(.route-change) { animation: route-leave 160ms var(--ease-settle) both; }
 ::view-transition-new(.route-change) { animation: route-enter 300ms 60ms var(--ease-settle) both; }
 @keyframes route-leave { to { opacity: 0; } }
-@keyframes route-enter { from { opacity: 0; translate: 0 calc(8px * var(--motion-shift)); } }
+@keyframes route-enter { from { opacity: 0; } }
 
 /* ---------------------------------------------------------------------------
    Profile: the account record as a single paper sheet. One column of details,
@@ -434,7 +422,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
    page exists to answer.
    --------------------------------------------------------------------------- */
 .profile-page { display: grid; place-items: start center; background: var(--paper-cool) url("../assets/plates/paper-sample.png") repeat; padding: clamp(28px, 5vw, 72px) 20px; }
-.profile-sheet { position: relative; isolation: isolate; width: min(100%, 780px); overflow: hidden; border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 54px); box-shadow: var(--shadow-sheet); animation: sheet-deal 640ms 120ms var(--ease-settle) both; }
+.profile-sheet { position: relative; isolation: isolate; width: min(100%, 780px); overflow: hidden; border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 54px); box-shadow: var(--shadow-sheet); }
 .profile-sheet::before { content: ""; position: absolute; z-index: -1; inset: 0; background: url("../assets/plates/paper-sample.png") repeat; opacity: .13; mix-blend-mode: multiply; }
 .profile-sheet__header { display: grid; grid-template-columns: 68px minmax(0, 1fr); align-items: center; gap: 18px; padding-bottom: 28px; }
 .profile-avatar { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--berkeley-blue); color: white; }
@@ -510,16 +498,29 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .about-footer span { margin-left: auto; }
 
 /* ---------------------------------------------------------------------------
-   Motion: "the binder is opened and the top sheet is dealt."
+   Motion.
 
-   Arrival is one rehearsed sequence per surface — the navy cover opens, the
-   role tabs seat into their slots, the active sheet is dealt onto the desk,
-   and the stamp presses last. Everything after arrival is fast, quiet
-   feedback. Entrances use the independent `translate`/`scale` properties so
-   they compose with the layout transforms the sheets and tabs already carry.
+   THE RULE: an entrance animation may only be attached to DOM the persistent
+   shell owns. Routed content gets no entrance keyframes at all — its only
+   arrival motion is the `.route-change` view transition.
 
-   `--motion-shift` scales every distance; reduced motion sets it to 0, which
-   keeps the fades and state changes while removing all travel.
+   This rule exists because the previous version broke it everywhere. Each
+   surface had a rehearsed arrival sequence — the cover opened, the tabs seated,
+   the sheet was dealt, the stamp pressed last — built from keyframes that
+   started at `opacity: 0` with `animation-fill-mode: both` and delays running
+   out to 760ms. Those elements mount fresh on every navigation, so the stage
+   was genuinely blank for most of a second after every click, and the sequence
+   replayed on every Server Action too, because `useActionState` submits inside
+   a React transition. It read as the whole page flashing.
+
+   The shell (the rail, the Campanile, the current-page marker) mounts once per
+   page load, so its entrances cannot re-fire. Everything under `{children}`
+   must stay bare. Dialogs are the one exception: they are genuinely on-demand
+   mounts, so `veil-in` / `sheet-in` are entrances that fire when something
+   actually arrived.
+
+   `--motion-shift` scales every remaining distance; reduced motion sets it to
+   0, which keeps the fades and state changes while removing all travel.
    --------------------------------------------------------------------------- */
 
 @property --progress { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
@@ -530,58 +531,20 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
   --ease-settle: cubic-bezier(.16, 1, .3, 1);
 }
 
-@keyframes cover-open { from { clip-path: inset(0 100% 0 0); } }
 @keyframes rail-establish { from { clip-path: inset(0 0 100% 0); } }
-@keyframes deal-in { from { opacity: 0; translate: 0 calc(16px * var(--motion-shift)); } }
-@keyframes tab-seat { from { opacity: 0; translate: 0 calc(20px * var(--motion-shift)); } }
-@keyframes sheet-deal { from { opacity: 0; translate: 0 calc(30px * var(--motion-shift)); rotate: calc(-.4deg * var(--motion-shift)); } }
-@keyframes queued-slide { from { opacity: 0; translate: calc(-14px * var(--motion-shift)) calc(20px * var(--motion-shift)); } }
-@keyframes stamp-press { from { opacity: 0; scale: calc(1 + .16 * var(--motion-shift)); } }
 @keyframes seal-sweep { from { --progress: 0%; } }
 @keyframes tower-draw { from { opacity: 0; --reveal: 0%; } }
-@keyframes docket-rise { from { opacity: 0; translate: 0 calc(14px * var(--motion-shift)); } }
 
-/* Landing: the cover opens, then the statement is set down on it. */
-.landing::before { animation: cover-open 620ms var(--ease-settle) both; }
-.landing nav { animation: deal-in 500ms 260ms var(--ease-settle) both; }
-.landing section > * { animation: deal-in 620ms var(--ease-settle) both; }
-.landing section > *:nth-child(1) { animation-delay: 300ms; }
-.landing section > *:nth-child(2) { animation-delay: 370ms; }
-.landing section > *:nth-child(3) { animation-delay: 440ms; }
-.landing section > *:nth-child(4) { animation-delay: 510ms; }
-.landing footer { animation: deal-in 500ms 580ms var(--ease-settle) both; }
-
-/* Access desk: the rail establishes, the Campanile draws up from its base,
-   and the credential sheet is set down on the paper. */
 .auth-rail { animation: rail-establish 640ms var(--ease-settle) both; }
-.auth-rail .brand-lockup { animation: deal-in 520ms 180ms var(--ease-settle) both; }
-.auth-rail-copy { animation: deal-in 520ms 260ms var(--ease-settle) both; }
 .auth-tower {
   mask-image: linear-gradient(to top, #000 var(--reveal), transparent calc(var(--reveal) + 14%));
-  animation: tower-draw 1000ms 260ms var(--ease-settle) both;
+  animation: tower-draw 1000ms var(--ease-settle) both;
 }
-.auth-sheet, .legal-sheet { animation: sheet-deal 640ms 200ms var(--ease-settle) both; }
-.about-mast { animation: deal-in 520ms var(--ease-settle) both; }
-.about-sheet { animation: sheet-deal 660ms 160ms var(--ease-settle) both; }
-.about-footer { animation: deal-in 500ms 380ms var(--ease-settle) both; }
 
-/* Portal shell: cover, tabs, active sheet, queued sheets, then the stamps. */
 .runbook-rail { animation: rail-establish 620ms var(--ease-settle) both; }
-.runbook-tower { animation: tower-draw 900ms 420ms var(--ease-settle) both; mask-image: linear-gradient(to top, #000 var(--reveal), transparent calc(var(--reveal) + 14%)); }
-.runbook-header { animation: deal-in 520ms 200ms var(--ease-settle) both; }
-.role-tab { animation: tab-seat 500ms var(--ease-settle) both; }
-.role-deck .role-tab:nth-child(2) { animation-delay: 180ms; }
-.role-deck .role-tab:nth-child(3) { animation-delay: 240ms; }
-.role-deck .role-tab:nth-child(4) { animation-delay: 300ms; }
-.active-sheet { animation: sheet-deal 680ms 420ms var(--ease-settle) both; }
-.queued-sheet { animation: queued-slide 620ms var(--ease-settle) both; }
-.queued-sheet:nth-child(2) { animation-delay: 520ms; }
-.queued-sheet:nth-child(3) { animation-delay: 580ms; }
-.queued-sheet:nth-child(4) { animation-delay: 640ms; }
-.progress-seal { animation: seal-sweep 1100ms 620ms var(--ease-settle) both; }
-.queued-progress { animation: seal-sweep 880ms 680ms var(--ease-settle) both; }
-.status-stamp { animation: stamp-press 340ms 760ms var(--ease-settle) both; }
-.event-docket { animation: docket-rise 560ms 700ms var(--ease-settle) both; }
+.runbook-tower { animation: tower-draw 900ms var(--ease-settle) both; mask-image: linear-gradient(to top, #000 var(--reveal), transparent calc(var(--reveal) + 14%)); }
+.progress-seal { animation: seal-sweep 480ms var(--ease-settle) both; }
+.queued-progress { animation: seal-sweep 480ms var(--ease-settle) both; }
 
 /* Feedback: the smallest change that makes cause and result unmistakable. */
 .primary-button:hover { translate: 0 -1px; background: #2f5caa; box-shadow: 0 12px 24px rgb(30 83 171 / 24%); }
@@ -659,7 +622,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
     animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
   }
-  .landing::before, .runbook-rail, .auth-rail, .runbook-rail nav a.is-current::before { animation-name: fade-in; clip-path: none; }
+  .runbook-rail, .auth-rail, .runbook-rail nav a.is-current::before { animation-name: fade-in; clip-path: none; }
   .auth-tower, .runbook-tower { animation-name: fade-in; mask-image: none; }
   .primary-button:hover, .queued-sheet:hover, .primary-button:hover span, .landing-secondary:hover span { translate: none; }
   ::view-transition-old(*), ::view-transition-new(*), ::view-transition-group(*) {

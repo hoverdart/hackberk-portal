@@ -80,12 +80,15 @@ export async function signInAction(_: AuthActionState, formData: FormData): Prom
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { status: "error", message: "We could not sign you in. Check your email and password." };
-  // Send organizers directly to their dedicated control room instead of briefly
-  // rendering an applicant URL and relying on a second redirect to correct it.
+  // Send organizers straight to the queue instead of briefly rendering an
+  // applicant URL and relying on a second redirect to correct it. `staff_members`
+  // is keyed on (event_id, user_id, role) and has no `id` column: selecting one
+  // returned 42703 every time, so this lookup always came back empty and the
+  // extra hop it exists to prevent happened on every organizer sign-in.
   const { data: organizerMembership } = data.user
     ? await supabase
         .from("staff_members")
-        .select("id")
+        .select("event_id")
         .eq("user_id", data.user.id)
         .eq("role", "organizer")
         .limit(1)

@@ -97,7 +97,7 @@ export function PortalShell({
           return (
             // Each tab keeps its own transition name, so re-ordering the deck
             // slides the tabs to their new slots instead of repainting the row.
-            <ViewTransition key={application.role} name={`tab-${application.role}`} share="tab-move">
+            <ViewTransition key={application.role} name={`tab-${application.role}`} share="tab-move" default="none">
               <Link
                 href={`${basePath}?role=${application.role}`}
                 role="tab"
@@ -127,7 +127,7 @@ export function PortalShell({
         {deck.map((application, position) => {
           const isActive = position === 0;
           return (
-            <ViewTransition key={application.role} name={`sheet-${application.role}`} share="sheet-move">
+            <ViewTransition key={application.role} name={`sheet-${application.role}`} share="sheet-move" default="none">
               <article className={isActive ? "active-sheet" : `queued-sheet queued-sheet--${application.role}`}>
                 {isActive ? (
                   <ActiveSheet application={application} event={event} eventDate={eventDate} />

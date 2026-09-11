@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
-import { refreshProjectMetadataAction, submitProjectAction } from "@/app/(portal)/projects/actions";
+import { refreshProjectMetadataAction, submitProjectAction } from "@/app/(app)/(portal)/projects/actions";
 import { requireUser } from "@/lib/auth/guards";
 import { getProjectLens } from "@/lib/data/projects";
 import { MessageSheet } from "@/components/ui/message-sheet";

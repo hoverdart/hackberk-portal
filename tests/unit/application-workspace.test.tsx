@@ -3,12 +3,12 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApplicationWorkspace } from "@/components/applications/application-workspace";
-import { saveApplicationSectionAction } from "@/app/(portal)/applications/actions";
+import { saveApplicationSectionAction } from "@/app/(app)/(portal)/applications/actions";
 import { getApplicationDefinition } from "@/lib/applications/definitions";
 import { applicationRoles, type ApplicationRole, type ApplicationStatus } from "@/lib/domain/applications";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
-vi.mock("@/app/(portal)/applications/actions", () => ({
+vi.mock("@/app/(app)/(portal)/applications/actions", () => ({
   saveApplicationSectionAction: vi.fn(async () => ({ status: "saved", message: "Draft saved", answerVersion: 1 })),
   submitApplicationAction: vi.fn(),
   withdrawApplicationAction: vi.fn(),

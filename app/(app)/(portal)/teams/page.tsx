@@ -5,8 +5,8 @@ import {
   inviteToTeamAction,
   respondInvitationAction,
   saveMatchingProfileAction,
-} from "@/app/(portal)/teams/actions";
-import { requireUser } from "@/lib/auth/guards";
+} from "@/app/(app)/(portal)/teams/actions";
+import { requireApplicant } from "@/lib/auth/guards";
 import { getActiveEvent } from "@/lib/data/applications";
 import { getTeamMatchData } from "@/lib/data/teams";
 import { MessageSheet } from "@/components/ui/message-sheet";
@@ -27,7 +27,7 @@ export default async function TeamsPage({
 }: {
   searchParams: Promise<{ success?: string; error?: string }>;
 }) {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const event = await getActiveEvent();
   if (!event) return <FeatureUnavailable title="Team Match is waiting for an active event." />;
   const data = await getTeamMatchData(user.id, event.id);

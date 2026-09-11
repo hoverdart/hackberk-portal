@@ -1,10 +1,9 @@
 "use client";
 
-import { AlertTriangle, ArrowLeft, Check, EyeOff, Save } from "lucide-react";
-import Link from "next/link";
+import { AlertTriangle, Check, EyeOff, Save } from "lucide-react";
 import { useActionState, useState } from "react";
 
-import { decideApplicationAction, reportConflictAction, saveReviewAction } from "@/app/(organizer)/organizer/actions";
+import { decideApplicationAction, reportConflictAction, saveReviewAction } from "@/app/(app)/(organizer)/organizer/actions";
 import type { RubricCriterion } from "@/lib/reviews/rubric";
 import { initialReviewState } from "@/lib/validation/reviews";
 
@@ -50,23 +49,28 @@ export function ReviewWorkspace({
   // organizer can still see what they recorded.
   const locked = review?.status === "submitted" || assignment.status === "conflict";
   const [showConflict, setShowConflict] = useState(false);
-  const saveAction = saveReviewAction.bind(null, application.id, assignment.id, false);
-  const submitAction = saveReviewAction.bind(null, application.id, assignment.id, true);
-  const [saveState, saveFormAction, saving] = useActionState(saveAction, initialReviewState);
-  const [submitState, submitFormAction, submitting] = useActionState(submitAction, initialReviewState);
-  const state = submitState.status !== "idle" ? submitState : saveState;
+  // React resets a `<form action={fn}>` on every submission. A radio survives
+  // because React syncs `defaultChecked` onto the DOM property, but a `<select>`
+  // has no `defaultValue` property — its default is whichever `<option>` carries
+  // `selected`, and React marks none — so reset snapped this back to "Choose
+  // one" every time. The organizer's recommendation was reaching the database
+  // and then disappearing from the screen. Controlled state is what holds it.
+  const [recommendation, setRecommendation] = useState(review?.recommendation ?? "");
+  const [state, formAction, pending] = useActionState(
+    saveReviewAction.bind(null, application.id, assignment.id),
+    initialReviewState,
+  );
   const currentScores = (review?.scores ?? {}) as Record<string, number>;
 
   return (
     <main className="review-workspace">
+      {/* The rail already carries "Application queue" and marks it current, so
+          this bar holds only the thing the rail cannot say: that the applicant's
+          identity is deliberately absent from the page. */}
       <header>
-        <Link href="/organizer/applications">
-          <ArrowLeft aria-hidden />
-          Application queue
-        </Link>
         <span>
           <EyeOff aria-hidden />
-          Blind review · applicant identity hidden
+          The applicant’s name and school are hidden while you score this
         </span>
       </header>
       <section className="review-context">
@@ -104,8 +108,8 @@ export function ReviewWorkspace({
             <p className="empty-state">No blind-review answers were submitted.</p>
           )}
         </article>
-        <form action={saveFormAction} className="rubric-sheet">
-          <fieldset disabled={locked || saving || submitting}>
+        <form action={formAction} className="rubric-sheet">
+          <fieldset disabled={locked || pending}>
             <p>ORGANIZER RUBRIC</p>
             <h2>Blind evaluation</h2>
             {criteria.map((criterion) => (
@@ -134,7 +138,11 @@ export function ReviewWorkspace({
             ))}
             <label className="rubric-notes">
               Recommendation
-              <select name="recommendation" defaultValue={review?.recommendation ?? ""}>
+              <select
+                name="recommendation"
+                value={recommendation}
+                onChange={(event) => setRecommendation(event.target.value)}
+              >
                 <option value="">Choose one</option>
                 <option value="accepted">Accept</option>
                 <option value="waitlisted">Waitlist</option>
@@ -153,22 +161,19 @@ export function ReviewWorkspace({
             {state.message}
           </p>
           <div className="rubric-actions">
-            <button type="button" onClick={() => setShowConflict(true)} disabled={locked}>
+            <button type="button" onClick={() => setShowConflict(true)} disabled={locked || pending}>
               <AlertTriangle aria-hidden />
               Report conflict
             </button>
-            <button type="submit" disabled={locked || saving}>
+            {/* The pressed button's value is what lands in the FormData, which
+                is how one action serves both intents. */}
+            <button type="submit" name="intent" value="save" disabled={locked || pending}>
               <Save aria-hidden />
-              {saving ? "Saving…" : "Save draft"}
+              Save draft
             </button>
-            <button
-              type="submit"
-              formAction={submitFormAction}
-              className="primary-button"
-              disabled={locked || submitting}
-            >
+            <button type="submit" name="intent" value="submit" className="primary-button" disabled={locked || pending}>
               <Check aria-hidden />
-              {submitting ? "Submitting…" : "Submit review"}
+              {pending ? "Working…" : "Submit review"}
             </button>
           </div>
         </form>

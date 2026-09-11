@@ -1,12 +1,10 @@
-import Link from "next/link";
-
 import {
   claimMentorRequestAction,
   createMentorRequestAction,
   joinVolunteerShiftAction,
-} from "@/app/(portal)/ops/actions";
+} from "@/app/(app)/(portal)/ops/actions";
 import { ActionFeed, type ActionFeedItem } from "@/components/ops/action-feed";
-import { requireUser } from "@/lib/auth/guards";
+import { requireApplicant } from "@/lib/auth/guards";
 import { getActiveEvent } from "@/lib/data/applications";
 import { getOpsHub } from "@/lib/data/ops";
 import { MessageSheet } from "@/components/ui/message-sheet";
@@ -23,7 +21,7 @@ export default async function OpsPage({
 }: {
   searchParams: Promise<{ success?: string; error?: string }>;
 }) {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const event = await getActiveEvent();
   if (!event)
     return (
@@ -151,16 +149,6 @@ export default async function OpsPage({
               </fieldset>
               <button className="primary-button">Send to mentor desk</button>
             </form>
-          </section>
-        ) : null}
-        {data.staff.some((staff) => staff.role === "organizer") ? (
-          <section className="organizer-handoff">
-            <p>ORGANIZER</p>
-            <h2>Workload control</h2>
-            <span>Review queues, decisions, and event handoffs from one command sheet.</span>
-            <Link className="primary-button" href="/organizer/applications">
-              Open application control
-            </Link>
           </section>
         ) : null}
       </div>

@@ -8,7 +8,7 @@ import {
   saveApplicationSectionAction,
   submitApplicationAction,
   withdrawApplicationAction,
-} from "@/app/(portal)/applications/actions";
+} from "@/app/(app)/(portal)/applications/actions";
 import type { FieldDefinition, SectionDefinition } from "@/lib/applications/definitions";
 import type { ApplicationRole, ApplicationStatus } from "@/lib/domain/applications";
 import { initialApplicationState } from "@/lib/validation/applications";

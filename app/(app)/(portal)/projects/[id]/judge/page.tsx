@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
-import { saveProjectReviewAction } from "@/app/(portal)/projects/[id]/judge/actions";
+import { saveProjectReviewAction } from "@/app/(app)/(portal)/projects/[id]/judge/actions";
 import { requireUser } from "@/lib/auth/guards";
 import { parseRubric } from "@/lib/reviews/rubric";
 import { createClient } from "@/lib/supabase/server";

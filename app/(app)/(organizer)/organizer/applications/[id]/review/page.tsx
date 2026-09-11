@@ -1,4 +1,4 @@
-import { claimReviewAction } from "@/app/(organizer)/organizer/actions";
+import { claimReviewAction } from "@/app/(app)/(organizer)/organizer/actions";
 import { ReviewWorkspace } from "@/components/organizer/review-workspace";
 import { requireOrganizer } from "@/lib/auth/guards";
 import { getReviewWorkspace } from "@/lib/data/organizer";

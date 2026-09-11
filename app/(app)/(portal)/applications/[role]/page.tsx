@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { startApplicationAction } from "@/app/(portal)/applications/actions";
+import { startApplicationAction } from "@/app/(app)/(portal)/applications/actions";
 import { ApplicationWorkspace } from "@/components/applications/application-workspace";
 import { getApplicationDefinition } from "@/lib/applications/definitions";
 import { requireApplicant } from "@/lib/auth/guards";

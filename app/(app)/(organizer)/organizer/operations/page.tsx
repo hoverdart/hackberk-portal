@@ -5,7 +5,7 @@ import {
   assignProjectJudgeAction,
   createVolunteerShiftAction,
   resolveMentorRequestAction,
-} from "@/app/(organizer)/organizer/operations/actions";
+} from "@/app/(app)/(organizer)/organizer/operations/actions";
 import { requireOrganizer } from "@/lib/auth/guards";
 import { getOrganizerOperations } from "@/lib/data/organizer-ops";
 import { MessageSheet } from "@/components/ui/message-sheet";
@@ -49,9 +49,6 @@ export default async function OrganizerOperationsPage({
             {event.name} · {event.venue}
           </span>
         </div>
-        <Link className="export-link" href="/dashboard">
-          Applicant portal
-        </Link>
       </header>
       {query.success ? <p className="workspace-notice workspace-notice--success">Operations docket updated.</p> : null}
       {query.error ? (

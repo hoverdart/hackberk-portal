@@ -1,8 +1,8 @@
 import { Code2, GitFork as Github } from "lucide-react";
 import Link from "next/link";
 
-import { saveProjectAction } from "@/app/(portal)/projects/actions";
-import { requireUser } from "@/lib/auth/guards";
+import { saveProjectAction } from "@/app/(app)/(portal)/projects/actions";
+import { requireApplicant } from "@/lib/auth/guards";
 import { getActiveEvent } from "@/lib/data/applications";
 import { getProjectHome } from "@/lib/data/projects";
 import { MessageSheet } from "@/components/ui/message-sheet";
@@ -14,7 +14,7 @@ import { MessageSheet } from "@/components/ui/message-sheet";
  * both enforced upstream in `lib/github/url.ts` and `lib/data/projects.ts`.
  */
 export default async function ProjectsPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const event = await getActiveEvent();
   if (!event) return <ProjectMessage title="Project Lens is waiting for an active event." />;
   const { membership, project } = await getProjectHome(user.id, event.id);
