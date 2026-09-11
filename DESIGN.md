@@ -13,6 +13,12 @@ colors:
   success: "#237a57"
   danger: "#b23935"
   focus: "#ffd166"
+  ink-2: "#3d5878"
+  ink-3: "#456785"
+  ink-4: "#4f6b88"
+  paper-white: "#fcfdfa"
+  rule: "#9aaec6"
+  rule-hair: "#c4cfd8"
 typography:
   display:
     fontFamily: "Space Grotesk, sans-serif"
@@ -168,7 +174,29 @@ The palette pairs institutional blue structure with cool paper neutrals and a sm
 - **Cool Desk Paper** (`paper-cool`, #e9eef2): the page field behind layered sheets.
 - **Warm Filing Paper** (`paper-warm`, #efe3cc): secondary binder material and queued role warmth.
 
+### Supporting Ink
+
+Body and secondary copy on paper use a three-step ink ramp rather than a bespoke
+value per component. Every step clears WCAG AA (4.5:1) against Active Paper, Cool
+Desk Paper, the header wash, and white, so any of them may be used on any paper
+surface without re-checking.
+
+- **Strong secondary** (`ink-2`, #3d5878, 6.81:1 on paper): lede copy, labels, and
+  emphasis inside supporting text.
+- **Default supporting** (`ink-3`, #456785, 5.53:1): the ordinary explanatory voice.
+- **Softest permitted** (`ink-4`, #4f6b88, 5.15:1): metadata, captions, placeholders.
+  Nothing lighter than this carries text.
+
+Structure uses two cool blue-grey steps: **Rule** (`rule`, #9aaec6) for a visible
+divider such as a sheet header or section boundary, and **Hairline** (`rule-hair`,
+#c4cfd8) for checklist dividers and table rows. **Paper White** (`paper-white`,
+#fcfdfa) is the field fill for inputs and inset panels on paper.
+
 ### Named Rules
+
+**The Ink Ramp Rule.** Supporting text picks a step from the ramp; it never
+introduces a new mid-tone. The ramp exists because the same semantic role was once
+written fifty different ways, twenty-three of which failed AA on cool paper.
 
 **The Working Blue Rule.** Berkeley blue marks the active responsibility or primary action; ink navy supplies the frame and authority around it.
 
@@ -191,6 +219,11 @@ The palette pairs institutional blue structure with cool paper neutrals and a sm
 - **Headline** (700, `clamp(2rem, 2.6vw, 2.8rem)`, 1.05): the active work-sheet title and status phrase.
 - **Title** (700, `1.35rem`, 1.1): shell greetings, panel titles, and operational section names.
 - **Body** (400–600, `1rem`, 1.5): instructions, answers, field copy, and next-action explanations; keep explanatory reading measures around 62–72 characters.
+Small text uses four steps — `--text-xs` .72rem, `--text-sm` .82rem, `--text-md`
+.95rem, `--text-lg` 1.1rem — rather than a bespoke size per component. Display
+sizes stay literal per surface, because those are composition decisions rather
+than a ramp.
+
 - **Label** (700, `0.52rem–0.65rem`, `0.12em–0.20em`, uppercase): dockets, table headings, provenance labels, step counters, and compact status language.
 
 ### Named Rules

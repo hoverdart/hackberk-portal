@@ -2,7 +2,11 @@ import { expect, test } from "@playwright/test";
 
 test("public application entry points remain usable", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Welcome to Herkeley's Smallest Collegiate Hackathon!" })).toBeVisible();
+  // Asserts the hero renders and names the event, not one exact sentence. This
+  // test is about the entry points staying usable; pinning the headline verbatim
+  // made it fail every time the marketing copy was reworded.
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Herkeley");
   await page.getByRole("link", { name: "Start an application" }).click();
   await expect(page.getByRole("heading", { name: "Get your credentials" })).toBeVisible();
   await expect(page.getByLabel("Full name")).toBeEditable();
