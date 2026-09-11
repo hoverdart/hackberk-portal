@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatEventDateTime, formatShiftRange, parseEventDateTime } from "@/lib/formatters/event-time";
+import { formatEventDateTime, formatShiftRange, parseEventDateTime, shiftDuration } from "@/lib/formatters/event-time";
 
 describe("event-time formatting", () => {
   it("renders an audit timestamp in Pacific daylight time instead of UTC", () => {
@@ -19,5 +19,25 @@ describe("event-time formatting", () => {
 
   it("rejects a wall-clock time skipped by the spring daylight-saving transition", () => {
     expect(() => parseEventDateTime("2027-03-14T02:30")).toThrow("does not exist");
+  });
+});
+
+describe("shiftDuration", () => {
+  it("is null until a volunteer has both checked in and checked out", () => {
+    expect(shiftDuration(null, null)).toBeNull();
+    // Joined but not arrived, and arrived but still working, are both normal
+    // states — and neither of them is zero hours.
+    expect(shiftDuration("2027-03-06T17:00:00Z", null)).toBeNull();
+    expect(shiftDuration(null, "2027-03-06T19:00:00Z")).toBeNull();
+  });
+
+  it("reads back the way a person would say it", () => {
+    expect(shiftDuration("2027-03-06T17:00:00Z", "2027-03-06T20:00:00Z")).toBe("3h");
+    expect(shiftDuration("2027-03-06T17:00:00Z", "2027-03-06T19:30:00Z")).toBe("2h 30m");
+    expect(shiftDuration("2027-03-06T17:00:00Z", "2027-03-06T17:45:00Z")).toBe("45 min");
+  });
+
+  it("never reports negative time, whatever the stamps say", () => {
+    expect(shiftDuration("2027-03-06T20:00:00Z", "2027-03-06T17:00:00Z")).toBe("0 min");
   });
 });

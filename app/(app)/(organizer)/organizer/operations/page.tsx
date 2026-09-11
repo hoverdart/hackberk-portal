@@ -192,7 +192,20 @@ export default async function OrganizerOperationsPage({
             {data.shifts.length ? (
               <ul>
                 {data.shifts.map((shift) => {
-                  const assigned = (shift.volunteer_shift_assignments as unknown as unknown[]).length;
+                  const roster = shift.volunteer_shift_assignments as unknown as Array<{
+                    checked_in_at: string | null;
+                    checked_out_at: string | null;
+                  }>;
+                  const present = roster.filter((entry) => entry.checked_in_at).length;
+                  // Hours worked, summed from the pair of stamps each volunteer
+                  // leaves. This is the number an organizer needs at the end of
+                  // an event and could not previously get from anywhere.
+                  const minutes = roster.reduce((total, entry) => {
+                    if (!entry.checked_in_at || !entry.checked_out_at) return total;
+                    return (
+                      total + Math.max(0, (Date.parse(entry.checked_out_at) - Date.parse(entry.checked_in_at)) / 60000)
+                    );
+                  }, 0);
                   return (
                     <li key={shift.id}>
                       <div>
@@ -200,7 +213,9 @@ export default async function OrganizerOperationsPage({
                         <span>{formatShiftRange(shift.starts_at, shift.ends_at, event.timezone)}</span>
                       </div>
                       <p>
-                        {shift.location} · {assigned} of {shift.capacity} filled
+                        {shift.location} · {roster.length} of {shift.capacity} filled
+                        {present ? ` · ${present} checked in` : ""}
+                        {minutes > 0 ? ` · ${formatMinutes(minutes)} logged` : ""}
                       </p>
                     </li>
                   );
@@ -221,6 +236,15 @@ export default async function OrganizerOperationsPage({
       </div>
     </main>
   );
+}
+
+/** Total volunteered time on one shift. */
+function formatMinutes(total: number) {
+  const rounded = Math.round(total);
+  const hours = Math.floor(rounded / 60);
+  const rest = rounded % 60;
+  if (!hours) return `${rest} min`;
+  return rest ? `${hours}h ${rest}m` : `${hours}h`;
 }
 
 function readStatus(value: unknown) {

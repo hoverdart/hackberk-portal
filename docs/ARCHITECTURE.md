@@ -11,7 +11,9 @@ The portal is a multi-event Next.js App Router application backed by Supabase Au
 - Team Match is accepted-hacker-only. Ranking is deterministic and explainable; transactional functions and row locks enforce one team per event and four people per team.
 - Project Lens accepts only canonical public `github.com/{owner}/{repository}` URLs. The server constructs GitHub API destinations, enforces time and byte limits, caches metadata, renders source as escaped highlighted text, and never executes repository code.
 - Project review assignments require an accepted judge application for the same event. Judges can read only submitted projects explicitly assigned to them.
-- Mentor claims and volunteer shift joins are transactional; shift joins lock capacity before insertion. A mentor resolves the request they claimed; a volunteer checks in and ticks their own copy of the shift checklist.
+- Mentor claims and volunteer shift joins are transactional; shift joins lock capacity before insertion.
+- A mentor resolves the request they claimed; the hacker who raised it sees its state and may withdraw one nobody has taken. Both writes are already covered by `mentor_requests_participant_update`, which allows either participant.
+- `volunteer_shift_assignments` carries `checked_in_at` and `checked_out_at`; hours worked are derived from the pair, never stored. A check constraint keeps a checkout from preceding its check-in while allowing either stamp to be absent.
 - Team, project, mentor, and shift tables share the event foreign key so the same components and policies support future events.
 - `application_reviews.assignment_id` is the sole conflict target for a review upsert. The table once also carried `unique (application_id, reviewer_id)`, which no `on conflict` clause could name alongside it, so a re-claimed assignment failed permanently with 23505.
 - audit rows are append-only from the application-status trigger; decisions preserve before/after state and actor identity.

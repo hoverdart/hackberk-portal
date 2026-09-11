@@ -1,7 +1,9 @@
 import { CalendarClock, CheckCircle2, LifeBuoy } from "lucide-react";
 
 import {
+  cancelMentorRequestAction,
   checkInShiftAction,
+  checkOutShiftAction,
   claimMentorRequestAction,
   createMentorRequestAction,
   joinVolunteerShiftAction,
@@ -15,6 +17,7 @@ import { SheetHeader } from "@/components/ui/sheet-header";
 import { requireApplicant } from "@/lib/auth/guards";
 import { getActiveEvent } from "@/lib/data/applications";
 import { getOpsHub } from "@/lib/data/ops";
+import { shiftDuration } from "@/lib/formatters/event-time";
 
 /**
  * Event day: what needs this person, in the roles they actually hold.
@@ -79,6 +82,27 @@ export default async function OpsPage({
         ) : undefined,
     }));
 
+  // What the hacker who asked can see. Before this a request went in and nothing
+  // ever came back: no confirmation it had been picked up, no way to withdraw
+  // one that had been answered in person.
+  const myRequestItems: ActionFeedItem[] = data.mentorRequests
+    .filter((request) => request.requester_id === user.id && request.status !== "cancelled")
+    .map((request) => ({
+      id: `mine-${request.id}`,
+      title: request.title,
+      detail: request.description,
+      meta: requestStateLabel(request.status),
+      done: request.status === "resolved",
+      action:
+        request.status === "open" ? (
+          <form action={cancelMentorRequestAction.bind(null, request.id)}>
+            <Button size="sm" type="submit">
+              Withdraw
+            </Button>
+          </form>
+        ) : undefined,
+    }));
+
   const judgingItems: ActionFeedItem[] = data.projectAssignments.map((assignment) => {
     const project = assignment.projects as unknown as { name: string; summary: string };
     return {
@@ -137,6 +161,15 @@ export default async function OpsPage({
         ) : null}
 
         {accepted.has("hacker") ? (
+          <ActionFeed
+            title="Your requests"
+            items={myRequestItems}
+            emptyTitle="Nothing open."
+            empty="Anything you ask a mentor shows up here with its status."
+          />
+        ) : null}
+
+        {accepted.has("hacker") ? (
           <section className="request-composer">
             <SheetHeader icon={LifeBuoy} title="Ask a mentor" />
             <form action={createMentorRequestAction.bind(null, event.id)}>
@@ -186,59 +219,92 @@ function ShiftBoard({
   formatDate: (value: string) => string;
 }) {
   if (!shifts.length) return <p className="shift-roster__empty">No shifts have been scheduled yet.</p>;
+  const minutes = assignments.reduce((total, assignment) => {
+    if (!assignment.checked_in_at || !assignment.checked_out_at) return total;
+    return total + Math.max(0, (Date.parse(assignment.checked_out_at) - Date.parse(assignment.checked_in_at)) / 60000);
+  }, 0);
   return (
-    <ul className="shift-list">
-      {shifts.map((shift) => {
-        const mine = assignments.find((assignment) => assignment.shift_id === shift.id);
-        const tasks = Array.isArray(shift.checklist) ? (shift.checklist as string[]) : [];
-        const state = (mine?.checklist_state ?? {}) as Record<string, boolean>;
-        return (
-          <li key={shift.id} className="shift-card">
-            <div className="shift-card__head">
-              <div>
-                <strong>{shift.title}</strong>
-                <span>
-                  {shift.location} · {formatDate(shift.starts_at)}
-                </span>
+    <>
+      {minutes > 0 ? (
+        <p className="shift-total">
+          <strong>{formatMinutes(minutes)}</strong> logged so far
+        </p>
+      ) : null}
+      <ul className="shift-list">
+        {shifts.map((shift) => {
+          const mine = assignments.find((assignment) => assignment.shift_id === shift.id);
+          const tasks = Array.isArray(shift.checklist) ? (shift.checklist as string[]) : [];
+          const state = (mine?.checklist_state ?? {}) as Record<string, boolean>;
+          return (
+            <li key={shift.id} className="shift-card">
+              <div className="shift-card__head">
+                <div>
+                  <strong>{shift.title}</strong>
+                  <span>
+                    {shift.location} · {formatDate(shift.starts_at)}
+                  </span>
+                </div>
+                {!mine ? (
+                  <form action={joinVolunteerShiftAction.bind(null, shift.id)}>
+                    <Button size="sm" type="submit">
+                      Join
+                    </Button>
+                  </form>
+                ) : !mine.checked_in_at ? (
+                  <form action={checkInShiftAction.bind(null, shift.id)}>
+                    <Button variant="primary" size="sm" type="submit">
+                      Check in
+                    </Button>
+                  </form>
+                ) : mine.checked_out_at ? (
+                  <span className="shift-card__state">
+                    <CheckCircle2 aria-hidden /> {shiftDuration(mine.checked_in_at, mine.checked_out_at)} logged
+                  </span>
+                ) : (
+                  <form action={checkOutShiftAction.bind(null, shift.id)}>
+                    <Button size="sm" type="submit">
+                      Check out
+                    </Button>
+                  </form>
+                )}
               </div>
-              {!mine ? (
-                <form action={joinVolunteerShiftAction.bind(null, shift.id)}>
-                  <Button size="sm" type="submit">
-                    Join
-                  </Button>
-                </form>
-              ) : mine.checked_in_at ? (
-                <span className="shift-card__state">
-                  <CheckCircle2 aria-hidden /> Checked in
-                </span>
-              ) : (
-                <form action={checkInShiftAction.bind(null, shift.id)}>
-                  <Button variant="primary" size="sm" type="submit">
-                    Check in
-                  </Button>
-                </form>
-              )}
-            </div>
-            {mine && tasks.length ? (
-              <ul className="shift-tasks">
-                {tasks.map((task) => (
-                  <li key={task}>
-                    <form action={toggleShiftTaskAction.bind(null, shift.id)}>
-                      <input type="hidden" name="task" value={task} />
-                      <button type="submit" aria-pressed={Boolean(state[task])}>
-                        <span aria-hidden>{state[task] ? "✓" : ""}</span>
-                        {task}
-                      </button>
-                    </form>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </li>
-        );
-      })}
-    </ul>
+              {mine && tasks.length ? (
+                <ul className="shift-tasks">
+                  {tasks.map((task) => (
+                    <li key={task}>
+                      <form action={toggleShiftTaskAction.bind(null, shift.id)}>
+                        <input type="hidden" name="task" value={task} />
+                        <button type="submit" aria-pressed={Boolean(state[task])}>
+                          <span aria-hidden>{state[task] ? "✓" : ""}</span>
+                          {task}
+                        </button>
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
+}
+
+/** Total volunteered time, in the same shape as a single shift's duration. */
+function formatMinutes(total: number) {
+  const rounded = Math.round(total);
+  const hours = Math.floor(rounded / 60);
+  const rest = rounded % 60;
+  if (!hours) return `${rest} min`;
+  return rest ? `${hours}h ${rest}m` : `${hours}h`;
+}
+
+/** What a hacker should be told about a request they raised. */
+function requestStateLabel(status: string) {
+  if (status === "open") return "Waiting for a mentor";
+  if (status === "claimed") return "A mentor is on it";
+  return "Resolved";
 }
 
 function formatDate(value: string) {

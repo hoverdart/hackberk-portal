@@ -31,7 +31,9 @@ export async function getOrganizerOperations(eventId: string) {
       .order("created_at", { ascending: false }),
     supabase
       .from("volunteer_shifts")
-      .select("id,title,location,starts_at,ends_at,capacity,volunteer_shift_assignments(volunteer_id)")
+      .select(
+        "id,title,location,starts_at,ends_at,capacity,volunteer_shift_assignments(volunteer_id,checked_in_at,checked_out_at)",
+      )
       .eq("event_id", eventId)
       .order("starts_at"),
     // Recent audit entries only. This is an at-a-glance control sheet, not the

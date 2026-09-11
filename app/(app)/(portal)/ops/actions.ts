@@ -114,6 +114,50 @@ export async function checkInShiftAction(shiftIdValue: string) {
 }
 
 /**
+ * A volunteer checks out, which is what turns a shift into hours worked.
+ *
+ * The pair of stamps is the record: an organizer needs hours at the end of an
+ * event and a volunteer usually wants them for their own reasons, and neither
+ * could be derived from a check-in with no closing bracket. The database
+ * enforces that a checkout cannot precede its check-in.
+ */
+export async function checkOutShiftAction(shiftIdValue: string) {
+  const user = await requireUser();
+  const shiftId = idSchema.parse(shiftIdValue);
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("volunteer_shift_assignments")
+    .update({ checked_out_at: new Date().toISOString() })
+    .eq("shift_id", shiftId)
+    .eq("volunteer_id", user.id)
+    .not("checked_in_at", "is", null);
+  revalidatePath("/ops");
+  redirect(error ? "/ops?error=checkout" : "/ops?success=checkout");
+}
+
+/**
+ * A hacker withdraws a request nobody has picked up yet.
+ *
+ * `mentor_requests_participant_update` already allowed the requester to write
+ * here; there was simply no way to do it, so a question answered in person still
+ * sat on the mentor desk. Restricted to `open` so it cannot pull the rug from a
+ * mentor who has already committed.
+ */
+export async function cancelMentorRequestAction(requestIdValue: string) {
+  const user = await requireUser();
+  const requestId = idSchema.parse(requestIdValue);
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("mentor_requests")
+    .update({ status: "cancelled" })
+    .eq("id", requestId)
+    .eq("requester_id", user.id)
+    .eq("status", "open");
+  revalidatePath("/ops");
+  redirect(error ? "/ops?error=cancel" : "/ops?success=cancel");
+}
+
+/**
  * Tick or untick one item on a shift's checklist.
  *
  * The shift carries the list of tasks and each volunteer carries their own

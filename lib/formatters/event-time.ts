@@ -85,3 +85,18 @@ function zonedParts(value: Date, timeZone: string) {
   ) as Record<"year" | "month" | "day" | "hour" | "minute", number>;
   return values;
 }
+
+/**
+ * How long a volunteer worked a shift, from the two stamps on their assignment.
+ *
+ * Null until both exist: "joined but not arrived" and "arrived but still
+ * working" are both normal states, and neither is zero hours.
+ */
+export function shiftDuration(checkedInAt: string | null, checkedOutAt: string | null) {
+  if (!checkedInAt || !checkedOutAt) return null;
+  const minutes = Math.max(0, Math.round((Date.parse(checkedOutAt) - Date.parse(checkedInAt)) / 60000));
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (!hours) return `${rest} min`;
+  return rest ? `${hours}h ${rest}m` : `${hours}h`;
+}

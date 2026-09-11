@@ -19,7 +19,14 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .matching-sheet, .current-team, .create-team, .invitations, .match-list, .project-intake, .action-feed, .request-composer, .project-scorecard { position: relative; overflow: hidden; background: var(--paper); box-shadow: var(--shadow-sheet); }
 .matching-sheet::before, .project-intake::before, .action-feed::before, .project-scorecard::before { content: ""; position: absolute; inset: 0; background: var(--texture-paper) repeat; opacity: .09; pointer-events: none; }
 .matching-sheet { padding: 30px; }
-.matching-sheet h2, .team-board h2, .project-intake h2, .request-composer h2, .sheet-header__title { position: relative; display: flex; align-items: center; gap: 10px; margin: 0; font: 700 1.55rem/1.15 var(--font-display); letter-spacing: -.025em; }
+/* One panel heading. `SheetHeader` supplies its own bottom margin from the
+   wrapper, so the title inside it must not add a second one; a bare `h2` has no
+   wrapper and carries its own. Getting this wrong is what made "Create your
+   team" sit on top of the line beneath it — the paragraph below used a -12px
+   margin to close a 22px gap that had stopped existing. */
+.matching-sheet h2, .team-board h2, .project-intake h2, .request-composer h2, .sheet-header__title { position: relative; display: flex; align-items: center; gap: 10px; font: 700 1.55rem/1.15 var(--font-display); letter-spacing: -.025em; }
+.matching-sheet h2, .team-board h2, .project-intake h2, .request-composer h2 { margin: 0 0 20px; }
+.sheet-header__title { margin: 0; }
 .matching-sheet h2 svg, .project-intake h2 svg, .request-composer h2 svg, .sheet-header__title svg { width: 24px; height: 24px; flex: 0 0 auto; color: var(--berkeley-blue); }
 .matching-sheet form { position: relative; display: grid; gap: 22px; }
 .match-choices { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; border: 0; padding: 0; }
@@ -56,7 +63,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .current-team li svg { width: 17px; color: var(--success); }
 .create-team { display: grid; justify-items: start; }
 .create-team > svg { width: 42px; height: 42px; margin-bottom: 18px; color: var(--berkeley-blue); }
-.create-team p { margin: -12px 0 20px; color: var(--ink-4); }
+.create-team p { margin: 0 0 20px; color: var(--ink-4); }
 .create-team form, .project-intake form, .request-composer form { width: 100%; display: grid; gap: 16px; }
 .create-team label, .project-intake label, .request-composer form > label { display: grid; gap: 7px; font-weight: 700; }
 .create-team input, .project-intake input, .project-intake textarea, .request-composer input, .request-composer textarea { width: 100%; min-height: 46px; border: 1px solid var(--rule); background: #ffffff; padding: 11px 12px; color: var(--ink-navy); font: 500 var(--text-md)/1.45 var(--font-body); }
@@ -133,6 +140,8 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .shift-roster li p { max-width: 27ch; margin: 0; text-align: right; }
 .shift-roster__empty { margin: 12px 0 0; }
 /* A volunteer's own shifts: join, check in, work the list. */
+.shift-total { margin: 0 0 14px; color: var(--ink-3); font-size: var(--text-sm); }
+.shift-total strong { color: var(--ink-navy); font: 700 var(--text-lg) var(--font-data); }
 .shift-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
 .shift-card { border: 1px solid var(--rule-hair); padding: 14px 16px; }
 .shift-card__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
