@@ -40,9 +40,11 @@ export default async function OrganizerApplicationsPage({ searchParams }: PagePr
     <main className="organizer-page">
       <header className="organizer-mast">
         <div>
-          <p>ORGANIZER · APPLICATION CONTROL</p>
-          <h1>Application queue</h1>
-          <span>{queue.count.toLocaleString()} records · single-organizer blind grading</span>
+          <h1>Applications</h1>
+          <span>
+            {queue.count.toLocaleString()} {queue.count === 1 ? "application" : "applications"} · names are hidden while
+            you score
+          </span>
         </div>
         <ButtonLink variant="secondary" size="sm" href={`/organizer/applications/export?${exportQuery}`}>
           <Download aria-hidden />

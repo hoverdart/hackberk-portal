@@ -87,10 +87,10 @@ export function ReviewWorkspace({
             STATUS <strong>{application.status.replaceAll("_", " ")}</strong>
           </span>
           <span>
-            REVIEW <strong>{submittedReviewCount}/1 submitted</strong>
+            REVIEW <strong>{submittedReviewCount ? "Submitted" : "In progress"}</strong>
           </span>
           <span>
-            AGGREGATE <strong>{aggregate ? `${aggregate.toFixed(2)} / 5` : "Hidden until submission"}</strong>
+            SCORE <strong>{aggregate ? `${aggregate.toFixed(2)} / 5` : "Shown once you submit"}</strong>
           </span>
         </div>
       </section>
@@ -116,8 +116,7 @@ export function ReviewWorkspace({
         </article>
         <form action={formAction} className="rubric-sheet">
           <fieldset disabled={locked || pending}>
-            <p>ORGANIZER RUBRIC</p>
-            <h2>Blind evaluation</h2>
+            <h2>Your scores</h2>
             {criteria.map((criterion) => (
               <fieldset className="rubric-row" key={criterion.key}>
                 <legend>
@@ -220,11 +219,8 @@ function DecisionBar({ applicationId, reviewCount }: { applicationId: string; re
   return (
     <aside className="decision-bar">
       <div>
-        <p>FINAL DECISION</p>
         <strong>
-          {reviewCount < 1
-            ? "Submit the organizer blind review before deciding."
-            : "Blind review submitted. Choose the final status."}
+          {reviewCount < 1 ? "Submit your scores before recording a decision." : "Scores are in. Choose the outcome."}
         </strong>
       </div>
       {(

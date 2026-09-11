@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ButtonLink } from "@/components/ui/button";
+import { Eyebrow } from "@/components/ui/eyebrow";
 
 /**
  * The single-message surface: empty states, dead ends and "not for you" pages.
@@ -13,14 +14,15 @@ import { ButtonLink } from "@/components/ui/button";
  * because some of these states have neither.
  */
 export function MessageSheet({
-  docket,
+  eyebrow,
   title,
   body,
   action,
   back,
   children,
 }: {
-  docket: string;
+  /** Only when it says something the title does not. Most did not. */
+  eyebrow?: string;
   title: string;
   body?: ReactNode;
   action?: { href: string; label: string };
@@ -30,7 +32,7 @@ export function MessageSheet({
   return (
     <main className="start-application">
       <article className="start-sheet">
-        <p className="start-sheet__docket">{docket}</p>
+        {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
         <h1>{title}</h1>
         {body ? <p className="start-sheet__lede">{body}</p> : null}
         {children}

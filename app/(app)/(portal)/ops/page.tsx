@@ -27,7 +27,6 @@ export default async function OpsPage({
   if (!event)
     return (
       <MessageSheet
-        docket="ROLE OPS"
         title="No active event is available."
         back={{ href: "/dashboard", label: "Return to the dashboard" }}
       />
@@ -91,56 +90,34 @@ export default async function OpsPage({
   return (
     <main className="ops-page" id="support">
       <header className="feature-mast">
-        <p>ROLE OPS · LIVE HANDOFFS</p>
-        <h1>What needs you next?</h1>
-        <span>One action-feed language, tuned to every role you hold.</span>
+        <h1>Event day</h1>
+        <span>Everything waiting on you, across every role you hold.</span>
       </header>
-      {query.success ? <p className="workspace-notice workspace-notice--success">Role Ops updated.</p> : null}
+      {query.success ? <p className="workspace-notice workspace-notice--success">Saved.</p> : null}
       {query.error ? (
         <p className="workspace-notice workspace-notice--error">
-          That operation did not finish. Capacity and ownership are unchanged.
+          That did not go through. Nothing was claimed or joined.
         </p>
       ) : null}
       <div className="ops-grid">
-        <ActionFeed
-          label="ALL ROLES"
-          title="Deadlines & milestones"
-          items={milestoneItems}
-          empty="No upcoming deadlines."
-        />
-        <ActionFeed
-          label="JUDGE"
-          title="Project judging queue"
-          items={judgingItems}
-          empty="No submitted projects are assigned to you."
-        />
-        <ActionFeed
-          label="MENTOR"
-          title="Help desk"
-          items={mentorItems}
-          empty={acceptedRoles.has("mentor") ? "No teams are waiting for help." : "Accepted mentors unlock this queue."}
-        />
-        <ActionFeed
-          label="VOLUNTEER"
-          title="Shift board"
-          items={shiftItems}
-          empty={acceptedRoles.has("volunteer") ? "No shifts are published." : "Accepted volunteers unlock shifts."}
-        />
+        <ActionFeed title="Deadlines" items={milestoneItems} empty="No upcoming deadlines." />
+        <ActionFeed title="Projects to judge" items={judgingItems} empty="Nothing has been assigned to you yet." />
+        <ActionFeed title="Requests for help" items={mentorItems} empty="No teams are waiting for help right now." />
+        <ActionFeed title="Volunteer shifts" items={shiftItems} empty="No shifts have been scheduled yet." />
         {acceptedRoles.has("hacker") ? (
           <section className="request-composer">
-            <p>HACKER · HELP DESK</p>
             <h2>Ask a mentor</h2>
             <form action={createMentorRequestAction.bind(null, event.id)}>
               <label>
-                Short title
+                What do you need?
                 <input name="title" minLength={4} maxLength={120} required />
               </label>
               <label>
-                What are you stuck on?
+                Tell them a bit more
                 <textarea name="description" minLength={10} maxLength={1200} rows={4} required />
               </label>
               <fieldset>
-                <legend>Expertise needed</legend>
+                <legend>What kind of help?</legend>
                 {["AI / ML", "Web", "Mobile", "Hardware", "Product", "Design"].map((tag) => (
                   <label key={tag}>
                     <input type="checkbox" name="expertiseTags" value={tag} />

@@ -22,21 +22,24 @@ type AuthFormProps = {
 
 const copy = {
   "sign-in": {
-    title: "Open your runbook",
+    title: "Sign in",
+    intro: "One account covers every role you apply for.",
     submit: "Sign in",
     helper: "New here?",
     helperLink: "Create an account",
     href: "/sign-up",
   },
   "sign-up": {
-    title: "Get your credentials",
+    title: "Create your account",
+    intro: "One account covers every role you apply for.",
     submit: "Create account",
     helper: "Already registered?",
     helperLink: "Sign in",
     href: "/sign-in",
   },
   forgot: {
-    title: "Reset your access",
+    title: "Reset your password",
+    intro: "We’ll email you a link to choose a new one.",
     submit: "Send reset link",
     helper: "Remembered it?",
     helperLink: "Sign in",
@@ -44,9 +47,10 @@ const copy = {
   },
   reset: {
     title: "Choose a new password",
+    intro: "Pick something you haven’t used here before.",
     submit: "Update password",
     helper: "Ready to return?",
-    helperLink: "Open dashboard",
+    helperLink: "Go to your dashboard",
     href: "/dashboard",
   },
 } as const;
@@ -62,9 +66,8 @@ export function AuthForm({ mode, action }: AuthFormProps) {
 
   return (
     <section className="auth-sheet" aria-labelledby="auth-title">
-      <p className="auth-docket">BACKATHONS AT HERKELEY · ACCESS DESK</p>
       <h1 id="auth-title">{labels.title}</h1>
-      <p className="auth-intro">One account, four ways to build a bigger Herkeley.</p>
+      <p className="auth-intro">{labels.intro}</p>
       <form action={formAction} className="auth-form" noValidate>
         {mode === "sign-up" ? (
           <Field id="fullName" label="Full name" autoComplete="name" error={state.errors?.fullName?.[0]} />
@@ -97,7 +100,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             >
               Create an organizer account
             </Button>
-            <p>Test portal only. Organizer accounts can review and manage applications, not submit them.</p>
+            <p>Organizer accounts review and decide applications. They cannot submit one.</p>
           </div>
         ) : (
           <Button variant="primary" full type="submit" disabled={pending}>

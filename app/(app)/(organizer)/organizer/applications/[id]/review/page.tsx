@@ -22,22 +22,20 @@ export default async function ReviewPage({ params, searchParams }: PageProps) {
   if (!workspace)
     return (
       <MessageSheet
-        docket="REVIEW DESK"
         title="Application not found."
-        back={{ href: "/organizer/applications", label: "Return to the queue" }}
+        back={{ href: "/organizer/applications", label: "Back to applications" }}
       />
     );
   if (!workspace.ownAssignment) {
     return (
       <MessageSheet
-        docket="ORGANIZER BLIND REVIEW"
-        title={workspace.assignments.length ? "This blind review is already claimed." : "Claim this blind review."}
+        title={workspace.assignments.length ? "Someone else is reviewing this." : "Claim this review."}
         body={
           workspace.assignments.length
-            ? "One organizer owns this application’s active blind review. It becomes available again only if they report a conflict."
-            : "Claiming it gives you the one blind rubric review required before a final decision."
+            ? "One organizer reviews each application. It frees up again only if they report a conflict."
+            : "Claiming it makes you the reviewer of record. A decision needs your scores first."
         }
-        back={{ href: "/organizer/applications", label: "Return to the queue" }}
+        back={{ href: "/organizer/applications", label: "Back to applications" }}
       >
         {workspace.assignments.length === 0 ? (
           <form action={claimReviewAction.bind(null, applicationId)}>
@@ -46,7 +44,7 @@ export default async function ReviewPage({ params, searchParams }: PageProps) {
             </Button>
           </form>
         ) : (
-          <p className="start-sheet__lede">The active organizer can report a conflict to return it to the queue.</p>
+          <p className="start-sheet__lede">They can report a conflict to hand it back.</p>
         )}
       </MessageSheet>
     );
@@ -74,11 +72,9 @@ export default async function ReviewPage({ params, searchParams }: PageProps) {
 }
 
 function reviewNotice(query: { error?: string; success?: string }) {
-  if (query.success === "decision")
-    return { tone: "success" as const, message: "Final decision recorded in the audit trail." };
+  if (query.success === "decision") return { tone: "success" as const, message: "Decision recorded." };
   if (query.error === "one-review-required")
-    return { tone: "error" as const, message: "Submit the organizer blind review before recording a decision." };
-  if (query.error)
-    return { tone: "error" as const, message: "That action did not finish. Existing review data is unchanged." };
+    return { tone: "error" as const, message: "Submit your scores before recording a decision." };
+  if (query.error) return { tone: "error" as const, message: "That did not go through. Nothing was changed." };
   return undefined;
 }

@@ -37,9 +37,8 @@ export default async function TeamsPage({
   return (
     <main className="feature-page">
       <header className="feature-mast">
-        <p>TEAM MATCH · ACCEPTED HACKERS</p>
         <h1>Find the people your idea needs.</h1>
-        <span>Matches are deterministic, explainable, and never place more than four hackers on a team.</span>
+        <span>We suggest people whose skills and goals line up with yours. Teams cap at four.</span>
       </header>
       {query.success ? <p className="workspace-notice workspace-notice--success">Team Match updated.</p> : null}
       {query.error ? (
@@ -49,7 +48,7 @@ export default async function TeamsPage({
       ) : null}
       <div className="team-layout">
         <section className="matching-sheet">
-          <h2>Your matching signal</h2>
+          <h2>Your team profile</h2>
           <form action={saveMatchingProfileAction.bind(null, event.id)}>
             <ChoiceSet title="Skills" name="skills" choices={skills} selected={data.profile?.skills ?? []} />
             <ChoiceSet
@@ -79,7 +78,7 @@ export default async function TeamsPage({
                 max="5"
                 defaultValue={data.profile?.experience_level ?? 1}
               />
-              <span>New to hackathons → highly experienced</span>
+              <span>New to hackathons — highly experienced</span>
             </label>
             <label className="rubric-notes">
               Short team bio
@@ -87,7 +86,7 @@ export default async function TeamsPage({
             </label>
             <label className="opt-in">
               <input type="checkbox" name="optedIn" defaultChecked={data.profile?.opted_in ?? false} />
-              Show me in Team Match and calculate candidates
+              Show me to other hackers looking for a team
             </label>
             <Button variant="primary" type="submit">
               Save matching profile
@@ -219,7 +218,5 @@ function ChoiceSet({
   );
 }
 function FeatureUnavailable({ title }: { title: string }) {
-  return (
-    <MessageSheet docket="TEAM MATCH" title={title} back={{ href: "/dashboard", label: "Return to the dashboard" }} />
-  );
+  return <MessageSheet title={title} back={{ href: "/dashboard", label: "Return to the dashboard" }} />;
 }

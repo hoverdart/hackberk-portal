@@ -38,7 +38,6 @@ export default async function ProjectJudgePage({
   if (!assignment)
     return (
       <MessageSheet
-        docket="PROJECT JUDGING"
         title="This project is not assigned to you."
         back={{ href: "/ops", label: "Return to your judging queue" }}
       />

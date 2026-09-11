@@ -52,7 +52,6 @@ function StartApplication({
 }) {
   return (
     <MessageSheet
-      docket={`${role.toUpperCase()} CREDENTIAL`}
       title={`Start your ${role} application.`}
       body={`Your draft is separate from every other role. Start now, move section by section, and come back anytime before applications close on ${closingDate(event.closesAt)}.`}
       back={{ href: "/dashboard", label: "Back to all applications" }}
@@ -69,7 +68,6 @@ function StartApplication({
 function ApplicationUnavailable() {
   return (
     <MessageSheet
-      docket="APPLICATION DESK"
       title="No active event is open."
       body="There is no application cycle accepting entries right now. Try again later, or contact an organizer if you were expecting one to be open."
       back={{ href: "/dashboard", label: "Return to the dashboard" }}

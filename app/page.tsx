@@ -29,9 +29,8 @@ export default function HomePage() {
         </div>
       </nav>
       <section>
-        <p className="landing-docket">APPLICATIONS · TEAMS · EVENT OPS</p>
-        <h1>Welcome to Herkeley’s Backathon!</h1>
-        <p>Apply in four roles, find your team, and keep every event-day handoff moving.</p>
+        <h1>Build something at Herkeley.</h1>
+        <p>Apply as a hacker, judge, mentor or volunteer. Find a team. See what needs you on the day.</p>
         <div>
           <ButtonLink variant="primary" href="/sign-up">
             Start an application

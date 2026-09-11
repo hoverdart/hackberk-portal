@@ -1,22 +1,28 @@
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, CalendarClock, ClipboardCheck, GitFork, LifeBuoy } from "lucide-react";
-import Link from "next/link";
+import { CalendarClock, ClipboardCheck, GitFork, LifeBuoy } from "lucide-react";
 
 import {
   assignProjectJudgeAction,
   createVolunteerShiftAction,
   resolveMentorRequestAction,
 } from "@/app/(app)/(organizer)/organizer/operations/actions";
+import { ActionFeed, type ActionFeedItem } from "@/components/ops/action-feed";
 import { requireOrganizer } from "@/lib/auth/guards";
 import { getOrganizerOperations } from "@/lib/data/organizer-ops";
+import { Button } from "@/components/ui/button";
 import { MessageSheet } from "@/components/ui/message-sheet";
+import { SheetHeader } from "@/components/ui/sheet-header";
 import { formatEventDateTime, formatShiftRange } from "@/lib/formatters/event-time";
 
 /**
- * The organizer control sheet: judge assignment, mentor triage, shifts, audit.
+ * Event operations: assign judges, clear mentor requests, run shifts, read the
+ * decision history.
  *
  * Assigning a judge to a project is what grants that judge access to it, so this
- * page is issuing authorization, not just scheduling.
+ * page issues authorization rather than merely scheduling.
+ *
+ * Every panel here is an `ActionFeed`. Three of them used to be hand-written
+ * copies of that component's markup sitting a few hundred lines from the real
+ * thing.
  */
 export default async function OrganizerOperationsPage({
   searchParams,
@@ -29,149 +35,131 @@ export default async function OrganizerOperationsPage({
   if (!data.event)
     return (
       <MessageSheet
-        docket="ORGANIZER"
         title="Event operations are unavailable."
-        back={{ href: "/organizer/applications", label: "Return to the application queue" }}
+        back={{ href: "/organizer/applications", label: "Back to applications" }}
       />
     );
   const event = data.event;
+
+  const projectItems: ActionFeedItem[] = data.projects.map((project) => {
+    const team = project.teams as unknown as { name: string };
+    const assignments = project.project_review_assignments as unknown as Array<{ id: string; judge_id: string }>;
+    const available = data.judges.filter(
+      (judge) => !assignments.some((assignment) => assignment.judge_id === judge.applicant_id),
+    );
+    return {
+      id: project.id,
+      icon: ClipboardCheck,
+      title: project.name,
+      detail: `${team?.name ?? "Team"} · ${assignments.length} judge${assignments.length === 1 ? "" : "s"} assigned`,
+      done: assignments.length > 0,
+      action: project.submitted_at ? (
+        <form action={assignProjectJudgeAction.bind(null, project.id)}>
+          <label className="sr-only" htmlFor={`judge-${project.id}`}>
+            Assign a judge to {project.name}
+          </label>
+          <select id={`judge-${project.id}`} name="judgeId" required defaultValue="">
+            <option value="" disabled>
+              Choose a judge
+            </option>
+            {available.map((judge) => {
+              const profile = judge.profiles as unknown as { full_name: string; preferred_name: string | null };
+              return (
+                <option key={judge.applicant_id} value={judge.applicant_id}>
+                  {profile?.preferred_name || profile?.full_name || "Accepted judge"}
+                </option>
+              );
+            })}
+          </select>
+          <Button size="sm" type="submit">
+            Assign
+          </Button>
+        </form>
+      ) : (
+        <small>Not submitted yet</small>
+      ),
+    };
+  });
+
+  const mentorItems: ActionFeedItem[] = data.mentorRequests.map((request) => ({
+    id: request.id,
+    icon: LifeBuoy,
+    title: request.title,
+    detail: request.expertise_tags.join(" · ") || "General help",
+    meta: request.status === "claimed" ? "A mentor is on it" : undefined,
+    done: request.status === "resolved",
+    action:
+      request.status !== "resolved" ? (
+        <form action={resolveMentorRequestAction.bind(null, request.id)}>
+          <Button size="sm" type="submit">
+            Mark resolved
+          </Button>
+        </form>
+      ) : undefined,
+  }));
+
+  const auditItems: ActionFeedItem[] = data.audit.map((entry) => {
+    const resultingStatus = readStatus(entry.after_state);
+    return {
+      id: String(entry.id),
+      icon: ClipboardCheck,
+      title: entry.application
+        ? `${entry.application.applicantName}’s ${entry.application.role} application`
+        : `${entry.entity_type} · ${entry.entity_id.slice(0, 8)}`,
+      detail: entry.application
+        ? `Status changed${resultingStatus ? ` to ${resultingStatus}` : ""}`
+        : entry.action.replaceAll("_", " "),
+      meta: formatEventDateTime(entry.created_at, event.timezone),
+      done: true,
+      wrap: entry.application
+        ? {
+            href: `/organizer/applications/${entry.application.id}/review`,
+            ariaLabel: `Open ${entry.application.applicantName}’s ${entry.application.role} application`,
+          }
+        : undefined,
+    };
+  });
 
   return (
     <main className="organizer-page">
       <header className="organizer-mast">
         <div>
-          <Link href="/organizer/applications">
-            <ArrowLeft aria-hidden />
-            Application control
-          </Link>
-          <p>ORGANIZER · EVENT CONTROL</p>
-          <h1>Operations docket</h1>
+          <h1>Event operations</h1>
           <span>
             {event.name} · {event.venue}
           </span>
         </div>
       </header>
-      {query.success ? <p className="workspace-notice workspace-notice--success">Operations docket updated.</p> : null}
+      {query.success ? <p className="workspace-notice workspace-notice--success">Saved.</p> : null}
       {query.error ? (
         <p className="workspace-notice workspace-notice--error">
-          That operation did not finish. No assignment or capacity was changed.
+          That did not go through. Nothing was assigned or changed.
         </p>
       ) : null}
       <div className="ops-grid">
-        <section className="action-feed">
-          <header>
-            <p>PROJECT JUDGING</p>
-            <h2>
-              <GitFork aria-hidden /> Submitted projects
-            </h2>
-          </header>
-          {data.projects.length ? (
-            <ol>
-              {data.projects.map((project) => {
-                const team = project.teams as unknown as { name: string };
-                const assignments = project.project_review_assignments as unknown as Array<{
-                  id: string;
-                  judge_id: string;
-                }>;
-                return (
-                  <li key={project.id}>
-                    <span className="feed-marker">
-                      <ClipboardCheck aria-hidden />
-                    </span>
-                    <div>
-                      <strong>{project.name}</strong>
-                      <p>
-                        {team?.name ?? "Team"} · {assignments.length} judge{assignments.length === 1 ? "" : "s"}{" "}
-                        assigned
-                      </p>
-                    </div>
-                    {project.submitted_at ? (
-                      <form action={assignProjectJudgeAction.bind(null, project.id)}>
-                        <label className="sr-only" htmlFor={`judge-${project.id}`}>
-                          Assign judge to {project.name}
-                        </label>
-                        <select id={`judge-${project.id}`} name="judgeId" required defaultValue="">
-                          <option value="" disabled>
-                            Choose judge
-                          </option>
-                          {data.judges
-                            .filter(
-                              (judge) => !assignments.some((assignment) => assignment.judge_id === judge.applicant_id),
-                            )
-                            .map((judge) => {
-                              const profile = judge.profiles as unknown as {
-                                full_name: string;
-                                preferred_name: string | null;
-                              };
-                              return (
-                                <option key={judge.applicant_id} value={judge.applicant_id}>
-                                  {profile?.preferred_name || profile?.full_name || "Accepted judge"}
-                                </option>
-                              );
-                            })}
-                        </select>
-                        <button>Assign</button>
-                      </form>
-                    ) : (
-                      <small>Awaiting submission</small>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          ) : (
-            <div className="empty-state">
-              <strong>No submitted projects.</strong>
-              <span>Project records appear here as teams create them.</span>
-            </div>
-          )}
-        </section>
-        <section className="action-feed">
-          <header>
-            <p>MENTOR DESK</p>
-            <h2>
-              <LifeBuoy aria-hidden /> Help requests
-            </h2>
-          </header>
-          {data.mentorRequests.length ? (
-            <ol>
-              {data.mentorRequests.map((request) => (
-                <li key={request.id} className={request.status === "resolved" ? "is-done" : undefined}>
-                  <span className="feed-marker">
-                    <LifeBuoy aria-hidden />
-                  </span>
-                  <div>
-                    <strong>{request.title}</strong>
-                    <p>{request.expertise_tags.join(" · ") || "General support"}</p>
-                    <small>{request.status}</small>
-                  </div>
-                  {request.status !== "resolved" ? (
-                    <form action={resolveMentorRequestAction.bind(null, request.id)}>
-                      <button>Resolve</button>
-                    </form>
-                  ) : null}
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <div className="empty-state">
-              <strong>Help desk is clear.</strong>
-              <span>No mentor requests have been opened.</span>
-            </div>
-          )}
-        </section>
+        <ActionFeed
+          icon={GitFork}
+          title="Projects awaiting judges"
+          items={projectItems}
+          emptyTitle="No projects yet."
+          empty="Projects appear here once teams submit them."
+        />
+        <ActionFeed
+          icon={LifeBuoy}
+          title="Help requests"
+          items={mentorItems}
+          emptyTitle="Nothing open."
+          empty="Hackers have not asked for help yet."
+        />
         <section className="request-composer">
-          <p>VOLUNTEER SHIFTS</p>
-          <h2>
-            <CalendarClock aria-hidden /> Publish a shift
-          </h2>
+          <SheetHeader icon={CalendarClock} title="Volunteer shifts" />
           <form action={createVolunteerShiftAction.bind(null, event.id)}>
             <label>
-              Shift title
+              What is the shift?
               <input name="title" minLength={3} maxLength={120} required />
             </label>
             <label>
-              Location
+              Where
               <input name="location" minLength={2} maxLength={160} required />
             </label>
             <label>
@@ -183,7 +171,7 @@ export default async function OrganizerOperationsPage({
               <input name="endsAt" type="datetime-local" required />
             </label>
             <label>
-              Capacity
+              How many volunteers
               <input name="capacity" type="number" min="1" max="500" required />
             </label>
             <Button variant="primary" type="submit">
@@ -192,8 +180,10 @@ export default async function OrganizerOperationsPage({
           </form>
           <section className="shift-roster" aria-labelledby="published-shifts-title">
             <div className="shift-roster__header">
-              <h3 id="published-shifts-title">Published shifts</h3>
-              <span>{data.shifts.length} on the roster</span>
+              <h3 id="published-shifts-title">Scheduled</h3>
+              <span>
+                {data.shifts.length} shift{data.shifts.length === 1 ? "" : "s"}
+              </span>
             </div>
             {data.shifts.length ? (
               <ul>
@@ -206,69 +196,24 @@ export default async function OrganizerOperationsPage({
                         <span>{formatShiftRange(shift.starts_at, shift.ends_at, event.timezone)}</span>
                       </div>
                       <p>
-                        {shift.location} · {assigned}/{shift.capacity} assigned
+                        {shift.location} · {assigned} of {shift.capacity} filled
                       </p>
                     </li>
                   );
                 })}
               </ul>
             ) : (
-              <p className="shift-roster__empty">No volunteer shifts have been published yet.</p>
+              <p className="shift-roster__empty">No shifts scheduled yet.</p>
             )}
           </section>
         </section>
-        <section className="action-feed">
-          <header>
-            <p>AUDIT HISTORY</p>
-            <h2>
-              <ClipboardCheck aria-hidden /> Recent application decisions
-            </h2>
-          </header>
-          {data.audit.length ? (
-            <ol>
-              {data.audit.map((entry) => {
-                const resultingStatus = readStatus(entry.after_state);
-                const detail = entry.application
-                  ? `Status changed${resultingStatus ? ` to ${resultingStatus}` : ""}`
-                  : entry.action.replaceAll("_", " ");
-                const content = (
-                  <>
-                    <strong>
-                      {entry.application
-                        ? `${entry.application.applicantName}'s ${entry.application.role} application`
-                        : `${entry.entity_type} · ${entry.entity_id.slice(0, 8)}`}
-                    </strong>
-                    <p>{detail}</p>
-                    <small>{formatEventDateTime(entry.created_at, event.timezone)}</small>
-                  </>
-                );
-                return (
-                  <li key={entry.id}>
-                    <span className="feed-marker">
-                      <ClipboardCheck aria-hidden />
-                    </span>
-                    {entry.application ? (
-                      <Link
-                        className="audit-entry"
-                        href={`/organizer/applications/${entry.application.id}/review`}
-                        aria-label={`Open ${entry.application.applicantName}'s ${entry.application.role} application`}
-                      >
-                        {content}
-                      </Link>
-                    ) : (
-                      <div>{content}</div>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          ) : (
-            <div className="empty-state">
-              <strong>No decisions recorded.</strong>
-              <span>Status changes appear here as an append-only history.</span>
-            </div>
-          )}
-        </section>
+        <ActionFeed
+          icon={ClipboardCheck}
+          title="Recent decisions"
+          items={auditItems}
+          emptyTitle="No decisions yet."
+          empty="Every status change is recorded here as it happens."
+        />
       </div>
     </main>
   );

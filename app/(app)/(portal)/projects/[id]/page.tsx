@@ -36,7 +36,6 @@ export default async function ProjectLensPage({
     // act on, so the message is theirs rather than a stack trace.
     return (
       <MessageSheet
-        docket="PROJECT LENS"
         title="Repository preview unavailable."
         body={error instanceof Error ? error.message : "GitHub did not provide this repository."}
         back={{ href: "/projects", label: "Return to project setup" }}

@@ -144,7 +144,7 @@ export function ApplicationWorkspace({
           aria-valuenow={progress}
         >
           <span style={{ transform: `scaleX(${progress / 100})` }} />
-          <strong>{progress}% ready</strong>
+          <strong>{progress}% complete</strong>
         </div>
       </nav>
       <section className="form-sheet" aria-labelledby="section-title">
@@ -359,7 +359,7 @@ function SectionEditor({
         ) : (
           <Cloud aria-hidden />
         )}
-        {pending ? "Saving…" : (state.message ?? (locked ? "Answers locked" : "Save to account"))}
+        {pending ? "Saving…" : (state.message ?? (locked ? "Answers locked" : "Save draft"))}
       </button>
       {/* Saving is intentional, but its outcome still needs a non-disruptive
           announcement for screen-reader users. */}

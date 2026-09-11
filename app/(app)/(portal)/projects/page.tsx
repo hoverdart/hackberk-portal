@@ -31,7 +31,6 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
   return (
     <main className="feature-page">
       <header className="feature-mast">
-        <p>PROJECT LENS · PUBLIC GITHUB ONLY</p>
         <h1>Show the work. Never run the code.</h1>
         <span>Judges browse your README, file tree, and syntax-highlighted source in a bounded, read-only viewer.</span>
       </header>
@@ -43,7 +42,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
       <section className="project-intake">
         <div>
           <Github aria-hidden />
-          <h2>{project ? "Update your project record" : "Connect your project"}</h2>
+          <h2>{project ? "Update your project" : "Add your project"}</h2>
           <p>Team: {team.name}</p>
         </div>
         <form action={saveProjectAction.bind(null, team.id, event.id, project?.id ?? null)}>
@@ -106,7 +105,6 @@ function ProjectMessage({
 }) {
   return (
     <MessageSheet
-      docket="PROJECT LENS"
       title={title}
       body={body}
       action={action}

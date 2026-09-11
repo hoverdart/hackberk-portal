@@ -78,7 +78,7 @@ export function PortalShell({
         <h1>
           {greeting()}, {profileName}.
         </h1>
-        <p>Four ways to contribute. One bigger Herkeley.</p>
+        <p>Apply for any of the four roles. Each one has its own form.</p>
       </header>
 
       {!databaseAvailable ? (
@@ -171,10 +171,10 @@ export function PortalShell({
         <Users aria-hidden />
         <div>
           <small>Team matching</small>
-          <strong>{preview ? "You’re eligible" : "Unlocks when you’re accepted"}</strong>
+          <strong>{preview ? "Open to you" : "Available once you’re accepted"}</strong>
         </div>
         <Link href="/ops">
-          View event details <span aria-hidden>→</span>
+          Event details <span aria-hidden>→</span>
         </Link>
       </footer>
     </main>
@@ -203,10 +203,6 @@ function ActiveSheet({
   return (
     <>
       <header className="active-sheet__header">
-        <div className="sheet-docket">
-          <span>BACKATHONS AT HERKELEY</span>
-          <span>APPLICATION 2027—01</span>
-        </div>
         <div className="sheet-title-row">
           <div>
             <h2>
@@ -261,23 +257,6 @@ function ActiveSheet({
             {applicationActionLabel(application.status)}
           </ButtonLink>
         </div>
-        <footer className="sheet-footer">
-          <span>GO BOLDER</span>
-          <span>
-            BACKATHONS AT HERKELEY
-            <br />
-            EST. 2012
-          </span>
-          <span>
-            PEOPLE
-            <br />
-            IDEAS
-            <br />
-            COMMUNITY
-            <br />
-            IMPACT
-          </span>
-        </footer>
       </div>
     </>
   );
