@@ -1,0 +1,42 @@
+/* ---------------------------------------------------------------------------
+   The shell: the navy rail, the stage it frames, and the loading state.
+
+   Shared by the landing page, the auth pages and every signed-in route. There
+   used to be three separate implementations at three different widths.
+   -------------------------------------------------------------------------- */
+
+/* Portal shell */
+/* One shell and one rail, shared by the landing page, the auth pages and the
+   signed-in portal. These were three separate implementations at three widths
+   (a fixed 210px, a `minmax(230px, 30vw)`, and a bare pseudo-element at 28% of
+   the viewport holding nothing at all). */
+.app-shell { min-height: 100svh; display: grid; grid-template-columns: 210px minmax(0, 1fr); background: var(--surface-0); }
+.app-rail { position: relative; z-index: 10; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; background: linear-gradient(150deg, var(--navy-rail-from) 0%, var(--navy-rail-to) 100%); color: var(--ink-on-navy); box-shadow: 8px 0 24px rgb(5 28 65 / 16%); }
+.app-rail .brand-lockup { flex: 0 0 auto; margin: 20px 22px 25px; color: #ffffff; }
+.app-rail nav { display: grid; gap: 2px; }
+.app-rail nav a, .app-rail-bottom a, .app-rail-bottom button { min-height: 48px; display: flex; align-items: center; gap: 18px; border: 0; background: transparent; color: var(--ink-on-navy); padding: 0 24px; font: 500 var(--text-md)/1 var(--font-body); text-decoration: none; cursor: pointer; }
+.app-rail nav a:hover, .app-rail-bottom a:hover, .app-rail-bottom button:hover { background: rgb(255 255 255 / 8%); color: #ffffff; }
+.app-rail nav a.is-current { position: relative; background: var(--rail-current); color: #ffffff; }
+.app-rail nav a.is-current::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--rail-current-edge); }
+.app-rail-bottom { margin-top: auto; display: grid; border-top: 1px solid rgb(163 198 240 / 35%); padding-top: 12px; }
+.app-rail-bottom form { margin: 0; }
+.app-rail-bottom button { width: 100%; }
+/* The Campanile and the motto sit side by side at the foot of the rail — the
+   composition the plate was drawn for. `margin-top: auto` on the bottom block
+   above is what reserves their space without the magic `bottom: 178px` the
+   fixed-position version needed. */
+.app-rail-foot { position: relative; flex: 0 0 auto; height: 168px; margin-top: 14px; }
+/* Signed out there is no navigation and no sign-out block to absorb the slack,
+   so the foot claims it and the Campanile still sits on the floor of the rail. */
+.app-rail:not(:has(.app-rail-bottom)) .app-rail-foot { margin-top: auto; }
+.app-tower { position: absolute; z-index: 1; width: 86px; height: auto; left: 4px; bottom: 0; object-fit: contain; opacity: .92; }
+.app-motto { position: absolute; z-index: 2; left: 98px; bottom: 24px; margin: 0; color: var(--ink-on-navy); font: 700 .68rem/1.5 var(--font-data); letter-spacing: .13em; }
+/* The rail is the only chrome, so the stage is simply the page. A single
+   stretched row lets a route that draws its own panel (the wizard rail, the
+   review band) reach the bottom of the desk instead of stopping short. */
+.app-stage { position: relative; z-index: 1; min-width: 0; min-height: 100svh; display: grid; grid-template-rows: minmax(0, 1fr); }
+.stage-loading { min-height: 100svh; background: var(--paper-cool); }
+.stage-header { padding: 26px 12px 4px; }
+.stage-header h1 { margin: 0; font: 700 1.35rem/1.1 var(--font-display); letter-spacing: -.02em; }
+.stage-header p { margin: 4px 0 0; color: var(--ink-4); font-size: var(--text-md); }
+.app-rail nav a, .app-rail-bottom a, .app-rail-bottom button { transition: background 150ms ease, color 150ms ease; }

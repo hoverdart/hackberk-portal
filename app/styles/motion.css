@@ -1,0 +1,53 @@
+/* ---------------------------------------------------------------------------
+   Motion.
+
+   THE RULE: an entrance animation may only be attached to DOM the persistent
+   shell owns. Routed content gets no entrance keyframes at all — its only
+   arrival motion is the `.route-change` view transition.
+
+   The previous version broke this everywhere. Each surface had a rehearsed
+   arrival sequence built from keyframes that started at `opacity: 0` with
+   `animation-fill-mode: both` and delays running out to 760ms. Those elements
+   mount fresh on every navigation, so the stage was genuinely blank for most of
+   a second after every click — and the sequence replayed on every Server Action
+   too, because `useActionState` submits inside a React transition. It read as
+   the whole page flashing.
+
+   The shell mounts once per page load, so its entrances cannot re-fire.
+   Everything under `{children}` stays bare. Dialogs are the exception: they are
+   genuinely on-demand mounts.
+
+   `--motion-shift` scales every remaining distance; reduced motion sets it to 0,
+   which keeps the fades and state changes while removing all travel.
+   -------------------------------------------------------------------------- */
+
+.save-draft .is-saving { animation: cloud-pulse 900ms ease-in-out infinite alternate; }
+@keyframes cloud-pulse { to { opacity: .35; transform: translateY(-2px); } }
+@keyframes veil-in { from { opacity: 0; } }
+@keyframes sheet-in { from { opacity: .4; transform: translateY(18px); filter: blur(4px); } }
+/* The outgoing page clears quickly; the incoming one is the part worth
+   watching, so it gets the longer half of the crossfade. */
+::view-transition-old(.route-change) { animation: route-leave 160ms var(--ease-settle) both; }
+::view-transition-new(.route-change) { animation: route-enter 300ms 60ms var(--ease-settle) both; }
+@keyframes route-leave { to { opacity: 0; } }
+@keyframes route-enter { from { opacity: 0; } }
+@keyframes rail-establish { from { clip-path: inset(0 0 100% 0); } }
+@keyframes seal-sweep { from { --progress: 0%; } }
+@keyframes tower-draw { from { opacity: 0; --reveal: 0%; } }
+.app-rail { animation: rail-establish 620ms var(--ease-settle) both; }
+.app-tower { animation: tower-draw 900ms var(--ease-settle) both; mask-image: linear-gradient(to top, #000 var(--reveal), transparent calc(var(--reveal) + 14%)); }
+.progress-seal { animation: seal-sweep 480ms var(--ease-settle) both; }
+.queued-progress { animation: seal-sweep 480ms var(--ease-settle) both; }
+.app-rail nav a.is-current::before { animation: rail-establish 420ms 320ms var(--ease-settle) both; }
+/* Role switching keeps each sheet's identity across the navigation. */
+::view-transition-old(*), ::view-transition-new(*) { animation-duration: 420ms; animation-timing-function: var(--ease-settle); }
+::view-transition-group(.sheet-move) { animation-duration: 460ms; animation-timing-function: var(--ease-settle); }
+::view-transition-group(.tab-move) { animation-duration: 380ms; animation-timing-function: var(--ease-settle); }
+/* The two sheets swapping places are different shapes, so hold the outgoing
+   one at full opacity for most of the move: it reads as one sheet travelling
+   rather than two sheets dissolving into each other. */
+::view-transition-old(.sheet-move) { animation-name: sheet-hand-off-out; }
+::view-transition-new(.sheet-move) { animation-name: sheet-hand-off-in; }
+@keyframes sheet-hand-off-out { 0% { opacity: 1; } 55% { opacity: .55; } 100% { opacity: 0; } }
+@keyframes sheet-hand-off-in { 0% { opacity: 0; } 45% { opacity: .5; } 100% { opacity: 1; } }
+@keyframes fade-in { from { opacity: 0; } }

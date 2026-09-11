@@ -1,0 +1,186 @@
+/* ---------------------------------------------------------------------------
+   Tokens.
+
+   The source of truth for the palette, the type ramp and the motion constants,
+   mirrored in DESIGN.md. The `@theme inline` block re-exports them to Tailwind
+   so utility classes and authored CSS cannot drift apart.
+
+   Every colour in this system is named here. The stylesheet used to carry about
+   160 literal hex values across 136 distinct colours while `:root` declared 17
+   tokens that mostly went unused — the navy rail was not `--ink-navy`, the link
+   blue was written fourteen different ways, and the same blue-grey divider
+   appeared under eighteen spellings.
+   -------------------------------------------------------------------------- */
+
+/* =============================================================================
+   Backathons at Herkeley — interface system.
+
+   The visual world is an event-operations binder: a navy control rail, cool paper
+   sheets, role tabs, stamped statuses and a docket strip. Reading order:
+
+     1. Tokens          the palette, type and shadow vocabulary
+     2. Primitives      the wordmark and the primary button
+     3. Portal shell    the signed-in binder (rail, tabs, sheets, docket)
+     4. Public surfaces auth, landing, legal, about
+     5. Feature pages   application wizard, organizer queue, teams, lens, ops
+     6. About           the Read surface
+     7. Motion          the arrival sequences and interaction feedback
+     8. Breakpoints     950px and 620px, then the reduced-motion path
+
+   Tailwind supplies the reset and the token bridge; everything with a material
+   quality — sheets, tabs, stamps, rules — is authored by hand below, because it
+   is a coherent system rather than a set of utility combinations.
+   ============================================================================= */
+@import "tailwindcss";
+/* -----------------------------------------------------------------------------
+   1. Tokens. These are the source of truth and are mirrored in DESIGN.md; the
+   @theme block below re-exports them to Tailwind so utility classes and authored
+   CSS cannot drift apart.
+   -------------------------------------------------------------------------- */
+:root {
+  --berkeley-blue: #3d68bb;
+  --ink-navy: #0a2457;
+  --paper: #f6f7f3;
+  --paper-cool: #e9eef2;
+  --paper-warm: #efe3cc;
+  --ddoski-gold: #ca841d;
+  --ddoski-brown: #ab5e18;
+  --coral: #e26d5a;
+  --success: #237a57;
+  --danger: #b23935;
+  --focus: #ffd166;
+  /* Ink ramp for supporting text on paper. Before this existed the same
+     semantic role was written 50 different ways across this file, 23 of which
+     failed WCAG AA on the cool paper ground (the worst was 3.39:1). Every step
+     below clears 4.5:1 against paper, paper-cool, the header wash and white.
+       --ink-2  6.81:1 on paper — strong secondary, labels, emphasis
+       --ink-3  5.53:1 on paper — the default supporting voice
+       --ink-4  5.15:1 on paper — the softest text this system permits */
+  --ink-2: #3d5878;
+  --ink-3: #456785;
+  --ink-4: #4f6b88;
+  /* Near-white fill for fields and inset panels sitting on paper. */
+  --paper-white: #fcfdfa;
+  /* One link blue. This role was previously spelled fourteen different ways
+     (#1e65c5, #185fc0, #1458aa, #17539f, #124f9f, …) with no token at all. */
+  --link: #1b5db8;
+  /* The navy on screen was never --ink-navy: the rail gradient was written as
+     literal #082856/#07376f in eleven places across four surfaces. */
+  --navy-rail-from: #082856;
+  --navy-rail-to: #07376f;
+  --rail-current: #245da9;
+  --rail-current-edge: #62a2ff;
+  /* A fourth paper value the desk had been using without a name. */
+  --surface-0: #f0f4f6;
+  --texture-paper: url("../../assets/plates/paper-sample.png");
+  --link-strong: #174d94;
+  /* A visible divider, one step darker than --rule. Most of the eighteen
+     blue-greys this file used to carry were just --rule or --rule-hair. */
+  --rule-strong: #8095ad;
+  /* The off-white the queue table, the review bar and the file tree sit on;
+     previously five near-identical values none of which was --paper-white. */
+  --surface-2: #f8faf9;
+  /* The pale blue field a selected chip or hovered secondary control takes. */
+  --tint-blue: #e8f0fc;
+  --notice-success-bg: #dcefe7;
+  --notice-success-ink: #14543e;
+  --notice-error-bg: #f6dedb;
+  --notice-error-ink: #7e2f2a;
+  --notice-warn-bg: #fff3cf;
+  --notice-warn-ink: #69400c;
+  --primary-hover: #2f5caa;
+  /* The selected state of a chip, a score button, a choice tile. */
+  --selected-bg: #2869c3;
+  --selected-border: #2363bb;
+  --field-focus: #296fd6;
+  /* Status inks, one step darker than the palette colour so they clear AA as
+     text. Previously three greens, four reds and three ambers for three roles. */
+  --success-ink: #146b5f;
+  --danger-ink: #8d332c;
+  --danger-border: #a6443d;
+  --danger-tint: #f8ebe9;
+  --warn-ink: #9a6415;
+  --warn-mark: #cf900d;
+  /* The completion tick where the row is already a saturated blue field. */
+  --success-on-blue: #9ff0d2;
+  /* The unfilled half of a progress ring or meter. */
+  --track: #dce3ea;
+  /* A tinted panel: table headings, feed markers, skill chips. */
+  --surface-3: #e6ebee;
+  /* Role tint. The queued role tabs are the one place the palette's warm
+     materials carry meaning, so they are named rather than inlined. */
+  --role-hacker: #2a6ac6;
+  --role-hacker-edge: #1d5fb6;
+  --role-hacker-tint: #dce7f7;
+  --role-judge-tint: #f4ede0;
+  --role-mentor-tint: #e9d0a7;
+  --role-mentor-ink: #714018;
+  --role-volunteer-tint: #f2c6bd;
+  --role-volunteer-ink: #7d291f;
+  /* Light ink on the navy rail and navy masts, collapsed from six near values. */
+  --ink-on-navy: #dbe8fa;
+  --ink-on-navy-2: #9fbde2;
+  /* The eyebrow label. */
+  --size-eyebrow: .6rem;
+  --tracking-eyebrow: .18em;
+  /* Cool blue-grey structure: a visible divider and a hairline. */
+  --rule: #9aaec6;
+  --rule-hair: #c4cfd8;
+  /* Small-text ramp. These four steps replaced 17 ad-hoc sizes that differed by
+     as little as 0.01rem while serving the same role. Display sizes stay literal:
+     those are deliberate per-surface decisions, not a ramp. */
+  --text-xs: .72rem;
+  --text-sm: .82rem;
+  --text-md: .95rem;
+  --text-lg: 1.1rem;
+  --shadow-sheet: 0 18px 42px rgb(10 36 87 / 18%);
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Karla", sans-serif;
+  --font-data: "Space Mono", monospace;
+  --font-comp: "Encode Sans Semi Condensed", sans-serif;
+  color-scheme: light;
+}
+@theme inline {
+  --color-primary: var(--berkeley-blue);
+  --color-ink: var(--ink-navy);
+  --color-paper: var(--paper);
+  --color-paper-cool: var(--paper-cool);
+  --color-paper-warm: var(--paper-warm);
+  --color-gold: var(--ddoski-gold);
+  --color-brown: var(--ddoski-brown);
+  --color-coral: var(--coral);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-data);
+}
+/* ---------------------------------------------------------------------------
+   Motion.
+
+   THE RULE: an entrance animation may only be attached to DOM the persistent
+   shell owns. Routed content gets no entrance keyframes at all — its only
+   arrival motion is the `.route-change` view transition.
+
+   This rule exists because the previous version broke it everywhere. Each
+   surface had a rehearsed arrival sequence — the cover opened, the tabs seated,
+   the sheet was dealt, the stamp pressed last — built from keyframes that
+   started at `opacity: 0` with `animation-fill-mode: both` and delays running
+   out to 760ms. Those elements mount fresh on every navigation, so the stage
+   was genuinely blank for most of a second after every click, and the sequence
+   replayed on every Server Action too, because `useActionState` submits inside
+   a React transition. It read as the whole page flashing.
+
+   The shell (the rail, the Campanile, the current-page marker) mounts once per
+   page load, so its entrances cannot re-fire. Everything under `{children}`
+   must stay bare. Dialogs are the one exception: they are genuinely on-demand
+   mounts, so `veil-in` / `sheet-in` are entrances that fire when something
+   actually arrived.
+
+   `--motion-shift` scales every remaining distance; reduced motion sets it to
+   0, which keeps the fades and state changes while removing all travel.
+   --------------------------------------------------------------------------- */
+@property --progress { syntax: "<percentage>"; inherits: false; initial-value: 0%; }
+@property --reveal { syntax: "<percentage>"; inherits: false; initial-value: 100%; }
+:root {
+  --motion-shift: 1;
+  --ease-settle: cubic-bezier(.16, 1, .3, 1);
+}

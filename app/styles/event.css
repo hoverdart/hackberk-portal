@@ -1,0 +1,194 @@
+/* ---------------------------------------------------------------------------
+   Event-day surfaces: Team Match, Project Lens, judging, shifts, help requests.
+   -------------------------------------------------------------------------- */
+
+button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
+.save-announcement { min-height: 20px; margin: 2px 0 0; color: var(--ink-4); font-size: var(--text-sm); }
+.save-announcement--error, .save-announcement--stale { color: var(--danger); }
+.application-locked-note { margin: 0 0 0 auto; color: var(--ink-3); font-size: var(--text-sm); text-align: right; }
+/* Team Match, Project Lens, and Role Ops share the same operational-paper
+   vocabulary. The shared mast and sheets keep new role tools composable. */
+.feature-page, .ops-page { background: var(--paper-cool) var(--texture-paper) repeat; padding: clamp(24px, 4vw, 58px); }
+.feature-mast { max-width: 980px; margin-bottom: 30px; }
+.feature-mast > a { display: inline-flex; min-height: 40px; align-items: center; gap: 8px; color: var(--ink-2); font-weight: 700; text-decoration: none; }
+.feature-mast > a svg { width: 18px; }
+.feature-mast > p { margin: 24px 0 8px; color: var(--ink-2); font: 700 .62rem var(--font-data); letter-spacing: .18em; }
+.feature-mast > h1 { max-width: 900px; margin: 0; font: 700 clamp(2.3rem, 3.6vw, 3.4rem)/1 var(--font-display); letter-spacing: -.035em; text-wrap: balance; }
+.feature-mast > span { display: block; max-width: 68ch; margin-top: 14px; color: var(--ink-4); font-size: var(--text-lg); line-height: 1.5; }
+.team-layout { display: grid; grid-template-columns: minmax(310px, 430px) minmax(0, 1fr); gap: 20px; align-items: start; }
+.matching-sheet, .current-team, .create-team, .invitations, .match-list, .project-intake, .action-feed, .request-composer, .project-scorecard { position: relative; overflow: hidden; background: var(--paper); box-shadow: var(--shadow-sheet); }
+.matching-sheet::before, .project-intake::before, .action-feed::before, .project-scorecard::before { content: ""; position: absolute; inset: 0; background: var(--texture-paper) repeat; opacity: .09; pointer-events: none; }
+.matching-sheet { padding: 30px; }
+.matching-sheet h2, .team-board h2, .project-intake h2, .request-composer h2, .sheet-header__title { position: relative; display: flex; align-items: center; gap: 10px; margin: 0; font: 700 1.55rem/1.15 var(--font-display); letter-spacing: -.025em; }
+.matching-sheet h2 svg, .project-intake h2 svg, .request-composer h2 svg, .sheet-header__title svg { width: 24px; height: 24px; flex: 0 0 auto; color: var(--berkeley-blue); }
+.matching-sheet form { position: relative; display: grid; gap: 22px; }
+.match-choices { display: flex; flex-wrap: wrap; gap: 7px; margin: 0; border: 0; padding: 0; }
+.match-choices legend { width: 100%; margin-bottom: 8px; font-weight: 700; }
+.match-choices label { min-height: 40px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--rule-hair); background: var(--paper-white); padding: 8px 10px; cursor: pointer; }
+.match-choices label:has(input:checked) { border-color: var(--selected-border); background: var(--tint-blue); color: var(--link); font-weight: 700; }
+.match-choices input, .opt-in input, .request-composer input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--berkeley-blue); }
+.range-field, .opt-in { display: grid; gap: 8px; font-weight: 700; }
+.range-field input { width: 100%; accent-color: var(--berkeley-blue); }
+.range-field span { color: var(--ink-4); font-size: var(--text-sm); font-weight: 500; }
+.opt-in { grid-template-columns: 20px 1fr; align-items: start; line-height: 1.35; }
+.team-board { display: grid; gap: 18px; }
+/* Context accent for the owner-specific sheets.
+
+   These four belong to different owners — the team, the help desk, the organizer
+   — and the colour says which. It is drawn as the short clipped index tab of a
+   filing divider, not as a full-width stripe across the top: a stripe is the
+   generic card device this system explicitly refuses, and DESIGN.md's borders
+   are thin, cool and functional. The sheets also take the documented work-sheet
+   corners here, which they had been missing. */
+.current-team, .create-team, 
+.current-team { --sheet-accent: var(--ddoski-gold); }
+.create-team { --sheet-accent: var(--ddoski-gold); }
+.request-composer { --sheet-accent: var(--coral); }
+.current-team::after, .create-team::after {
+  content: ""; position: absolute; left: 0; top: 0; width: 88px; height: 7px;
+  background: var(--sheet-accent);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+.current-team, .create-team, .invitations, .match-list { padding: 28px 30px; }
+.current-team ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.current-team li { min-height: 48px; display: grid; grid-template-columns: 32px 1fr 18px; align-items: center; gap: 10px; border: 1px solid var(--rule-hair); padding: 7px 10px; font-weight: 700; }
+.current-team li > span { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--ink-navy); color: white; font: 700 var(--text-xs) var(--font-data); }
+.current-team li svg { width: 17px; color: var(--success); }
+.create-team { display: grid; justify-items: start; }
+.create-team > svg { width: 42px; height: 42px; margin-bottom: 18px; color: var(--berkeley-blue); }
+.create-team p { margin: -12px 0 20px; color: var(--ink-4); }
+.create-team form, .project-intake form, .request-composer form { width: 100%; display: grid; gap: 16px; }
+.create-team label, .project-intake label, .request-composer form > label { display: grid; gap: 7px; font-weight: 700; }
+.create-team input, .project-intake input, .project-intake textarea, .request-composer input, .request-composer textarea { width: 100%; min-height: 46px; border: 1px solid var(--rule); background: #ffffff; padding: 11px 12px; color: var(--ink-navy); font: 500 var(--text-md)/1.45 var(--font-body); }
+.project-intake textarea, .request-composer textarea { resize: vertical; }
+.invitations article { display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--rule-hair); padding: 14px 0; }
+.invitations article > div { display: grid; flex: 1; }
+.invitations article span { color: var(--ink-4); font-size: var(--text-sm); }
+.match-list > h2 { display: flex; align-items: center; gap: 10px; }
+.match-list > h2 svg { width: 24px; height: 24px; flex: 0 0 auto; color: var(--ddoski-gold); }
+.match-list > article { display: grid; grid-template-columns: 45px minmax(0, 1fr) auto 44px; align-items: center; gap: 14px; border-top: 1px solid var(--rule-hair); padding: 18px 0; }
+.match-avatar { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--rail-current); color: white; font: 700 var(--text-sm) var(--font-data); }
+.match-list article > div:nth-child(2) { display: grid; gap: 3px; }
+.match-list article > div:nth-child(2) > span { color: var(--ink-4); font-size: var(--text-sm); }
+.match-list article ul { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 0; padding: 0; list-style: none; }
+.match-list article li { background: var(--surface-3); padding: 4px 6px; color: var(--ink-2); font-size: var(--text-xs); text-transform: capitalize; }
+.match-list article > b { color: var(--link); font: 700 1.2rem var(--font-data); }
+.match-list article form button { width: 40px; display: grid; place-items: center; padding: 0; }
+.match-list article form svg { width: 18px; }
+.project-intake { width: min(100%, 940px); display: grid; grid-template-columns: .7fr 1.3fr; gap: 36px; padding: clamp(28px, 5vw, 54px); border-top: 8px solid var(--berkeley-blue); }
+.project-intake > div, .project-intake form, .project-intake > a { position: relative; }
+.project-intake > div > svg { width: 48px; height: 48px; margin-bottom: 22px; color: var(--berkeley-blue); }
+.project-intake > div p { color: var(--ink-4); }
+.project-intake label small { color: var(--ink-4); font: 700 .58rem var(--font-data); letter-spacing: .1em; text-transform: uppercase; }
+.open-lens { grid-column: 2; }
+.lens-page { background: var(--paper-cool) var(--texture-paper) repeat; }
+.lens-page > header, .project-judge > header { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--rule-hair); background: var(--surface-2); padding: 0 clamp(18px, 4vw, 58px); }
+.lens-page > header a, .lens-page > header div, .lens-page > header button, .project-judge > header a { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; color: var(--ink-2); font-weight: 700; text-decoration: none; }
+.lens-page > header svg, .project-judge > header svg { width: 18px; }
+.lens-page > header div span { font: 700 .58rem var(--font-data); letter-spacing: .14em; }
+.lens-page > header strong { border: 2px solid var(--success); padding: 6px 9px; color: var(--success); font: 700 .68rem var(--font-data); transform: rotate(-3deg); }
+.lens-page > header button { cursor: pointer; }
+.lens-mast { display: flex; align-items: end; justify-content: space-between; gap: 30px; background: var(--navy-rail-from); padding: clamp(30px, 5vw, 62px); color: white; }
+.lens-mast p { margin: 0 0 8px; color: var(--ink-on-navy-2); font: 700 .6rem var(--font-data); letter-spacing: .16em; }
+.lens-mast h1 { margin: 0; font: 700 clamp(2.2rem, 3.6vw, 3.3rem)/1 var(--font-display); letter-spacing: -.035em; }
+.lens-mast span { display: block; max-width: 70ch; margin-top: 12px; color: var(--rule-hair); line-height: 1.5; }
+.lens-mast > div:last-child { display: flex; flex-wrap: wrap; gap: 10px; }
+.lens-mast > div:last-child { --btn-fg: #ffffff; --btn-border: var(--ink-on-navy-2); }
+.lens-mast svg { width: 17px; }
+.lens-layout { display: grid; grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); gap: 18px; padding: 18px; }
+.file-tree, .source-viewer { min-height: 620px; overflow: hidden; background: var(--surface-2); box-shadow: 0 12px 30px rgb(10 36 87 / 9%); }
+.file-tree { padding: 24px 16px; }
+.file-tree h2 { margin: 0 8px 18px; font: 700 1.25rem var(--font-display); }
+.file-tree nav { display: grid; max-height: 550px; overflow: auto; }
+.file-tree nav a, .file-tree nav span { min-height: 38px; display: flex; align-items: center; gap: 8px; overflow: hidden; padding: 7px 8px; color: var(--ink-2); font-size: var(--text-sm); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+.file-tree nav a:hover, .file-tree nav a[aria-current="page"] { background: var(--tint-blue); color: var(--link); }
+.file-tree svg { width: 16px; flex: 0 0 auto; }
+.source-viewer > header { min-height: 54px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--rule-hair); padding: 0 20px; font: 700 var(--text-sm) var(--font-data); }
+.source-viewer > header small { color: var(--ink-4); font: 500 var(--text-xs) var(--font-body); }
+.source-viewer > pre { max-height: 560px; margin: 0; overflow: auto; padding: 26px; white-space: pre-wrap; font: 500 var(--text-sm)/1.65 var(--font-data); }
+.source-viewer > div { max-height: 560px; overflow: auto; }
+.source-viewer .shiki { min-height: 560px; margin: 0; padding: 24px; font-size: var(--text-sm); line-height: 1.65; }
+.ops-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.action-feed, .request-composer, 
+.action-feed > .sheet-header, .action-feed > ol, .action-feed > .empty-state { position: relative; }
+.action-feed ol { margin: 0; padding: 0; list-style: none; }
+.action-feed li { min-height: 84px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 12px; border-top: 1px solid var(--rule-hair); padding: 13px 0; }
+.action-feed li.is-done { opacity: .64; }
+.feed-marker { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-3); color: var(--link); }
+.feed-marker svg { width: 15px; }
+.action-feed li > div { display: grid; gap: 3px; }
+.action-feed li p { margin: 0; color: var(--ink-4); font-size: var(--text-sm); }
+.action-feed li small { color: var(--ink-4); font: 700 .63rem var(--font-data); }
+.action-feed li > a { display: inline-flex; align-items: center; gap: 4px; color: var(--link); font-weight: 700; font-size: var(--text-sm); }
+.action-feed li > a svg { width: 15px; }
+.action-feed > .empty-state { min-height: 128px; }
+.shift-roster { position: relative; margin-top: 26px; border-top: 1px solid var(--rule); padding-top: 18px; }
+.shift-roster__header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.shift-roster h3 { margin: 0; font: 700 1.05rem var(--font-display); letter-spacing: -.01em; }
+.shift-roster__header > span, .shift-roster__empty { color: var(--ink-4); font-size: var(--text-sm); }
+.shift-roster ul { display: grid; gap: 0; margin: 12px 0 0; padding: 0; list-style: none; }
+.shift-roster li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 12px; border-top: 1px solid var(--rule-hair); padding: 12px 0; }
+.shift-roster li > div { display: grid; gap: 3px; min-width: 0; }
+.shift-roster li span, .shift-roster li p { color: var(--ink-4); font-size: var(--text-sm); line-height: 1.35; }
+.shift-roster li p { max-width: 27ch; margin: 0; text-align: right; }
+.shift-roster__empty { margin: 12px 0 0; }
+/* A volunteer's own shifts: join, check in, work the list. */
+.shift-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.shift-card { border: 1px solid var(--rule-hair); padding: 14px 16px; }
+.shift-card__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.shift-card__head strong { display: block; font: 700 1rem var(--font-display); }
+.shift-card__head span { color: var(--ink-4); font-size: var(--text-sm); }
+.shift-card__state { display: inline-flex; align-items: center; gap: 7px; color: var(--success); font-weight: 700; font-size: var(--text-sm); }
+.shift-card__state svg { width: 17px; }
+.shift-tasks { display: grid; gap: 4px; margin: 14px 0 0; padding: 0; list-style: none; }
+.shift-tasks form { margin: 0; }
+.shift-tasks button { width: 100%; min-height: 40px; display: flex; align-items: center; gap: 10px; border: 0; background: transparent; color: var(--ink-2); padding: 6px 4px; font: 500 var(--text-md) var(--font-body); text-align: left; cursor: pointer; }
+.shift-tasks button:hover { background: rgb(61 104 187 / 6%); }
+.shift-tasks button > span { width: 22px; height: 22px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid var(--rule); border-radius: 3px; font: 700 .8rem/1 var(--font-body); }
+.shift-tasks button[aria-pressed="true"] { color: var(--ink-4); text-decoration: line-through; }
+.shift-tasks button[aria-pressed="true"] > span { border-color: var(--success); background: var(--success); color: #ffffff; }
+.action-feed li > .audit-entry { display: grid; gap: 3px; min-width: 0; color: var(--ink-navy); font-size: inherit; font-weight: inherit; text-decoration: none; }
+.action-feed li > .audit-entry:hover strong { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+.action-feed li > .audit-entry:focus-visible { outline: 3px solid rgb(216 156 48 / 48%); outline-offset: 4px; }
+.request-composer fieldset { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; border: 0; padding: 0; }
+.request-composer legend { width: 100%; margin-bottom: 5px; font-weight: 700; }
+.request-composer fieldset label { min-height: 40px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--rule-hair); padding: 8px 10px; }
+.project-judge { background: var(--paper-cool) var(--texture-paper) repeat; padding-bottom: 50px; }
+.project-judge > section { background: var(--navy-rail-from); padding: clamp(30px, 5vw, 62px); color: white; }
+.project-judge > section p { margin: 0 0 8px; color: var(--ink-on-navy-2); font: 700 .6rem var(--font-data); letter-spacing: .17em; }
+.project-judge > section h1 { margin: 0; font: 700 clamp(2.2rem, 3.6vw, 3.3rem)/1 var(--font-display); letter-spacing: -.035em; }
+.project-judge > section span { display: block; max-width: 72ch; margin-top: 12px; color: var(--rule-hair); line-height: 1.5; }
+.project-scorecard { width: min(calc(100% - 36px), 760px); margin: 22px auto; padding: clamp(24px, 4vw, 42px); }
+.project-scorecard > fieldset { position: relative; display: grid; gap: 24px; margin: 0; border: 0; padding: 0; }
+.project-scorecard h2 { margin: 0; font: 700 2rem var(--font-display); }
+/* ---------------------------------------------------------------------------
+   Profile: the account record as a single paper sheet. One column of details,
+   then the four role rows, because "which roles do I hold" is the question this
+   page exists to answer.
+   --------------------------------------------------------------------------- */
+.profile-page { display: grid; place-items: start center; background: var(--paper-cool) var(--texture-paper) repeat; padding: clamp(28px, 5vw, 72px) 20px; }
+.profile-sheet { position: relative; isolation: isolate; width: min(100%, 780px); overflow: hidden; border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 54px); box-shadow: var(--shadow-sheet); }
+.profile-sheet::before { content: ""; position: absolute; z-index: -1; inset: 0; background: var(--texture-paper) repeat; opacity: .13; mix-blend-mode: multiply; }
+.profile-sheet__header { display: grid; grid-template-columns: 68px minmax(0, 1fr); align-items: center; gap: 18px; padding-bottom: 28px; }
+.profile-avatar { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--berkeley-blue); color: white; }
+.profile-avatar svg { width: 30px; height: 30px; }
+.profile-sheet h1 { margin: 0; font: 700 clamp(2rem, 5vw, 3rem)/1 var(--font-display); letter-spacing: -.03em; }
+.profile-sheet__header p { margin: 7px 0 0; color: var(--ink-3); }
+.profile-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; margin: 0; border-top: 1px solid var(--rule); }
+.profile-details div { min-width: 0; border-bottom: 1px solid var(--rule-hair); padding: 15px 0; }
+.profile-details dt { color: var(--ink-4); font-size: var(--text-xs); }
+.profile-details dd { margin: 5px 0 0; overflow-wrap: anywhere; font-weight: 700; }
+.profile-roles { margin-top: 38px; }
+.profile-roles h2 { margin: 0; font: 700 1.65rem/1 var(--font-display); letter-spacing: -.025em; }
+.profile-roles > p { margin: 7px 0 18px; color: var(--ink-3); }
+.profile-roles ul { margin: 0; border-top: 1px solid var(--rule); padding: 0; list-style: none; }
+.role-divider { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 13px; border-bottom: 1px solid var(--rule-hair); padding: 15px 2px; }
+.role-divider div { display: grid; gap: 3px; }
+.role-divider strong { font: 700 1rem var(--font-display); }
+.role-divider span { color: var(--ink-4); font-size: var(--text-sm); }
+.role-divider a { display: inline-flex; align-items: center; gap: 7px; color: var(--link); font-weight: 700; text-decoration: none; }
+.role-divider a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.role-divider--hacker > svg { color: var(--berkeley-blue); }
+.role-divider--judge > svg { color: var(--ddoski-brown); }
+.role-divider--mentor > svg { color: var(--ddoski-brown); }
+.role-divider--volunteer > svg { color: var(--coral); }

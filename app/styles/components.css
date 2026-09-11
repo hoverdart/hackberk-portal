@@ -1,0 +1,81 @@
+/* ---------------------------------------------------------------------------
+   Components.
+
+   Anything with a name in `components/ui/`. Appearance for these lives here and
+   nowhere else — see the note above `.btn`. A page may set a component's layout
+   (`display`, `gap`, `justify-content`) and must never set its appearance.
+   -------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+   2. Primitives shared by every surface.
+   -------------------------------------------------------------------------- */
+
+/* The wordmark stacks "Backathons" over a gold "at Herkeley". Two lines, not
+   three — an earlier version repeated the place name on a leading serif line. */
+.brand-lockup { display: inline-flex; flex-direction: column; color: inherit; text-decoration: none; line-height: .9; }
+.brand-lockup span { font: 700 1.5rem/1 var(--font-display); letter-spacing: -.035em; }
+.brand-lockup em { margin-top: 6px; color: var(--ddoski-gold); font: 600 var(--text-md)/1 var(--font-display); font-style: normal; letter-spacing: .015em; }
+/* Buttons. Appearance is defined here and nowhere else — see the note in
+   `components/ui/button.tsx`. Container rules may set layout and nothing else:
+   `.rubric-actions button { background: transparent }` is specificity (0,1,1)
+   and used to outrank `.primary-button { background: blue }` at (0,1,0), which
+   is how "Submit review" ended up as white text on pale paper. Keying variants
+   on a class here keeps every rule flat, so a container cannot win again. A
+   surface that needs another tint sets --btn-bg/--btn-fg/--btn-border itself. */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; border: 1px solid var(--btn-border, transparent); border-radius: 3px; background: var(--btn-bg, transparent); color: var(--btn-fg, var(--ink-navy)); text-align: center; text-decoration: none; cursor: pointer; transition: background 180ms ease, border-color 180ms ease, translate 180ms var(--ease-settle), box-shadow 180ms ease; }
+.btn--md { min-height: 44px; padding: .7rem 1.4rem; font: 700 1rem/1.15 var(--font-body); }
+.btn--sm { min-height: 40px; padding: .55rem .9rem; font: 700 var(--text-sm)/1.15 var(--font-body); }
+.btn--full { width: 100%; }
+.btn svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.btn--primary { --btn-bg: var(--berkeley-blue); --btn-fg: #ffffff; box-shadow: 0 9px 20px rgb(30 83 171 / 18%); }
+.btn--primary:hover:not(:disabled) { --btn-bg: var(--primary-hover); translate: 0 -1px; box-shadow: 0 12px 24px rgb(30 83 171 / 24%); }
+.btn--secondary { --btn-border: var(--ink-4); }
+.btn--secondary:hover:not(:disabled) { --btn-border: var(--berkeley-blue); --btn-bg: var(--tint-blue); --btn-fg: var(--link-strong); }
+.btn--ghost { --btn-fg: var(--link); padding-inline: .4rem; }
+.btn--ghost:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 3px; }
+.btn--danger { --btn-border: var(--danger-border); --btn-fg: var(--danger-ink); }
+.btn--danger:hover:not(:disabled) { --btn-bg: var(--danger-tint); }
+.btn:disabled, .btn[aria-disabled="true"] { cursor: not-allowed; opacity: .5; translate: none; box-shadow: none; }
+.btn:active:not(:disabled) { translate: 0 0; }
+.btn span[aria-hidden] { transition: translate 200ms var(--ease-settle); }
+.btn:hover span[aria-hidden] { translate: 3px 0; }
+/* The eyebrow. One rule for what was eighteen positional selectors spanning
+   .45-.65rem and .08-.20em of tracking, most of which fired only because the
+   element happened to be the first `<p>` child of its container. */
+.eyebrow { margin: 0 0 8px; color: var(--ink-3); font: 700 var(--size-eyebrow)/1.2 var(--font-data); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
+.eyebrow[data-on-navy] { color: var(--ink-on-navy-2); }
+.database-notice { margin: 8px 12px 0; border: 1px solid var(--notice-warn-ink); background: var(--notice-warn-bg); padding: 10px 14px; color: var(--notice-warn-ink); font-weight: 700; font-size: var(--text-sm); }
+.status-stamp { display: inline-block; border: 2px solid currentColor; padding: 7px 10px; color: var(--ink-4); font: 700 var(--text-sm)/1 var(--font-data); letter-spacing: .06em; text-transform: uppercase; transform: rotate(-8deg); }
+.status-stamp--not_started { color: var(--ink-4); border-style: dashed; }
+.status-stamp--draft { color: var(--warn-ink); }
+.status-stamp--submitted, .status-stamp--under_review { color: var(--link); }
+.status-stamp--accepted { color: var(--success-ink); }
+.status-stamp--rejected, .status-stamp--withdrawn { color: var(--danger-ink); }
+.field { display: grid; gap: 7px; font-weight: 700; }
+.field input { min-height: 46px; border: 1px solid var(--rule-hair); border-radius: 3px; background: var(--paper-white); padding: 0 12px; color: var(--ink-navy); font: 500 1rem var(--font-body); }
+.field input[aria-invalid="true"] { border-color: var(--danger); }
+.field small { color: var(--danger); }
+.form-message { min-height: 20px; margin: 0; font-weight: 600; }
+.form-message--error { color: var(--danger); }
+.form-message--success { color: var(--success); }
+.workspace-notice { margin: 0; padding: 12px 36px; font-weight: 700; }
+.workspace-notice--success { background: var(--notice-success-bg); color: var(--notice-success-ink); }
+.workspace-notice--error { background: var(--notice-error-bg); color: var(--notice-error-ink); }
+.field-error { color: var(--danger); font-size: var(--text-sm); }
+.dialog-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; background: rgb(4 25 57 / 66%); padding: 20px; animation: veil-in 180ms ease-out both; }
+.confirmation-dialog { width: min(100%, 560px); background: var(--paper); padding: 40px; box-shadow: 0 30px 90px rgb(0 12 35 / 35%); animation: sheet-in 300ms cubic-bezier(.2,.8,.2,1) both; }
+.confirmation-dialog > p { font: 700 .6rem var(--font-data); letter-spacing: .18em; }
+.confirmation-dialog h2 { margin: 12px 0; font: 700 2.4rem/1.05 var(--font-display); letter-spacing: -.03em; }
+.confirmation-dialog > span { color: var(--ink-4); line-height: 1.5; }
+.dialog-form { display: grid; gap: 14px; width: 100%; }
+.dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 30px; }
+.confirmation-dialog form { margin: 0; }
+.queue-error { background: var(--notice-error-bg); color: var(--notice-error-ink); padding: 12px 16px; font-weight: 700; }
+.empty-state { display: grid; place-items: center; gap: 6px; color: var(--ink-4); text-align: center; }
+.empty-state strong { color: var(--ink-navy); font: 700 1.2rem var(--font-display); }
+.sheet-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin: 0 0 22px; }
+.sheet-header > div { min-width: 0; }
+/* Feedback: the smallest change that makes cause and result unmistakable. */
+.field input { transition: border-color 160ms ease, box-shadow 160ms ease; }
+.field input:focus { border-color: var(--berkeley-blue); box-shadow: 0 0 0 3px rgb(61 104 187 / 22%); }
+.status-stamp { transition: color 160ms ease; }

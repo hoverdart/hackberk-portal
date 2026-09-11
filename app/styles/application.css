@@ -1,0 +1,58 @@
+/* ---------------------------------------------------------------------------
+   The application wizard: the step rail, the section sheets, the field grid.
+   -------------------------------------------------------------------------- */
+
+/* Multi-role application engine */
+/* -----------------------------------------------------------------------------
+   5. Feature pages. Each keeps the same navy-to-paper relationship as the shell
+   even where its working grid differs.
+   -------------------------------------------------------------------------- */
+.form-workspace { display: grid; grid-template-columns: minmax(246px, 300px) minmax(0, 1fr); align-items: stretch; min-height: 100%; background: var(--paper-cool) var(--texture-paper) repeat; }
+.workspace-state { display: inline-block; border: 1px solid currentColor; padding: 4px 7px; color: var(--ink-4); font: 700 .58rem var(--font-data); letter-spacing: .12em; text-transform: uppercase; }
+.workspace-state--submitted, .workspace-state--under_review { color: var(--link); }
+.workspace-state--accepted { color: var(--success); }
+.workspace-state--rejected, .workspace-state--withdrawn { color: var(--danger); }
+.form-steps { position: sticky; top: 0; align-self: start; min-height: 100svh; border-right: 1px solid var(--rule-hair); background: rgb(246 247 243 / 94%); padding: clamp(30px, 3vw, 44px) clamp(20px, 2.25vw, 32px); box-shadow: 10px 0 28px rgb(10 36 87 / 5%); }
+.form-steps > p { display: grid; gap: 10px; justify-items: start; margin: 0; color: var(--ink-3); font: 700 .6rem var(--font-data); letter-spacing: .16em; }
+.form-steps > h1 { margin: 14px 0 26px; font: 700 1.25rem/1.2 var(--font-display); letter-spacing: -.02em; }
+.form-steps ol { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.form-steps button { width: 100%; min-height: 60px; display: grid; grid-template-columns: 30px 1fr 20px; align-items: center; gap: 11px; border: 0; border-radius: 4px; background: transparent; color: var(--ink-2); padding: 9px 10px; text-align: left; cursor: pointer; }
+.form-steps button:hover { background: rgb(10 36 87 / 6%); }
+.form-steps button[aria-current="step"] { background: var(--berkeley-blue); color: white; }
+.form-steps button > span:first-child { display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid currentColor; border-radius: 50%; font: 700 var(--text-xs) var(--font-data); }
+.form-steps button strong, .form-steps button small { display: block; }
+.form-steps button strong { font: 700 .95rem var(--font-display); }
+.form-steps button small { margin-top: 3px; color: var(--ink-4); font-size: var(--text-xs); }
+.form-steps button[aria-current="step"] small { color: var(--ink-on-navy); }
+.form-steps button svg { width: 17px; color: var(--success); }
+.form-steps button[aria-current="step"] svg { color: var(--success-on-blue); }
+.form-progress { margin-top: 26px; height: 5px; background: rgb(10 36 87 / 12%); }
+.form-progress span { display: block; width: 100%; height: 100%; background: var(--berkeley-blue); transform-origin: left; transition: transform 500ms var(--ease-settle); }
+.form-progress strong { display: block; margin-top: 10px; color: var(--ink-3); font: 700 .65rem var(--font-data); letter-spacing: .08em; }
+.form-sheet { width: min(100%, 960px); min-width: 0; align-self: start; justify-self: center; margin: clamp(28px, 4vw, 56px) clamp(20px, 4vw, 64px); border-radius: 5px 5px 8px 8px; background: var(--paper); box-shadow: var(--shadow-sheet); }
+.section-heading { padding: 42px 48px 30px; border-bottom: 1px solid var(--rule); background: linear-gradient(135deg, rgb(233 238 242 / 72%), transparent 62%); }
+.section-heading > p { margin: 0; color: var(--ink-3); font: 700 .6rem var(--font-data); letter-spacing: .18em; }
+.section-heading h2 { margin: 10px 0 8px; font: 700 clamp(2rem, 3.2vw, 2.9rem)/1 var(--font-display); letter-spacing: -.03em; }
+.section-heading > span { display: block; max-width: 68ch; color: var(--ink-4); font-size: 1rem; }
+.section-heading > small { display: inline-flex; align-items: center; gap: 7px; margin-top: 22px; color: var(--ink-2); font-weight: 700; }
+.section-heading > small svg { width: 16px; }
+.section-form { position: relative; padding: 34px 48px 22px; }
+.section-form[hidden] { display: none; }
+.section-form fieldset { display: grid; gap: 30px; margin: 0; border: 0; padding: 0; }
+.section-form fieldset:disabled { opacity: .72; }
+.application-field { display: grid; gap: 8px; }
+.application-field__label { display: flex; align-items: center; justify-content: space-between; gap: 16px; font: 700 1rem var(--font-display); }
+.application-field__label b, .application-field__label small { color: var(--ink-4); font: 700 .55rem var(--font-data); letter-spacing: .12em; text-transform: uppercase; }
+.application-field > em { color: var(--ink-4); font-size: var(--text-sm); font-style: normal; }
+.application-field > input, .application-field > textarea, .application-field > select { width: 100%; min-height: 48px; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper-white); color: var(--ink-navy); padding: 12px 14px; font: 500 1rem/1.45 var(--font-body); }
+.application-field > textarea { resize: vertical; }
+.application-field > input:focus, .application-field > textarea:focus, .application-field > select:focus { border-color: var(--field-focus); box-shadow: 0 0 0 3px rgb(41 111 214 / 13%); outline: 0; }
+.application-field > input:focus-visible, .application-field > textarea:focus-visible, .application-field > select:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.application-field [aria-invalid="true"] { border-color: var(--danger); }
+.application-field .choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.choice-grid label { min-height: 44px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper-white); padding: 9px 12px; cursor: pointer; }
+.choice-grid label:has(input:checked) { border-color: var(--selected-border); background: var(--tint-blue); color: var(--link); font-weight: 700; }
+.choice-grid input { width: 18px; height: 18px; accent-color: var(--berkeley-blue); }
+.save-draft { margin-top: 28px; }
+.form-pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--rule-hair); padding: 20px 48px; }
+.form-pagination .submit-application { margin-left: auto; }
