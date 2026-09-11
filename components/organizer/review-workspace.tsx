@@ -218,11 +218,10 @@ export function ReviewWorkspace({
 function DecisionBar({ applicationId, reviewCount }: { applicationId: string; reviewCount: number }) {
   return (
     <aside className="decision-bar">
-      <div>
-        <strong>
-          {reviewCount < 1 ? "Submit your scores before recording a decision." : "Scores are in. Choose the outcome."}
-        </strong>
-      </div>
+      {/* Only speak when the buttons are disabled and the reason is not visible.
+          Once they are live, "Choose the outcome" is a caption on three buttons
+          already labelled Accept, Waitlist and Reject. */}
+      <div>{reviewCount < 1 ? <strong>Submit your scores before recording a decision.</strong> : null}</div>
       {(
         [
           ["accepted", "Accept", "primary"],

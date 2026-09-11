@@ -381,23 +381,28 @@ with words.
 
 ## Motion
 
-**The Shell Owns Every Entrance Rule.** An entrance animation may only be
-attached to DOM the persistent shell owns. Routed content gets no entrance
-keyframes at all; its only arrival motion is the `.route-change` view transition.
+**The Arrival Budget Rule.** Nothing may be invisible for longer than it takes to
+read as arrival. No entrance on routed content starts later than ~220ms, and the
+whole choreography finishes inside ~550ms.
 
-This is the system's second load-bearing correction. Every surface used to have a
-rehearsed arrival — the cover opened, the tabs seated, the sheet was dealt, the
-stamp pressed last — built from keyframes starting at `opacity: 0` with
-`animation-fill-mode: both` and delays running out to 760ms. Those elements mount
-fresh on every navigation, so the stage was genuinely blank for most of a second
-after every click, and the whole sequence replayed on every Server Action as
-well, because `useActionState` submits inside a React transition. It read as the
-page flashing.
+A budget, not a ban. The motion is the point — paper is dealt onto a desk, tabs
+seat into their slots, a stamp presses last — and the flash this rule exists to
+prevent was never caused by the animation, only by its schedule. Entrances used
+to start at `opacity: 0` with `animation-fill-mode: both` and delays running out
+to 760ms, attached to content that remounts on every navigation, so the stage was
+genuinely blank for most of a second after every click.
 
-The rail and the Campanile mount once per page load and keep their entrances.
-Dialogs keep theirs, because they are genuinely on-demand mounts. Everything
-else is bare. `--motion-shift` scales every remaining distance and reduced motion
-sets it to `0`, which keeps state changes while removing all travel.
+Two exemptions. The rail and the Campanile belong to the shell, which mounts once
+per page load, so they may take longer entrances that cannot re-fire. Dialogs
+keep theirs because they are genuinely on-demand mounts.
+
+One exclusion. `.review-workspace` takes no arrival animation at all: recording a
+decision redirects to the same route, so an entrance there replays on a page the
+organizer is already looking at — which is what made its header appear to pop up
+at random.
+
+`--motion-shift` scales every distance and reduced motion sets it to `0`, which
+keeps state changes while removing all travel.
 
 ## Voice
 
@@ -435,7 +440,7 @@ fictional.
 - **Don't** write a hex literal outside the token file.
 - **Don't** style a control from its container — that is how a primary button
   became invisible.
-- **Don't** attach an entrance animation to routed content.
+- **Don't** let an entrance on routed content start later than ~220ms.
 - **Don't** add an eyebrow above a heading that already reads clearly.
 - **Don't** let this document's vocabulary — binder, docket, sheet, stamp —
   appear in user-facing copy.

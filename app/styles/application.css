@@ -13,7 +13,7 @@
 .workspace-state--accepted { color: var(--success); }
 .workspace-state--rejected, .workspace-state--withdrawn { color: var(--danger); }
 .form-steps { position: sticky; top: 0; align-self: start; min-height: 100svh; border-right: 1px solid var(--rule-hair); background: rgb(246 247 243 / 94%); padding: clamp(30px, 3vw, 44px) clamp(20px, 2.25vw, 32px); box-shadow: 10px 0 28px rgb(10 36 87 / 5%); }
-.form-steps > p { display: grid; gap: 10px; justify-items: start; margin: 0; color: var(--ink-3); font: 700 .6rem var(--font-data); letter-spacing: .16em; }
+.form-steps > p { display: grid; gap: 10px; justify-items: start; margin: 0; color: var(--ink-3); font: 700 var(--text-sm) var(--font-body); }
 .form-steps > h1 { margin: 14px 0 26px; font: 700 1.25rem/1.2 var(--font-display); letter-spacing: -.02em; }
 .form-steps ol { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
 .form-steps button { width: 100%; min-height: 60px; display: grid; grid-template-columns: 30px 1fr 20px; align-items: center; gap: 11px; border: 0; border-radius: 4px; background: transparent; color: var(--ink-2); padding: 9px 10px; text-align: left; cursor: pointer; }
@@ -26,6 +26,7 @@
 .form-steps button[aria-current="step"] small { color: var(--ink-on-navy); }
 .form-steps button svg { width: 17px; color: var(--success); }
 .form-steps button[aria-current="step"] svg { color: var(--success-on-blue); }
+.form-outcome { margin: 26px 0 0; color: var(--ink-3); font-size: var(--text-sm); line-height: 1.5; }
 .form-progress { margin-top: 26px; height: 5px; background: rgb(10 36 87 / 12%); }
 .form-progress span { display: block; width: 100%; height: 100%; background: var(--berkeley-blue); transform-origin: left; transition: transform 500ms var(--ease-settle); }
 .form-progress strong { display: block; margin-top: 10px; color: var(--ink-3); font: 700 .65rem var(--font-data); letter-spacing: .08em; }

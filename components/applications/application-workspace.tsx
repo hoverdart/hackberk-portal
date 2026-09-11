@@ -107,7 +107,7 @@ export function ApplicationWorkspace({
           second navy column beside the rail read as a second site. */}
       <nav className="form-steps" aria-label="Application sections">
         <p>
-          APPLICATION · {application.role.toUpperCase()}
+          {capitalize(application.role)} application
           <span className={`workspace-state workspace-state--${application.status}`}>
             {application.status.replaceAll("_", " ")}
           </span>
@@ -127,25 +127,35 @@ export function ApplicationWorkspace({
                   <span>{index + 1}</span>
                   <span>
                     <strong>{candidate.title}</strong>
-                    <small>{complete ? "Complete" : "Needs answers"}</small>
+                    {/* Once an application is submitted there is nothing left to
+                        answer, so a per-section to-do reading is noise at best
+                        and wrong at worst. */}
+                    <small>{locked ? "Submitted" : complete ? "Complete" : "Needs answers"}</small>
                   </span>
-                  {complete ? <Check aria-hidden /> : null}
+                  {locked || complete ? <Check aria-hidden /> : null}
                 </button>
               </li>
             );
           })}
         </ol>
-        <div
-          className="form-progress"
-          role="progressbar"
-          aria-label="Application completion"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={progress}
-        >
-          <span style={{ transform: `scaleX(${progress / 100})` }} />
-          <strong>{progress}% complete</strong>
-        </div>
+        {/* A decided application is not a form in progress. Showing it a
+            completion meter asked the wrong question — and answered it wrongly,
+            since a locked fieldset reports no values at all. */}
+        {locked ? (
+          <p className="form-outcome">{outcomeLabel(application.status)}</p>
+        ) : (
+          <div
+            className="form-progress"
+            role="progressbar"
+            aria-label="Application completion"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progress}
+          >
+            <span style={{ transform: `scaleX(${progress / 100})` }} />
+            <strong>{progress}% complete</strong>
+          </div>
+        )}
       </nav>
       <section className="form-sheet" aria-labelledby="section-title">
         {notice ? (
@@ -351,16 +361,20 @@ function SectionEditor({
           />
         ))}
       </fieldset>
-      <button type="submit" className="save-draft" disabled={locked || pending}>
-        {pending ? (
-          <Cloud aria-hidden className="is-saving" />
-        ) : state.status === "error" || state.status === "stale" ? (
-          <CloudOff aria-hidden />
-        ) : (
-          <Cloud aria-hidden />
-        )}
-        {pending ? "Saving…" : (state.message ?? (locked ? "Answers locked" : "Save draft"))}
-      </button>
+      {/* A locked application has nothing to save, so it gets no save control.
+          The footer already says why it cannot be changed. */}
+      {locked ? null : (
+        <button type="submit" className="save-draft" disabled={pending}>
+          {pending ? (
+            <Cloud aria-hidden className="is-saving" />
+          ) : state.status === "error" || state.status === "stale" ? (
+            <CloudOff aria-hidden />
+          ) : (
+            <Cloud aria-hidden />
+          )}
+          {pending ? "Saving…" : (state.message ?? "Save draft")}
+        </button>
+      )}
       {/* Saving is intentional, but its outcome still needs a non-disruptive
           announcement for screen-reader users. */}
       <p className={`save-announcement save-announcement--${state.status}`} aria-live="polite">
@@ -528,22 +542,38 @@ function restoreLocalDraft(form: HTMLFormElement, key: string) {
   }
 }
 
+/**
+ * Is every required field in this section answered?
+ *
+ * Reads the controls directly rather than through `new FormData(form)`.
+ * FormData omits disabled controls by specification, and a submitted or decided
+ * application renders its whole fieldset disabled — so every field read as
+ * empty, and an accepted applicant was shown "0% complete" with every section
+ * marked "Needs answers" above the answers they had actually given.
+ *
+ * Reading `.value` is also the more honest question: "does this control hold an
+ * answer", not "would this control be submitted".
+ */
 function isSectionComplete(form: HTMLFormElement, fields: FieldDefinition[]) {
-  const data = new FormData(form);
   return fields.every((field) => {
     const controls = form.elements.namedItem(field.key);
+    if (field.type === "multiselect") {
+      const boxes = controls instanceof RadioNodeList ? Array.from(controls) : controls ? [controls] : [];
+      if (!field.required) return true;
+      return boxes.some((box) => box instanceof HTMLInputElement && box.checked);
+    }
     const control = controls instanceof RadioNodeList ? controls[0] : controls;
-    const valid =
-      !(
-        control instanceof HTMLInputElement ||
-        control instanceof HTMLTextAreaElement ||
-        control instanceof HTMLSelectElement
-      ) || control.validity.valid;
-    if (!valid) return false;
+    if (!(
+      control instanceof HTMLInputElement ||
+      control instanceof HTMLTextAreaElement ||
+      control instanceof HTMLSelectElement
+    ))
+      return !field.required;
+    // A disabled control is always `valid`, because constraint validation skips
+    // it — which is exactly what we want for a locked application.
+    if (!control.validity.valid) return false;
     if (!field.required) return true;
-    return field.type === "multiselect"
-      ? data.getAll(field.key).length > 0
-      : String(data.get(field.key) ?? "").trim().length > 0;
+    return control.value.trim().length > 0;
   });
 }
 
@@ -623,6 +653,20 @@ function Withdrawal({ applicationId, role }: { applicationId: string; role: Appl
       ) : null}
     </>
   );
+}
+
+/** What a decided or submitted application should say instead of a progress meter. */
+function outcomeLabel(status: ApplicationStatus) {
+  if (status === "submitted") return "Submitted. Organizers review it next.";
+  if (status === "under_review") return "An organizer is reviewing this now.";
+  if (status === "accepted") return "You’re in. See what’s next on your dashboard.";
+  if (status === "waitlisted") return "Waitlisted. We’ll be in touch if a place opens.";
+  if (status === "rejected") return "Not accepted this time.";
+  return "Withdrawn.";
+}
+
+function capitalize(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function canWithdraw(status: ApplicationStatus) {

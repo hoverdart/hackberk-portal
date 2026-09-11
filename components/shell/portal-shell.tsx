@@ -53,6 +53,10 @@ export function PortalShell({
   preview = false,
 }: PortalShellProps) {
   const active = applications.find((application) => application.role === activeRole) ?? applications[0];
+  // Team Match opens to accepted hackers. This line used to read `preview`, the
+  // design fixture's flag, so every real applicant was told they were still
+  // waiting no matter what an organizer had decided.
+  const acceptedHacker = applications.some((app) => app.role === "hacker" && app.status === "accepted");
   // The selected role leads the deck; the rest keep their canonical order
   // behind it. Reordering here rather than in CSS keeps DOM order, tab order
   // and visual order identical, which is what a keyboard user follows.
@@ -171,7 +175,7 @@ export function PortalShell({
         <Users aria-hidden />
         <div>
           <small>Team matching</small>
-          <strong>{preview ? "Open to you" : "Available once you’re accepted"}</strong>
+          <strong>{preview || acceptedHacker ? "Open to you" : "Opens when you’re accepted"}</strong>
         </div>
         <Link href="/ops">
           Event details <span aria-hidden>→</span>

@@ -23,7 +23,12 @@ afterEach(() => {
   window.localStorage.clear();
 });
 
-function renderWorkspace(role: ApplicationRole, status: ApplicationStatus = "draft", progress = 0) {
+function renderWorkspace(
+  role: ApplicationRole,
+  status: ApplicationStatus = "draft",
+  progress = 0,
+  answers: Record<string, Record<string, unknown>> = {},
+) {
   return render(
     <ApplicationWorkspace
       application={{
@@ -31,7 +36,7 @@ function renderWorkspace(role: ApplicationRole, status: ApplicationStatus = "dra
         role,
         status,
         progress,
-        answers: {},
+        answers,
         answerVersions: {},
       }}
       eventName="Herkeley Build 2027"
@@ -113,4 +118,39 @@ describe("application workspace", () => {
     expect(screen.queryByRole("button", { name: "Withdraw application" })).not.toBeInTheDocument();
     expect(screen.getByText(/cannot be changed here/i)).toBeVisible();
   });
+
+  /**
+   * A locked application reports its answers, not an empty form.
+   *
+   * Completion used to be read through `new FormData(form)`, which omits
+   * disabled controls by specification. A submitted or decided application
+   * renders its whole fieldset disabled, so every field came back empty: an
+   * accepted applicant was shown "0% complete" and "Needs answers" on every
+   * section, directly above the answers they had given.
+   */
+  it.each(["submitted", "accepted"] as const)(
+    "shows a %s application its outcome rather than an empty progress meter",
+    async (status) => {
+      const completeAnswers = {
+        profile: { school: "UC Herkeley", graduationYear: 2028, portfolioUrl: "https://example.com/" },
+        experience: {
+          skills: ["Web"],
+          motivation: "A sentence that is comfortably long enough to satisfy the schema.",
+          projectInterest: "Something I have wanted to build for a while now.",
+        },
+        logistics: { availability: ["Friday"] },
+      };
+      renderWorkspace("hacker", status, 100, completeAnswers);
+
+      expect(screen.queryByRole("progressbar", { name: "Application completion" })).not.toBeInTheDocument();
+      expect(screen.queryByText("0% complete")).not.toBeInTheDocument();
+      expect(screen.queryByText("Needs answers")).not.toBeInTheDocument();
+      expect(screen.getAllByText("Submitted").length).toBeGreaterThan(0);
+      // The answers are still on screen, read-only.
+      expect(screen.getByLabelText("School or organization")).toHaveValue("UC Herkeley");
+      expect(screen.getByLabelText("School or organization")).toBeDisabled();
+      // Nothing offers to save an application that cannot change.
+      expect(screen.queryByRole("button", { name: /save draft/i })).not.toBeInTheDocument();
+    },
+  );
 });
