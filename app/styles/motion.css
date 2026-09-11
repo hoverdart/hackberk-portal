@@ -17,12 +17,20 @@
    is the same sequence compressed to fit the budget: everything has begun by
    220ms, where it used to still be waiting on the stamp.
 
-   Two things stay off the routed stage entirely. The rail and the Campanile
-   belong to the shell, which mounts once per page load, so their longer
-   entrances cannot re-fire. And `.review-workspace` takes no arrival animation
-   at all: recording a decision redirects to the same route, so an entrance there
-   replays on a page the organizer is already looking at — which is what made its
-   header appear to pop up at random.
+   THE RAIL NEVER ANIMATES. It is the one element that must read as furniture:
+   always there, never arriving. It had a clip-path wipe and its wordmark and
+   Campanile faded in, which was fine in theory — one layout owns the rail, and a
+   layout is cached on the client rather than re-rendered — but only on the
+   signed-in side. The landing page, sign-in and /about each rendered their own,
+   so moving between them tore the navigation down and built it again. Both
+   halves are fixed: `app/(site)/layout.tsx` owns one rail for every signed-out
+   route, and the rail carries no entrance either way. The Campanile keeps its
+   draw, because that mark is the point of the rail rather than its arrival.
+
+   `.review-workspace` also takes no arrival animation: recording a decision
+   redirects to the same route, so an entrance there replays on a page the
+   organizer is already looking at — which is what made its header appear to pop
+   up at random.
 
    Dialogs keep their own entrance, because they are genuinely on-demand mounts.
 
@@ -72,8 +80,6 @@
 .landing section > *:nth-child(3) { animation-delay: 160ms; }
 .landing section > *:nth-child(4) { animation-delay: 200ms; }
 .landing footer { animation: deal-in 360ms 220ms var(--ease-settle) both; }
-.app-rail .brand-lockup { animation: deal-in 380ms 120ms var(--ease-settle) both; }
-.app-rail-foot { animation: deal-in 420ms 180ms var(--ease-settle) both; }
 .auth-sheet, .legal-sheet { animation: sheet-deal 440ms 80ms var(--ease-settle) both; }
 .about-mast { animation: deal-in 360ms var(--ease-settle) both; }
 .about-sheet { animation: sheet-deal 460ms 80ms var(--ease-settle) both; }
@@ -93,7 +99,6 @@
 @keyframes rail-establish { from { clip-path: inset(0 0 100% 0); } }
 @keyframes seal-sweep { from { --progress: 0%; } }
 @keyframes tower-draw { from { opacity: 0; --reveal: 0%; } }
-.app-rail { animation: rail-establish 620ms var(--ease-settle) both; }
 .app-tower { animation: tower-draw 900ms var(--ease-settle) both; mask-image: linear-gradient(to top, #000 var(--reveal), transparent calc(var(--reveal) + 14%)); }
 .progress-seal { animation: seal-sweep 480ms var(--ease-settle) both; }
 .queued-progress { animation: seal-sweep 480ms var(--ease-settle) both; }

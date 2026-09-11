@@ -31,12 +31,15 @@ insert into public.events (
   project_rubric = excluded.project_rubric,
   updated_at = now();
 
-insert into public.event_milestones (id, event_id, audience, title, description, due_at, sort_order) values
-  ('00000000-0000-4000-8001-000000000001', '00000000-0000-4000-8000-000000000001', 'hacker', 'Applications close', 'Submit every required section before the docket closes.', '2027-03-06 23:59:00-08', 10),
-  ('00000000-0000-4000-8001-000000000002', '00000000-0000-4000-8000-000000000001', 'hacker', 'Team lock', 'Confirm a team of one to four accepted hackers.', '2027-02-19 23:59:00-08', 20),
-  ('00000000-0000-4000-8001-000000000003', '00000000-0000-4000-8000-000000000001', 'judge', 'Judging briefing', 'Review assigned tracks and scoring calibration.', '2027-03-07 10:00:00-08', 30),
-  ('00000000-0000-4000-8001-000000000004', '00000000-0000-4000-8000-000000000001', 'mentor', 'Mentor desk opens', 'Set expertise tags before requests arrive.', '2027-03-06 18:00:00-08', 40),
-  ('00000000-0000-4000-8001-000000000005', '00000000-0000-4000-8000-000000000001', 'volunteer', 'Shift confirmations due', 'Confirm or release your assigned shifts.', '2027-02-27 17:00:00-08', 50)
+-- `audience` decides who sees a deadline: null means everyone, a role means the
+-- people accepted for that role. `link_path` is where the work is done, because
+-- deriving it from the audience sent every deadline to an application form.
+insert into public.event_milestones (id, event_id, audience, title, description, due_at, sort_order, link_path) values
+  ('00000000-0000-4000-8001-000000000001', '00000000-0000-4000-8000-000000000001', null, 'Applications close', 'Submit every required section before applications close.', '2027-03-06 23:59:00-08', 10, '/dashboard'),
+  ('00000000-0000-4000-8001-000000000002', '00000000-0000-4000-8000-000000000001', 'hacker', 'Team lock', 'Confirm a team of one to four accepted hackers.', '2027-02-19 23:59:00-08', 20, '/teams'),
+  ('00000000-0000-4000-8001-000000000003', '00000000-0000-4000-8000-000000000001', 'judge', 'Judging briefing', 'Review assigned projects and scoring calibration.', '2027-03-07 10:00:00-08', 30, '/judging'),
+  ('00000000-0000-4000-8001-000000000004', '00000000-0000-4000-8000-000000000001', 'mentor', 'Help desk opens', 'Set your expertise before questions arrive.', '2027-03-06 18:00:00-08', 40, '/ops#mentor'),
+  ('00000000-0000-4000-8001-000000000005', '00000000-0000-4000-8000-000000000001', 'volunteer', 'Shift confirmations due', 'Confirm or release your assigned shifts.', '2027-02-27 17:00:00-08', 50, '/ops#volunteer')
 on conflict (id) do nothing;
 
 insert into public.volunteer_shifts (id, event_id, title, location, starts_at, ends_at, capacity, checklist) values

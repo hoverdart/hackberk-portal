@@ -27,7 +27,7 @@
 .landing footer a { color: var(--link); text-underline-offset: 3px; }
 .landing footer { display: flex; gap: 22px; padding: 22px clamp(24px, 5vw, 72px); color: var(--ink-3); font-size: var(--text-sm); }
 .landing footer span { margin-left: auto; }
-.start-application { display: grid; align-content: center; justify-items: start; background: var(--texture-paper) repeat; padding: clamp(36px, 7vw, 92px) clamp(20px, 6vw, 86px); }
+.start-application { display: grid; align-content: center; justify-items: start; padding: clamp(36px, 7vw, 92px) clamp(20px, 6vw, 86px); }
 .start-sheet { position: relative; overflow: hidden; width: min(100%, 760px); border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 58px); box-shadow: var(--shadow-sheet); }
 .start-sheet::before { content: ""; position: absolute; inset: 0; opacity: .14; pointer-events: none; background: var(--texture-paper) repeat; mix-blend-mode: multiply; }
 .start-sheet > * { position: relative; z-index: 1; }
@@ -40,11 +40,10 @@
    one wide work sheet — but the sheet is sized for a 65-72ch reading measure
    instead of a dense operational grid.
    --------------------------------------------------------------------------- */
-.about-page { position: relative; min-height: 100svh; display: grid; grid-template-rows: auto 1fr auto; background: var(--paper-cool) var(--texture-paper) repeat; }
-.about-mast { display: flex; justify-content: space-between; align-items: center; gap: 24px; background: linear-gradient(150deg, var(--navy-rail-from) 0%, var(--navy-rail-to) 100%); padding: 20px clamp(20px, 5vw, 64px); color: white; box-shadow: 0 8px 24px rgb(5 28 65 / 16%); }
-.about-mast nav { display: flex; align-items: center; gap: clamp(14px, 2vw, 26px); }
-.about-mast nav a { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink-on-navy); font-weight: 600; text-decoration: none; text-underline-offset: 4px; }
-.about-mast nav a:hover { color: white; text-decoration: underline; }
+.about-stage { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; }
+.about-mast { display: flex; align-items: center; justify-content: flex-end; gap: clamp(14px, 2vw, 26px); padding: 24px clamp(20px, 5vw, 64px); }
+.about-mast a:not(.btn) { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink-navy); font-weight: 600; text-underline-offset: 4px; }
+.about-mast a:not(.btn):hover { text-decoration: underline; }
 .about-sheet { position: relative; overflow: hidden; width: min(100% - 40px, 900px); justify-self: center; margin: clamp(24px, 4vw, 52px) 0; border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 68px); box-shadow: var(--shadow-sheet); }
 .about-sheet::before { content: ""; position: absolute; inset: 0; opacity: .14; pointer-events: none; background: var(--texture-paper) repeat; mix-blend-mode: multiply; }
 .about-sheet > * { position: relative; z-index: 1; }

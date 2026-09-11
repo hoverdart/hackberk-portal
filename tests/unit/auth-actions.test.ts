@@ -23,7 +23,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ auth: { signUp: mocks.signUp }, rpc: mocks.rpc })),
 }));
 
-import { signUpAction } from "@/app/(public)/auth-actions";
+import { signUpAction } from "@/app/(site)/(public)/auth-actions";
 
 describe("signUpAction", () => {
   beforeEach(() => {

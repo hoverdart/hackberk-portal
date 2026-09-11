@@ -10,8 +10,13 @@
    signed-in portal. These were three separate implementations at three widths
    (a fixed 210px, a `minmax(230px, 30vw)`, and a bare pseudo-element at 28% of
    the viewport holding nothing at all). */
-.app-shell { min-height: 100svh; display: grid; grid-template-columns: 210px minmax(0, 1fr); background: var(--surface-0); }
-.app-rail { position: relative; z-index: 10; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; background: linear-gradient(150deg, var(--navy-rail-from) 0%, var(--navy-rail-to) 100%); color: var(--ink-on-navy); box-shadow: 8px 0 24px rgb(5 28 65 / 16%); }
+.app-shell { min-height: 100svh; display: grid; grid-template-columns: 210px minmax(0, 1fr); background: var(--paper-cool) var(--texture-paper) repeat; }
+/* Sticky, not merely tall. As a grid item the rail stretched to the height of
+   the document, so on a long page — the application queue, /about — the
+   navigation scrolled away and the Campanile ended up thousands of pixels below
+   the fold. It now stays put and the foot of it is always the foot of the
+   screen. */
+.app-rail { position: sticky; top: 0; align-self: start; z-index: 10; height: 100svh; overflow: hidden; display: flex; flex-direction: column; background: linear-gradient(150deg, var(--navy-rail-from) 0%, var(--navy-rail-to) 100%); color: var(--ink-on-navy); box-shadow: 8px 0 24px rgb(5 28 65 / 16%); }
 .app-rail .brand-lockup { flex: 0 0 auto; margin: 20px 22px 25px; color: #ffffff; }
 .app-rail nav { display: grid; gap: 2px; }
 .app-rail nav a, .app-rail-bottom a, .app-rail-bottom button { min-height: 48px; display: flex; align-items: center; gap: 18px; border: 0; background: transparent; color: var(--ink-on-navy); padding: 0 24px; font: 500 var(--text-md)/1 var(--font-body); text-decoration: none; cursor: pointer; }

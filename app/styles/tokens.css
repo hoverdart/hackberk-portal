@@ -70,8 +70,6 @@
   --navy-rail-to: #07376f;
   --rail-current: #245da9;
   --rail-current-edge: #62a2ff;
-  /* A fourth paper value the desk had been using without a name. */
-  --surface-0: #f0f4f6;
   --texture-paper: url("../../assets/plates/paper-sample.png");
   --link-strong: #174d94;
   /* A visible divider, one step darker than --rule. Most of the eighteen

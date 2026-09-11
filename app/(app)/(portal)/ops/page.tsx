@@ -46,14 +46,21 @@ export default async function OpsPage({
   const accepted = new Set(data.applications.filter((app) => app.status === "accepted").map((app) => app.role));
   const query = await searchParams;
 
+  // A deadline addressed to a role belongs to the people who hold that role, not
+  // to anyone who once opened its form. Matching on "has an application" meant a
+  // rejected judge and a half-filled volunteer draft both drew work that was
+  // never theirs. A deadline with no audience is for everybody.
   const milestoneItems: ActionFeedItem[] = data.milestones
-    .filter((item) => !item.audience || data.applications.some((app) => app.role === item.audience))
+    .filter((item) => !item.audience || accepted.has(item.audience))
     .map((item) => ({
       id: item.id,
       title: item.title,
       detail: item.description,
       meta: formatDate(item.due_at),
-      href: item.audience ? `/applications/${item.audience}` : "/dashboard",
+      // Where the work is actually done. This used to be derived from the
+      // audience, so every deadline opened an application form — "Team lock"
+      // sent you to the hacker application rather than to Team Match.
+      href: item.link_path ?? "/dashboard",
     }));
 
   const mentorItems: ActionFeedItem[] = data.mentorRequests
@@ -115,7 +122,7 @@ export default async function OpsPage({
   });
 
   return (
-    <main className="ops-page desk" id="support">
+    <main className="ops-page" id="support">
       <header className="feature-mast">
         <h1>Event day</h1>
         <span>Everything waiting on you, across every role you hold.</span>

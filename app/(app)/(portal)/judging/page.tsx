@@ -61,7 +61,7 @@ export default async function JudgingPage() {
     }));
 
   return (
-    <main className="feature-page desk">
+    <main className="feature-page">
       <header className="feature-mast">
         <h1>Judging</h1>
         <span>

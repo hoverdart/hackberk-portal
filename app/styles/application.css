@@ -7,7 +7,7 @@
    5. Feature pages. Each keeps the same navy-to-paper relationship as the shell
    even where its working grid differs.
    -------------------------------------------------------------------------- */
-.form-workspace { display: grid; grid-template-columns: minmax(246px, 300px) minmax(0, 1fr); align-items: stretch; min-height: 100%; background: var(--paper-cool) var(--texture-paper) repeat; }
+.form-workspace { display: grid; grid-template-columns: minmax(246px, 300px) minmax(0, 1fr); align-items: stretch; min-height: 100%; }
 .workspace-state { display: inline-block; border: 1px solid currentColor; padding: 4px 7px; color: var(--ink-4); font: 700 .58rem var(--font-data); letter-spacing: .12em; text-transform: uppercase; }
 .workspace-state--submitted, .workspace-state--under_review { color: var(--link); }
 .workspace-state--accepted { color: var(--success); }

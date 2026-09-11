@@ -17,7 +17,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ViewTransition, type ReactNode } from "react";
 
-import { signOutAction } from "@/app/(public)/auth-actions";
+import { signOutAction } from "@/app/(site)/(public)/auth-actions";
 import { BrandRail } from "@/components/shell/brand-rail";
 
 /**

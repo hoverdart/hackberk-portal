@@ -28,7 +28,7 @@ export async function getOpsHub(userId: string, eventId: string) {
     supabase.from("applications").select("role,status").eq("event_id", eventId).eq("applicant_id", userId),
     supabase
       .from("event_milestones")
-      .select("id,audience,title,description,due_at")
+      .select("id,audience,title,description,due_at,link_path")
       .eq("event_id", eventId)
       .order("due_at"),
     supabase.from("project_review_assignments").select("id,project_id,projects(name,summary)").eq("judge_id", userId),

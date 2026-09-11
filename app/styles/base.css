@@ -26,4 +26,3 @@ body {
    4. Public surfaces. Auth, landing and legal pages reuse the binder's materials
    so the product does not change identity at the sign-in boundary.
    -------------------------------------------------------------------------- */
-.desk { background: var(--paper-cool) var(--texture-paper) repeat; }

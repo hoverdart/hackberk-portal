@@ -8,7 +8,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .application-locked-note { margin: 0 0 0 auto; color: var(--ink-3); font-size: var(--text-sm); text-align: right; }
 /* Team Match, Project Lens, and Role Ops share the same operational-paper
    vocabulary. The shared mast and sheets keep new role tools composable. */
-.feature-page, .ops-page { background: var(--paper-cool) var(--texture-paper) repeat; padding: clamp(24px, 4vw, 58px); }
+.feature-page, .ops-page { padding: clamp(24px, 4vw, 58px); }
 .feature-mast { max-width: 980px; margin-bottom: 30px; }
 .feature-mast > a { display: inline-flex; min-height: 40px; align-items: center; gap: 8px; color: var(--ink-2); font-weight: 700; text-decoration: none; }
 .feature-mast > a svg { width: 18px; }
@@ -16,7 +16,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .feature-mast > h1 { max-width: 900px; margin: 0; font: 700 clamp(2.3rem, 3.6vw, 3.4rem)/1 var(--font-display); letter-spacing: -.035em; text-wrap: balance; }
 .feature-mast > span { display: block; max-width: 68ch; margin-top: 14px; color: var(--ink-4); font-size: var(--text-lg); line-height: 1.5; }
 .team-layout { display: grid; grid-template-columns: minmax(310px, 430px) minmax(0, 1fr); gap: 20px; align-items: start; }
-.matching-sheet, .current-team, .create-team, .invitations, .match-list, .project-intake, .action-feed, .request-composer, .project-scorecard { position: relative; overflow: hidden; background: var(--paper); box-shadow: var(--shadow-sheet); }
+.matching-sheet, .current-team, .create-team, .invitations, .match-list, .project-intake, .action-feed, .request-composer, .project-scorecard { position: relative; overflow: hidden; border-radius: 5px 5px 8px 8px; background: var(--paper); box-shadow: var(--shadow-sheet); }
 .matching-sheet::before, .project-intake::before, .action-feed::before, .project-scorecard::before { content: ""; position: absolute; inset: 0; background: var(--texture-paper) repeat; opacity: .09; pointer-events: none; }
 .matching-sheet { padding: 30px; }
 /* One panel heading. `SheetHeader` supplies its own bottom margin from the
@@ -47,10 +47,8 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
    generic card device this system explicitly refuses, and DESIGN.md's borders
    are thin, cool and functional. The sheets also take the documented work-sheet
    corners here, which they had been missing. */
-.current-team, .create-team, 
 .current-team { --sheet-accent: var(--ddoski-gold); }
 .create-team { --sheet-accent: var(--ddoski-gold); }
-.request-composer { --sheet-accent: var(--coral); }
 .current-team::after, .create-team::after {
   content: ""; position: absolute; left: 0; top: 0; width: 88px; height: 7px;
   background: var(--sheet-accent);
@@ -88,7 +86,6 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .project-intake > div p { color: var(--ink-4); }
 .project-intake label small { color: var(--ink-4); font: 700 .58rem var(--font-data); letter-spacing: .1em; text-transform: uppercase; }
 .open-lens { grid-column: 2; }
-.lens-page { background: var(--paper-cool) var(--texture-paper) repeat; }
 .lens-page > header, .project-judge > header { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--rule-hair); background: var(--surface-2); padding: 0 clamp(18px, 4vw, 58px); }
 .lens-page > header a, .lens-page > header div, .lens-page > header button, .project-judge > header a { min-height: 42px; display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; color: var(--ink-2); font-weight: 700; text-decoration: none; }
 .lens-page > header svg, .project-judge > header svg { width: 18px; }
@@ -116,7 +113,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .source-viewer > div { max-height: 560px; overflow: auto; }
 .source-viewer .shiki { min-height: 560px; margin: 0; padding: 24px; font-size: var(--text-sm); line-height: 1.65; }
 .ops-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.action-feed, .request-composer, 
+.action-feed, .request-composer { padding: 28px; }
 .action-feed > .sheet-header, .action-feed > ol, .action-feed > .empty-state { position: relative; }
 .action-feed ol { margin: 0; padding: 0; list-style: none; }
 .action-feed li { min-height: 84px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: center; gap: 12px; border-top: 1px solid var(--rule-hair); padding: 13px 0; }
@@ -162,7 +159,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .request-composer fieldset { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; border: 0; padding: 0; }
 .request-composer legend { width: 100%; margin-bottom: 5px; font-weight: 700; }
 .request-composer fieldset label { min-height: 40px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--rule-hair); padding: 8px 10px; }
-.project-judge { background: var(--paper-cool) var(--texture-paper) repeat; padding-bottom: 50px; }
+.project-judge { padding-bottom: 50px; }
 .project-judge > section { background: var(--navy-rail-from); padding: clamp(30px, 5vw, 62px); color: white; }
 .project-judge > section p { margin: 0 0 8px; color: var(--ink-on-navy-2); font: 700 .6rem var(--font-data); letter-spacing: .17em; }
 .project-judge > section h1 { margin: 0; font: 700 clamp(2.2rem, 3.6vw, 3.3rem)/1 var(--font-display); letter-spacing: -.035em; }
@@ -175,7 +172,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
    then the four role rows, because "which roles do I hold" is the question this
    page exists to answer.
    --------------------------------------------------------------------------- */
-.profile-page { display: grid; place-items: start center; background: var(--paper-cool) var(--texture-paper) repeat; padding: clamp(28px, 5vw, 72px) 20px; }
+.profile-page { display: grid; place-items: start center; padding: clamp(28px, 5vw, 72px) 20px; }
 .profile-sheet { position: relative; isolation: isolate; width: min(100%, 780px); overflow: hidden; border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(28px, 5vw, 54px); box-shadow: var(--shadow-sheet); }
 .profile-sheet::before { content: ""; position: absolute; z-index: -1; inset: 0; background: var(--texture-paper) repeat; opacity: .13; mix-blend-mode: multiply; }
 .profile-sheet__header { display: grid; grid-template-columns: 68px minmax(0, 1fr); align-items: center; gap: 18px; padding-bottom: 28px; }

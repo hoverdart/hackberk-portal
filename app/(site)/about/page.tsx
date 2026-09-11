@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Wordmark } from "@/components/ui/wordmark";
 import { ButtonLink } from "@/components/ui/button";
 
 /**
@@ -50,9 +49,9 @@ const workflows = [
       "Judges browse a team's public GitHub repository — README, file tree, syntax-highlighted source — inside a bounded read-only viewer. Submitted code is never executed, and only public repositories are accepted.",
   },
   {
-    name: "Role Ops",
+    name: "Event day",
     detail:
-      "During the event, deadlines, judging assignments, mentor requests, and volunteer shifts share one action-feed language, filtered to the roles you actually hold.",
+      "On the day, each role sees only its own work: deadlines for everyone, assigned projects for judges, open questions for mentors, shifts and checklists for volunteers. Volunteers check in and out, so hours are a record rather than an estimate.",
   },
 ];
 
@@ -86,7 +85,7 @@ const stack = [
   {
     layer: "Interface",
     tech: "Tailwind 4 + authored CSS",
-    why: "Tailwind carries the tokens; the binder's sheets, tabs, stamps, and dockets are hand-authored CSS because they are a material system, not utility combinations.",
+    why: "Tailwind carries the reset and the token bridge; the sheets, tabs and stamps are hand-authored CSS split by concern — tokens, components, one file per surface — because they are a material system, not utility combinations. Every colour is named; none is a literal.",
   },
   {
     layer: "Tests",
@@ -97,17 +96,14 @@ const stack = [
 
 export default function AboutPage() {
   return (
-    <main className="about-page">
-      <header className="about-mast">
-        <Wordmark href="/" />
-        <nav aria-label="Site">
-          <Link href="/">Home</Link>
-          <Link href="/sign-in">Sign in</Link>
-          <ButtonLink variant="primary" size="sm" href="/sign-up">
-            Apply now
-          </ButtonLink>
-        </nav>
-      </header>
+    <main className="about-page about-stage">
+      <nav className="about-mast" aria-label="Site">
+        <Link href="/">Home</Link>
+        <Link href="/sign-in">Sign in</Link>
+        <ButtonLink variant="primary" size="sm" href="/sign-up">
+          Apply now
+        </ButtonLink>
+      </nav>
 
       <article className="about-sheet">
         <h1>A demonstration portal, built the way a real one would be.</h1>
@@ -171,9 +167,9 @@ export default function AboutPage() {
         <section aria-labelledby="about-interface">
           <h2 id="about-interface">The interface system</h2>
           <p>
-            The visual world is an event-operations binder. Organizers running a hackathon work from a stack of paper —
-            role tabs, checklists, stamped statuses, a docket strip along the bottom — and the portal renders that
-            literally rather than reaching for the default floating-card dashboard.
+            Organizers running a hackathon work from a stack of paper — role tabs, checklists, stamped statuses — and
+            the portal renders that literally rather than reaching for the default floating-card dashboard. The
+            vocabulary stays in the design notes: what you read on screen names the job you are doing.
           </p>
           <ul className="about-notes">
             <li>
@@ -187,20 +183,21 @@ export default function AboutPage() {
               role. No status is communicated by color alone — it is always written or shaped as well.
             </li>
             <li>
-              <strong>Type.</strong> Space Grotesk commands, Karla explains, Space Mono keeps the dockets and stamps
+              <strong>Type.</strong> Space Grotesk commands, Karla explains, Space Mono keeps counts and stamps
               accountable, and Encode Sans Semi Condensed carries the active sheet&rsquo;s headline where a narrower
               silhouette protects the composition.
             </li>
             <li>
-              <strong>Motion.</strong> One rehearsed arrival per surface: the navy cover opens, the role tabs seat into
-              their slots, the active sheet is dealt onto the desk, and the status stamp presses last. Everything after
-              arrival is fast, quiet feedback. Under <code>prefers-reduced-motion</code> every travel distance collapses
-              to zero while the fades and state changes remain.
+              <strong>Motion.</strong> One arrival per surface: the role tabs seat into their slots, the active sheet is
+              dealt onto the desk, and the status stamp presses last. It runs on a budget — nothing is invisible past
+              about 220ms — because an earlier version staged the same sequence over 760ms and a page you had already
+              asked for spent most of a second blank. Under <code>prefers-reduced-motion</code> every travel distance
+              collapses to zero while the state changes remain.
             </li>
             <li>
               <strong>Accessibility.</strong> WCAG 2.2 AA is the target: full keyboard operation, a 3px high-contrast
-              focus ring, semantic forms and tables, live regions for status, and a mobile layout that reorders the
-              binder into a work packet rather than shrinking it.
+              focus ring, semantic forms and tables, live regions for status, and a mobile layout that reorders the page
+              into a work packet rather than shrinking it. Verified with axe on every public surface.
             </li>
           </ul>
         </section>
