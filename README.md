@@ -83,8 +83,11 @@ npm run test:e2e    # Playwright, including axe accessibility checks
 ```
 
 `npm run format` applies Prettier to `app`, `components`, `lib` and `tests`.
-`app/globals.css` is deliberately excluded (see `.prettierignore`): it is
-authored as one dense, sectioned system and is read that way.
+The stylesheets in `app/styles/` are deliberately excluded (see
+`.prettierignore`): they are authored as one dense, sectioned system and are read
+that way. The house style that replaces Prettier there is written at the top of
+`app/globals.css`, and its first rule — never more than one CSS rule per line —
+is the one that matters.
 
 Individual steps:
 
@@ -101,4 +104,22 @@ Database tests require Docker. The pgTAP suite covers status transitions, one-or
 npm run db:reset && npm run db:test
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for security boundaries and organizer bootstrap instructions. `PRODUCT.md` records product truth; the final verified interface system will be documented in `DESIGN.md`.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for security and interface
+boundaries and organizer bootstrap instructions. `PRODUCT.md` records product
+truth and [DESIGN.md](DESIGN.md) records the interface system — the palette, the
+component layer, the motion rule and the voice rules, each with the failure that
+produced it.
+
+## Where things live
+
+```
+app/(app)/            every signed-in route, inside one persistent shell
+  (portal)/           applicant, judge, mentor and volunteer surfaces
+  (organizer)/        the application queue, review, event operations
+app/(public)/         sign-in, sign-up, password reset, legal
+app/styles/           tokens, base, components, shell, per-surface, motion, breakpoints
+components/ui/        Button, Dialog, Field, Sheet header, Eyebrow, MessageSheet
+lib/auth/guards.ts    who may see what, including getAcceptedRoles
+lib/data/             one read model per surface, server-only
+supabase/migrations/  the schema, its policies and its triggers
+```

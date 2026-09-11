@@ -36,14 +36,14 @@ Applicants often complete forms between classes or on mobile. Organizers review 
 - One organizer-owned blind review per application and explicit final decisions.
 - Team matching is opt-in, explainable, invitation-based, and capped at four members.
 - Project Lens supports public GitHub repositories only and never executes submitted code.
-- Role Ops combines deadlines, judge assignments, mentor requests, and volunteer shifts.
+- The event-day page shows each person only the work their accepted roles reach: deadlines for everyone, assigned projects for judges, open requests for mentors, shifts and checklists for volunteers.
 - Hosted database credentials remain server-only; client authorization is enforced by grants and RLS.
 
 ## Brand Commitments
 
 The product is for Backathons at Herkeley, a fictional organization. The name is a deliberate near-miss of a real one so this portal can never be mistaken for it; it is a portfolio build whose purpose is to demonstrate the engineering, and every surface says so. Preserve the primary blue, ink navy, Ddoski gold and brown, coral accents, and the established Space Grotesk, Karla, and Space Mono type lineage.
 
-"Run of Show" is the name of the interface world only — an event operations binder expressed through role tabs, credential strips, review stamps, and queue sheets. It is not the product name and must not appear in user-facing copy.
+"Run of Show" is the name of the interface world only — an event operations binder expressed through role tabs, review stamps, and queue sheets. It is not the product name, and neither it nor its vocabulary (docket, desk, runbook, credential, control) may appear in user-facing copy. DESIGN.md's **Voice** section is the operative rule.
 
 ## Evidence on Hand
 

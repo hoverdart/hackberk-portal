@@ -1,100 +1,260 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-09-10T19:52:07Z",
-  "title": "Design System: Hackathons @ Berkeley Portal",
+  "title": "Design System: Backathons at Herkeley Portal",
   "extensions": {
     "colorMeta": {
       "berkeley-blue": {
         "role": "primary",
         "displayName": "Berkeley Working Blue",
         "canonical": "#3d68bb",
-        "tonalRamp": ["oklch(0.15 0.139 262.1)", "oklch(0.27 0.139 262.1)", "oklch(0.39 0.139 262.1)", "oklch(0.51 0.139 262.1)", "oklch(0.63 0.139 262.1)", "oklch(0.75 0.139 262.1)", "oklch(0.87 0.139 262.1)", "oklch(0.95 0.139 262.1)"]
+        "tonalRamp": [
+          "oklch(0.15 0.139 262.1)",
+          "oklch(0.27 0.139 262.1)",
+          "oklch(0.39 0.139 262.1)",
+          "oklch(0.51 0.139 262.1)",
+          "oklch(0.63 0.139 262.1)",
+          "oklch(0.75 0.139 262.1)",
+          "oklch(0.87 0.139 262.1)",
+          "oklch(0.95 0.139 262.1)"
+        ]
       },
       "ink-navy": {
         "role": "primary",
         "displayName": "Operations Ink Navy",
         "canonical": "#0a2457",
-        "tonalRamp": ["oklch(0.15 0.098 262.0)", "oklch(0.27 0.098 262.0)", "oklch(0.39 0.098 262.0)", "oklch(0.51 0.098 262.0)", "oklch(0.63 0.098 262.0)", "oklch(0.75 0.098 262.0)", "oklch(0.87 0.098 262.0)", "oklch(0.95 0.098 262.0)"]
+        "tonalRamp": [
+          "oklch(0.15 0.098 262.0)",
+          "oklch(0.27 0.098 262.0)",
+          "oklch(0.39 0.098 262.0)",
+          "oklch(0.51 0.098 262.0)",
+          "oklch(0.63 0.098 262.0)",
+          "oklch(0.75 0.098 262.0)",
+          "oklch(0.87 0.098 262.0)",
+          "oklch(0.95 0.098 262.0)"
+        ]
       },
       "paper": {
         "role": "neutral",
         "displayName": "Active Paper",
         "canonical": "#f6f7f3",
-        "tonalRamp": ["oklch(0.15 0.005 117.9)", "oklch(0.27 0.005 117.9)", "oklch(0.39 0.005 117.9)", "oklch(0.51 0.005 117.9)", "oklch(0.63 0.005 117.9)", "oklch(0.75 0.005 117.9)", "oklch(0.87 0.005 117.9)", "oklch(0.95 0.005 117.9)"]
+        "tonalRamp": [
+          "oklch(0.15 0.005 117.9)",
+          "oklch(0.27 0.005 117.9)",
+          "oklch(0.39 0.005 117.9)",
+          "oklch(0.51 0.005 117.9)",
+          "oklch(0.63 0.005 117.9)",
+          "oklch(0.75 0.005 117.9)",
+          "oklch(0.87 0.005 117.9)",
+          "oklch(0.95 0.005 117.9)"
+        ]
       },
       "paper-cool": {
         "role": "neutral",
         "displayName": "Cool Desk Paper",
         "canonical": "#e9eef2",
-        "tonalRamp": ["oklch(0.15 0.008 241.7)", "oklch(0.27 0.008 241.7)", "oklch(0.39 0.008 241.7)", "oklch(0.51 0.008 241.7)", "oklch(0.63 0.008 241.7)", "oklch(0.75 0.008 241.7)", "oklch(0.87 0.008 241.7)", "oklch(0.95 0.008 241.7)"]
+        "tonalRamp": [
+          "oklch(0.15 0.008 241.7)",
+          "oklch(0.27 0.008 241.7)",
+          "oklch(0.39 0.008 241.7)",
+          "oklch(0.51 0.008 241.7)",
+          "oklch(0.63 0.008 241.7)",
+          "oklch(0.75 0.008 241.7)",
+          "oklch(0.87 0.008 241.7)",
+          "oklch(0.95 0.008 241.7)"
+        ]
       },
       "paper-warm": {
         "role": "neutral",
         "displayName": "Warm Filing Paper",
         "canonical": "#efe3cc",
-        "tonalRamp": ["oklch(0.15 0.033 83.7)", "oklch(0.27 0.033 83.7)", "oklch(0.39 0.033 83.7)", "oklch(0.51 0.033 83.7)", "oklch(0.63 0.033 83.7)", "oklch(0.75 0.033 83.7)", "oklch(0.87 0.033 83.7)", "oklch(0.95 0.033 83.7)"]
+        "tonalRamp": [
+          "oklch(0.15 0.033 83.7)",
+          "oklch(0.27 0.033 83.7)",
+          "oklch(0.39 0.033 83.7)",
+          "oklch(0.51 0.033 83.7)",
+          "oklch(0.63 0.033 83.7)",
+          "oklch(0.75 0.033 83.7)",
+          "oklch(0.87 0.033 83.7)",
+          "oklch(0.95 0.033 83.7)"
+        ]
       },
       "ddoski-gold": {
         "role": "secondary",
         "displayName": "Ddoski Tab Gold",
         "canonical": "#ca841d",
-        "tonalRamp": ["oklch(0.15 0.137 69.9)", "oklch(0.27 0.137 69.9)", "oklch(0.39 0.137 69.9)", "oklch(0.51 0.137 69.9)", "oklch(0.63 0.137 69.9)", "oklch(0.75 0.137 69.9)", "oklch(0.87 0.137 69.9)", "oklch(0.95 0.137 69.9)"]
+        "tonalRamp": [
+          "oklch(0.15 0.137 69.9)",
+          "oklch(0.27 0.137 69.9)",
+          "oklch(0.39 0.137 69.9)",
+          "oklch(0.51 0.137 69.9)",
+          "oklch(0.63 0.137 69.9)",
+          "oklch(0.75 0.137 69.9)",
+          "oklch(0.87 0.137 69.9)",
+          "oklch(0.95 0.137 69.9)"
+        ]
       },
       "ddoski-brown": {
         "role": "secondary",
         "displayName": "Ddoski Binder Brown",
         "canonical": "#ab5e18",
-        "tonalRamp": ["oklch(0.15 0.126 56.6)", "oklch(0.27 0.126 56.6)", "oklch(0.39 0.126 56.6)", "oklch(0.51 0.126 56.6)", "oklch(0.63 0.126 56.6)", "oklch(0.75 0.126 56.6)", "oklch(0.87 0.126 56.6)", "oklch(0.95 0.126 56.6)"]
+        "tonalRamp": [
+          "oklch(0.15 0.126 56.6)",
+          "oklch(0.27 0.126 56.6)",
+          "oklch(0.39 0.126 56.6)",
+          "oklch(0.51 0.126 56.6)",
+          "oklch(0.63 0.126 56.6)",
+          "oklch(0.75 0.126 56.6)",
+          "oklch(0.87 0.126 56.6)",
+          "oklch(0.95 0.126 56.6)"
+        ]
       },
       "coral": {
         "role": "tertiary",
         "displayName": "Cue Coral",
         "canonical": "#e26d5a",
-        "tonalRamp": ["oklch(0.15 0.150 30.9)", "oklch(0.27 0.150 30.9)", "oklch(0.39 0.150 30.9)", "oklch(0.51 0.150 30.9)", "oklch(0.63 0.150 30.9)", "oklch(0.75 0.150 30.9)", "oklch(0.87 0.150 30.9)", "oklch(0.95 0.150 30.9)"]
+        "tonalRamp": [
+          "oklch(0.15 0.150 30.9)",
+          "oklch(0.27 0.150 30.9)",
+          "oklch(0.39 0.150 30.9)",
+          "oklch(0.51 0.150 30.9)",
+          "oklch(0.63 0.150 30.9)",
+          "oklch(0.75 0.150 30.9)",
+          "oklch(0.87 0.150 30.9)",
+          "oklch(0.95 0.150 30.9)"
+        ]
       },
       "success": {
         "role": "tertiary",
         "displayName": "Completion Green",
         "canonical": "#237a57",
-        "tonalRamp": ["oklch(0.15 0.099 162.2)", "oklch(0.27 0.099 162.2)", "oklch(0.39 0.099 162.2)", "oklch(0.51 0.099 162.2)", "oklch(0.63 0.099 162.2)", "oklch(0.75 0.099 162.2)", "oklch(0.87 0.099 162.2)", "oklch(0.95 0.099 162.2)"]
+        "tonalRamp": [
+          "oklch(0.15 0.099 162.2)",
+          "oklch(0.27 0.099 162.2)",
+          "oklch(0.39 0.099 162.2)",
+          "oklch(0.51 0.099 162.2)",
+          "oklch(0.63 0.099 162.2)",
+          "oklch(0.75 0.099 162.2)",
+          "oklch(0.87 0.099 162.2)",
+          "oklch(0.95 0.099 162.2)"
+        ]
       },
       "danger": {
         "role": "tertiary",
         "displayName": "Exception Red",
         "canonical": "#b23935",
-        "tonalRamp": ["oklch(0.15 0.158 26.1)", "oklch(0.27 0.158 26.1)", "oklch(0.39 0.158 26.1)", "oklch(0.51 0.158 26.1)", "oklch(0.63 0.158 26.1)", "oklch(0.75 0.158 26.1)", "oklch(0.87 0.158 26.1)", "oklch(0.95 0.158 26.1)"]
+        "tonalRamp": [
+          "oklch(0.15 0.158 26.1)",
+          "oklch(0.27 0.158 26.1)",
+          "oklch(0.39 0.158 26.1)",
+          "oklch(0.51 0.158 26.1)",
+          "oklch(0.63 0.158 26.1)",
+          "oklch(0.75 0.158 26.1)",
+          "oklch(0.87 0.158 26.1)",
+          "oklch(0.95 0.158 26.1)"
+        ]
       },
       "focus": {
         "role": "tertiary",
         "displayName": "Keyboard Gold",
         "canonical": "#ffd166",
-        "tonalRamp": ["oklch(0.15 0.135 86.1)", "oklch(0.27 0.135 86.1)", "oklch(0.39 0.135 86.1)", "oklch(0.51 0.135 86.1)", "oklch(0.63 0.135 86.1)", "oklch(0.75 0.135 86.1)", "oklch(0.87 0.135 86.1)", "oklch(0.95 0.135 86.1)"]
+        "tonalRamp": [
+          "oklch(0.15 0.135 86.1)",
+          "oklch(0.27 0.135 86.1)",
+          "oklch(0.39 0.135 86.1)",
+          "oklch(0.51 0.135 86.1)",
+          "oklch(0.63 0.135 86.1)",
+          "oklch(0.75 0.135 86.1)",
+          "oklch(0.87 0.135 86.1)",
+          "oklch(0.95 0.135 86.1)"
+        ]
       }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Single-message landing and feature statements." },
-      "headline": { "displayName": "Active Sheet Headline", "purpose": "The current role, work item, and state on the principal sheet." },
-      "title": { "displayName": "Operational Title", "purpose": "Shell greetings, panels, and named work sections." },
-      "body": { "displayName": "Working Copy", "purpose": "Instructions, explanations, answers, and field content." },
-      "label": { "displayName": "Docket Label", "purpose": "Metadata, stamps, step counters, and provenance." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Single-message landing and feature statements."
+      },
+      "headline": {
+        "displayName": "Active Sheet Headline",
+        "purpose": "The current role, work item, and state on the principal sheet."
+      },
+      "title": {
+        "displayName": "Operational Title",
+        "purpose": "Shell greetings, panels, and named work sections."
+      },
+      "body": {
+        "displayName": "Working Copy",
+        "purpose": "Instructions, explanations, answers, and field content."
+      },
+      "label": {
+        "displayName": "Docket Label",
+        "purpose": "Metadata, stamps, step counters, and provenance."
+      }
     },
     "shadows": [
-      { "name": "active-sheet", "value": "0 18px 42px rgb(10 36 87 / 18%)", "purpose": "Separates the principal paper work surface from the cool desk field." },
-      { "name": "queued-sheet", "value": "0 12px 28px rgb(10 36 87 / 12%)", "purpose": "Keeps secondary role sheets legible without competing with active work." },
-      { "name": "control-rest", "value": "0 9px 20px rgb(30 83 171 / 18%)", "purpose": "Gives the primary action a restrained resting lift." },
-      { "name": "control-hover", "value": "0 12px 24px rgb(30 83 171 / 24%)", "purpose": "Confirms primary-control hover with a small increase in lift." },
-      { "name": "modal-sheet", "value": "0 30px 90px rgb(0 12 35 / 35%)", "purpose": "Places confirmation work above the temporary navy veil." }
+      {
+        "name": "active-sheet",
+        "value": "0 18px 42px rgb(10 36 87 / 18%)",
+        "purpose": "Separates the principal paper work surface from the cool desk field."
+      },
+      {
+        "name": "queued-sheet",
+        "value": "0 12px 28px rgb(10 36 87 / 12%)",
+        "purpose": "Keeps secondary role sheets legible without competing with active work."
+      },
+      {
+        "name": "control-rest",
+        "value": "0 9px 20px rgb(30 83 171 / 18%)",
+        "purpose": "Gives the primary action a restrained resting lift."
+      },
+      {
+        "name": "control-hover",
+        "value": "0 12px 24px rgb(30 83 171 / 24%)",
+        "purpose": "Confirms primary-control hover with a small increase in lift."
+      },
+      {
+        "name": "modal-sheet",
+        "value": "0 30px 90px rgb(0 12 35 / 35%)",
+        "purpose": "Places confirmation work above the temporary navy veil."
+      }
     ],
     "motion": [
-      { "name": "control-response", "value": "180ms cubic-bezier(.2,.8,.2,1)", "purpose": "Primary-control lift and immediate state feedback." },
-      { "name": "role-tab-shift", "value": "220ms cubic-bezier(.2,.8,.2,1)", "purpose": "Small tab movement that preserves orientation between roles." },
-      { "name": "progress-advance", "value": "500ms cubic-bezier(.2,.8,.2,1)", "purpose": "Communicates saved application progress without delaying work." },
-      { "name": "sheet-arrive", "value": "300ms cubic-bezier(.2,.8,.2,1)", "purpose": "Brings a confirmation sheet into the active layer." },
-      { "name": "reduced-motion", "value": "0.01ms", "purpose": "Effectively removes transitions and animations when reduced motion is requested." }
+      {
+        "name": "control-response",
+        "value": "180ms cubic-bezier(.2,.8,.2,1)",
+        "purpose": "Primary-control lift and immediate state feedback."
+      },
+      {
+        "name": "role-tab-shift",
+        "value": "220ms cubic-bezier(.2,.8,.2,1)",
+        "purpose": "Small tab movement that preserves orientation between roles."
+      },
+      {
+        "name": "progress-advance",
+        "value": "500ms cubic-bezier(.2,.8,.2,1)",
+        "purpose": "Communicates saved application progress without delaying work."
+      },
+      {
+        "name": "sheet-arrive",
+        "value": "300ms cubic-bezier(.2,.8,.2,1)",
+        "purpose": "Brings a confirmation sheet into the active layer."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "Effectively removes transitions and animations when reduced motion is requested."
+      }
     ],
     "breakpoints": [
-      { "name": "binder-collapse", "value": "950px" },
-      { "name": "mobile-work-packet", "value": "620px" }
+      {
+        "name": "binder-collapse",
+        "value": "950px"
+      },
+      {
+        "name": "mobile-work-packet",
+        "value": "620px"
+      }
     ]
   },
   "components": [
@@ -103,7 +263,7 @@
       "kind": "button",
       "refersTo": "button-primary",
       "description": "The single next action inside an active work area.",
-      "html": "<button class=\"ds-btn-primary\">Continue application <span aria-hidden=\"true\">→</span></button>",
+      "html": "<button class=\"ds-btn-primary\">Continue application <span aria-hidden=\"true\">\u2192</span></button>",
       "css": ".ds-btn-primary { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: .75rem; border: 0; border-radius: 3px; background: var(--berkeley-blue, #3d68bb); color: #fff; padding: .75rem 1.5rem; font: 700 1rem/1 var(--font-body, Karla, sans-serif); box-shadow: 0 9px 20px rgb(30 83 171 / 18%); cursor: pointer; transition: transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease, background 180ms ease; } .ds-btn-primary:hover { background: #2f5caa; transform: translateY(-1px); box-shadow: 0 12px 24px rgb(30 83 171 / 24%); } .ds-btn-primary:focus-visible { outline: 3px solid var(--focus, #ffd166); outline-offset: 3px; } .ds-btn-primary:active { transform: translateY(0); }"
     },
     {
@@ -151,7 +311,7 @@
       "kind": "card",
       "refersTo": "card-active-sheet",
       "description": "The principal paper surface that owns the current role, state, and next action.",
-      "html": "<article class=\"ds-active-sheet\"><div class=\"ds-sheet-docket\"><span>HACKATHONS @ BERKELEY</span><span>APPLICATION 2027—01</span></div><h2>Hacker application — in progress</h2><p>Complete your logistics information.</p><a href=\"#\">Continue application →</a></article>",
+      "html": "<article class=\"ds-active-sheet\"><div class=\"ds-sheet-docket\"><span>HACKATHONS @ BERKELEY</span><span>APPLICATION 2027\u201401</span></div><h2>Hacker application \u2014 in progress</h2><p>Complete your logistics information.</p><a href=\"#\">Continue application \u2192</a></article>",
       "css": ".ds-active-sheet { position: relative; overflow: hidden; max-width: 680px; border-radius: 5px 5px 8px 8px; background: var(--paper, #f6f7f3); color: var(--ink-navy, #0a2457); padding: 30px 42px 36px; box-shadow: 0 18px 42px rgb(10 36 87 / 18%); font-family: var(--font-body, Karla, sans-serif); } .ds-sheet-docket { display: flex; justify-content: space-between; gap: 20px; border-bottom: 1px solid #768ba4; padding-bottom: 8px; color: #294d79; font: 700 .56rem/1 var(--font-data, 'Space Mono', monospace); letter-spacing: .2em; } .ds-active-sheet h2 { margin: 22px 0 8px; font: 700 2.5rem/1.05 var(--font-comp, 'Encode Sans Semi Condensed', sans-serif); letter-spacing: -.025em; } .ds-active-sheet p { color: #58708f; } .ds-active-sheet a { min-height: 44px; display: inline-flex; align-items: center; margin-top: 12px; border-radius: 3px; background: var(--berkeley-blue, #3d68bb); color: #fff; padding: .75rem 1.5rem; font-weight: 700; text-decoration: none; box-shadow: 0 9px 20px rgb(30 83 171 / 18%); } .ds-active-sheet a:hover { background: #2f5caa; transform: translateY(-1px); } .ds-active-sheet a:focus-visible { outline: 3px solid var(--focus, #ffd166); outline-offset: 3px; }"
     },
     {
@@ -175,17 +335,61 @@
       "Responsive transformation from layered desktop binder to ordered mobile work packet."
     ],
     "rules": [
-      { "name": "The Working Blue Rule", "body": "Berkeley blue marks the active responsibility or primary action; ink navy supplies the frame and authority around it.", "section": "colors" },
-      { "name": "The Coral Is a Signal Rule", "body": "Coral is rare and informationally meaningful, reserved for alerts, synthetic-data provenance, or a narrow accent edge rather than broad decoration.", "section": "colors" },
-      { "name": "The Status Has Meaning Rule", "body": "Success and danger colors communicate a state only when the same state is also written in text or carried by a recognizable symbol.", "section": "colors" },
-      { "name": "The Docket Voice Rule", "body": "Space Mono is metadata, not body copy: keep it short, usually uppercase, and visibly tracked.", "section": "typography" },
-      { "name": "The Command Before Explanation Rule", "body": "The Space Grotesk or condensed headline names the job; Karla immediately supplies the detail needed to complete it.", "section": "typography" },
-      { "name": "The One Active Sheet Rule", "body": "One role and one next action dominate; other responsibilities remain visible but structurally queued.", "section": "layout" },
-      { "name": "The Unfold, Do Not Shrink Rule", "body": "Mobile preserves role, task, evidence, and next cue by changing order and topology rather than scaling down desktop geometry.", "section": "layout" },
-      { "name": "The Paper Stack Rule", "body": "Elevation explains which sheet is active or temporarily above the work; it is never ambient decoration.", "section": "elevation" },
-      { "name": "The Texture at Whisper Volume Rule", "body": "Paper fiber stays low-opacity and never competes with text, controls, or thin rules.", "section": "elevation" },
-      { "name": "The Cut, Not Bubble Rule", "body": "Use small radii for controls and sheets; use a full circle only for a seal, marker, avatar, or count.", "section": "shapes" },
-      { "name": "The Rule Carries Structure Rule", "body": "Prefer one meaningful divider or clipped edge to another rounded container.", "section": "shapes" }
+      {
+        "name": "The Working Blue Rule",
+        "body": "Berkeley blue marks the active responsibility or primary action; ink navy supplies the frame and authority around it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Coral Is a Signal Rule",
+        "body": "Coral is rare and informationally meaningful, reserved for alerts, synthetic-data provenance, or a narrow accent edge rather than broad decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Status Has Meaning Rule",
+        "body": "Success and danger colors communicate a state only when the same state is also written in text or carried by a recognizable symbol.",
+        "section": "colors"
+      },
+      {
+        "name": "The Docket Voice Rule",
+        "body": "Space Mono is metadata, not body copy: keep it short, usually uppercase, and visibly tracked.",
+        "section": "typography"
+      },
+      {
+        "name": "The Command Before Explanation Rule",
+        "body": "The Space Grotesk or condensed headline names the job; Karla immediately supplies the detail needed to complete it.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Active Sheet Rule",
+        "body": "One role and one next action dominate; other responsibilities remain visible but structurally queued.",
+        "section": "layout"
+      },
+      {
+        "name": "The Unfold, Do Not Shrink Rule",
+        "body": "Mobile preserves role, task, evidence, and next cue by changing order and topology rather than scaling down desktop geometry.",
+        "section": "layout"
+      },
+      {
+        "name": "The Paper Stack Rule",
+        "body": "Elevation explains which sheet is active or temporarily above the work; it is never ambient decoration.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Texture at Whisper Volume Rule",
+        "body": "Paper fiber stays low-opacity and never competes with text, controls, or thin rules.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Cut, Not Bubble Rule",
+        "body": "Use small radii for controls and sheets; use a full circle only for a seal, marker, avatar, or count.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Rule Carries Structure Rule",
+        "body": "Prefer one meaningful divider or clipped edge to another rounded container.",
+        "section": "shapes"
+      }
     ],
     "dos": [
       "Do preserve one unmistakable primary action within the active work sheet.",

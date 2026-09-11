@@ -1,24 +1,53 @@
 ---
 name: "Backathons at Herkeley Portal"
-description: "A live event-operations binder that keeps every role oriented to its next cue."
+description: "An event operations portal that keeps every role oriented to its next action."
 colors:
   berkeley-blue: "#3d68bb"
+  primary-hover: "#2f5caa"
   ink-navy: "#0a2457"
+  navy-rail-from: "#082856"
+  navy-rail-to: "#07376f"
+  rail-current: "#245da9"
+  rail-current-edge: "#62a2ff"
   paper: "#f6f7f3"
   paper-cool: "#e9eef2"
   paper-warm: "#efe3cc"
+  paper-white: "#fcfdfa"
+  surface-0: "#f0f4f6"
+  surface-2: "#f8faf9"
+  surface-3: "#e6ebee"
   ddoski-gold: "#ca841d"
   ddoski-brown: "#ab5e18"
   coral: "#e26d5a"
   success: "#237a57"
+  success-ink: "#146b5f"
   danger: "#b23935"
+  danger-ink: "#8d332c"
+  danger-border: "#a6443d"
+  danger-tint: "#f8ebe9"
+  warn-ink: "#9a6415"
+  warn-mark: "#cf900d"
   focus: "#ffd166"
+  link: "#1b5db8"
+  link-strong: "#174d94"
   ink-2: "#3d5878"
   ink-3: "#456785"
   ink-4: "#4f6b88"
-  paper-white: "#fcfdfa"
+  ink-on-navy: "#dbe8fa"
+  ink-on-navy-2: "#9fbde2"
   rule: "#9aaec6"
   rule-hair: "#c4cfd8"
+  rule-strong: "#8095ad"
+  selected-bg: "#2869c3"
+  selected-border: "#2363bb"
+  field-focus: "#296fd6"
+  tint-blue: "#e8f0fc"
+  track: "#dce3ea"
+  role-hacker: "#2a6ac6"
+  role-hacker-tint: "#dce7f7"
+  role-judge-tint: "#f4ede0"
+  role-mentor-tint: "#e9d0a7"
+  role-volunteer-tint: "#f2c6bd"
 typography:
   display:
     fontFamily: "Space Grotesk, sans-serif"
@@ -57,57 +86,44 @@ rounded:
   sheet: "5px 5px 8px 8px"
   tab: "9px 9px 0 0"
   round: "999px"
-spacing:
-  xs: "8px"
-  sm: "12px"
-  md: "18px"
-  lg: "24px"
-  xl: "30px"
-  sheet: "42px"
-  section: "48px"
 components:
   button-primary:
     backgroundColor: "{colors.berkeley-blue}"
     textColor: "#ffffff"
-    typography: "{typography.body}"
     rounded: "{rounded.control}"
-    padding: "0.75rem 1.5rem"
+    padding: "0.7rem 1.4rem"
     height: "44px"
-  button-primary-hover:
-    backgroundColor: "#2f5caa"
-    textColor: "#ffffff"
-    typography: "{typography.body}"
+  button-secondary:
+    backgroundColor: "transparent"
+    borderColor: "{colors.ink-4}"
+    textColor: "{colors.ink-navy}"
     rounded: "{rounded.control}"
-    padding: "0.75rem 1.5rem"
+    height: "44px"
+  button-ghost:
+    backgroundColor: "transparent"
+    textColor: "{colors.link}"
+    height: "44px"
+  button-danger:
+    backgroundColor: "transparent"
+    borderColor: "{colors.danger-border}"
+    textColor: "{colors.danger-ink}"
     height: "44px"
   input-default:
-    backgroundColor: "#fcfdfa"
+    backgroundColor: "{colors.paper-white}"
     textColor: "{colors.ink-navy}"
-    typography: "{typography.body}"
     rounded: "{rounded.control}"
     padding: "12px 14px"
     height: "48px"
+  eyebrow:
+    textColor: "{colors.ink-3}"
+    fontSize: "0.6rem"
+    letterSpacing: "0.18em"
   nav-active:
-    backgroundColor: "#245da9"
+    backgroundColor: "{colors.rail-current}"
     textColor: "#ffffff"
-    typography: "{typography.body}"
     rounded: "0"
     padding: "0 24px"
     height: "48px"
-  role-tab-hacker:
-    backgroundColor: "#2a6ac6"
-    textColor: "#ffffff"
-    typography: "{typography.label}"
-    rounded: "{rounded.tab}"
-    padding: "7px 22px"
-    height: "102px"
-  role-tab-mentor:
-    backgroundColor: "#e9d0a7"
-    textColor: "#714018"
-    typography: "{typography.label}"
-    rounded: "{rounded.tab}"
-    padding: "7px 22px 7px 34px"
-    height: "76px"
   card-active-sheet:
     backgroundColor: "{colors.paper}"
     textColor: "{colors.ink-navy}"
@@ -115,17 +131,9 @@ components:
     padding: "30px 42px 24px"
   status-stamp-draft:
     backgroundColor: "transparent"
-    textColor: "#9a6415"
+    textColor: "{colors.warn-ink}"
     typography: "{typography.label}"
-    rounded: "0"
     padding: "7px 10px"
-  event-docket:
-    backgroundColor: "#f9fbfc"
-    textColor: "{colors.ink-navy}"
-    typography: "{typography.body}"
-    rounded: "0"
-    padding: "10px 22px"
-    height: "74px"
 ---
 
 # Design System: Backathons at Herkeley Portal
@@ -134,14 +142,14 @@ components:
 
 **Creative North Star: "The Live Run of Show Binder"**
 
-The portal turns an event-operations binder into a working interface: a navy control rail frames cool paper sheets, role tabs expose the account's parallel responsibilities, and docket labels, ruled checklists, progress seals, and status stamps make state legible at a glance. It is operational and tactile, with the confidence of a staffed event desk rather than the neutrality of a generic software dashboard.
+The portal turns an event-operations binder into a working interface: a navy control rail frames cool paper sheets, role tabs expose the account's parallel responsibilities, and ruled checklists, progress seals, and status stamps make state legible at a glance. The metaphor names the materials, never the product: see **Voice**. It is operational and tactile, with the confidence of a staffed event desk rather than the neutrality of a generic software dashboard.
 
 The visual hierarchy always answers three questions in order: which role is active, what work is active, and what comes next. Brand character comes from disciplined material cues, Berkeley blue and navy fields, Ddoski gold-brown warmth, restrained coral signals, compact operational type, and small pieces of commissioned line art. Expression never obscures status, authorization, or the primary action.
 
 **Key Characteristics:**
 
 - One dominant active work sheet with other role sheets visibly queued.
-- Cool paper, ink rules, clipped credentials, circular seals, and stamped state language.
+- Cool paper, ink rules, circular seals, and stamped state language.
 - Berkeley navy and blue structure warmed by Ddoski gold, brown, and restrained coral.
 - Dense but calm operational typography with strong docket-level metadata.
 - Purposeful motion that preserves orientation and disappears under reduced motion.
@@ -194,6 +202,15 @@ divider such as a sheet header or section boundary, and **Hairline** (`rule-hair
 
 ### Named Rules
 
+**The Every Colour Is Named Rule.** No hex literal appears outside
+`app/styles/tokens.css`. This is the rule the system most recently failed: the
+stylesheet declared seventeen tokens and then carried about a hundred and sixty
+literal values across a hundred and thirty-six distinct colours. The navy rail
+was not `--ink-navy`. The link blue was written fourteen different ways. The same
+cool blue-grey divider appeared under eighteen spellings while `--rule` and
+`--rule-hair` sat unused. If a colour needs to exist, it needs a name, and giving
+it one forces its role to be decided rather than approximated.
+
 **The Ink Ramp Rule.** Supporting text picks a step from the ramp; it never
 introduces a new mid-tone. The ramp exists because the same semantic role was once
 written fifty different ways, twenty-three of which failed AA on cool paper.
@@ -219,10 +236,10 @@ written fifty different ways, twenty-three of which failed AA on cool paper.
 - **Headline** (700, `clamp(2rem, 2.6vw, 2.8rem)`, 1.05): the active work-sheet title and status phrase.
 - **Title** (700, `1.35rem`, 1.1): shell greetings, panel titles, and operational section names.
 - **Body** (400–600, `1rem`, 1.5): instructions, answers, field copy, and next-action explanations; keep explanatory reading measures around 62–72 characters.
-Small text uses four steps — `--text-xs` .72rem, `--text-sm` .82rem, `--text-md`
-.95rem, `--text-lg` 1.1rem — rather than a bespoke size per component. Display
-sizes stay literal per surface, because those are composition decisions rather
-than a ramp.
+  Small text uses four steps — `--text-xs` .72rem, `--text-sm` .82rem, `--text-md`
+  .95rem, `--text-lg` 1.1rem — rather than a bespoke size per component. Display
+  sizes stay literal per surface, because those are composition decisions rather
+  than a ramp.
 
 - **Label** (700, `0.52rem–0.65rem`, `0.12em–0.20em`, uppercase): dockets, table headings, provenance labels, step counters, and compact status language.
 
@@ -278,67 +295,154 @@ Borders are thin, cool blue-gray, and functional. Docket rules, checklist divide
 
 ## Components
 
-### Buttons
+Everything in this section lives in `components/ui/`. The governing rule came out
+of a real failure and is worth stating before the parts:
 
-- **Shape:** compact rectangular control with a slight radius (`3px`) and a minimum touch height of `44px`.
-- **Primary:** Berkeley Working Blue with white text, strong Karla weight, and `0.75rem 1.5rem` padding; use for the single next action in a work area.
-- **Hover / Focus:** lift by `1px`, deepen the blue and shadow over `180ms`; the global visible focus outline is `3px` Keyboard Gold with a `3px` offset.
-- **Secondary / Ghost:** transparent with an ink or blue-gray stroke; destructive variants use Exception Red in both text and border.
-- **Disabled:** lower opacity, remove lift and shadow, and retain the written label.
+**The Containers Own Layout, Components Own Appearance Rule.** A page may set a
+component's `display`, `gap`, `justify-content` or margin. It may never set its
+colour, border, radius or type. Before this rule there were eight unrelated
+button treatments, most of them defined by an ancestor selector — and
+`.rubric-actions button { background: transparent }` at specificity (0,1,1)
+silently outranked `.primary-button { background: blue }` at (0,1,0), while
+`.rubric-actions .primary-button { color: white }` at (0,2,0) won the colour.
+The primary action of the review screen rendered as white text on pale paper.
+Keying variants on the control itself keeps every rule flat, so a container
+cannot win that fight again.
 
-### Chips
+### Buttons — `Button`, `ButtonLink`
 
-- **Style:** selectable choices are tight paper rectangles with a cool blue-gray stroke, 3px corners, and at least 44px height rather than pills.
-- **State:** selection shifts to a pale blue paper field with a stronger Berkeley-blue border, blue ink, and bold text; native checkbox state remains present.
+- **Shape:** a compact rectangle at `3px` radius with a `44px` minimum height
+  (`40px` at `size="sm"`).
+- **Primary:** Berkeley Working Blue on white, for the single next action in a
+  work area. Hover lifts 1px and deepens to `primary-hover`.
+- **Secondary:** transparent with an `ink-4` stroke; hover takes `tint-blue`.
+- **Ghost:** no stroke, `link` text. For a navigation that is not the main action.
+- **Danger:** `danger-border` stroke and `danger-ink` text, for withdraw, recuse
+  and reject.
+- **Retinting:** a surface that genuinely needs another colour sets `--btn-bg`,
+  `--btn-fg` or `--btn-border` on itself rather than adding a variant.
+- **Disabled:** half opacity, no lift, no shadow, and the written label stays.
+- `ButtonLink` is the same control when the action is a navigation, so a link
+  never has to impersonate a button.
 
-### Cards / Containers
+### Sheet headers — `SheetHeader`, `Eyebrow`
 
-- **Corner Style:** work sheets use subtly varied outer corners (`5px 5px 8px 8px`); supporting sheets and tables stay nearly square.
-- **Background:** Active Paper over Cool Desk Paper, with warm filing paper reserved for role context.
-- **Shadow Strategy:** follow the Paper Stack Rule; the active surface carries the strongest resting shadow.
-- **Border:** thin blue-gray rules mark sheet headers, rows, dockets, and secondary edges.
-- **Internal Padding:** active desktop sheets use about `42px`; supporting modules commonly use `18–30px`; mobile work areas reduce to `18–20px`.
+One icon treatment: flex, vertically centred, `10px` gap, the glyph fixed at
+`24px`. There used to be three, and the most common one was
+`<h2><Icon /> Title</h2>` with no alignment at all — which renders the icon as an
+inline replaced element sitting on the text baseline, so its bottom edge lines up
+with the bottom of the letters while the cap-height floats well above it.
 
-### Inputs / Fields
+`Eyebrow` is the small tracked label, at one size (`0.6rem`) and one tracking
+(`0.18em`). **The Eyebrow Must Earn Its Line Rule:** use it only when it says
+something the heading does not. Fifty-one of these were once written by hand
+across eighteen positional selectors, nearly all of them decoration above a
+heading that already read clearly; most were deleted rather than converted.
 
-- **Style:** near-white paper fill, cool blue-gray 1px stroke, 3px corners, Karla text, and a 48px minimum height.
-- **Focus:** shift the border to blue and add a restrained 3px blue halo while preserving the global Keyboard Gold focus indication for keyboard users.
-- **Error / Disabled:** Exception Red changes the stroke and error copy; disabled field groups recede in opacity without hiding their values.
+### Dialogs — `Dialog`
+
+`role="dialog"`, `aria-modal`, a focus trap, Escape to dismiss, and focus
+returned to the control that opened it. Focus lands on the dismissing button, not
+the confirming one, so a stray Return cancels rather than commits.
+
+### Fields and chips
+
+- **Fields:** near-white fill, cool blue-grey stroke, `3px` corners, `48px`
+  minimum height. Focus shifts the border to `field-focus` with a restrained 3px
+  halo while keeping the global Keyboard Gold ring for keyboard users.
+- **Chips:** tight paper rectangles rather than pills, at least 44px high.
+  Selection takes `tint-blue` with a `selected-border` stroke and bold text; the
+  native checkbox state remains present.
+
+### Feeds and message sheets
+
+`ActionFeed` renders every queue in the product — deadlines, judging, help
+requests, shifts, submitted projects, the audit trail — as a marker, a title, a
+detail and at most one action, so no two queues drift into two different lists.
+`MessageSheet` is the single-message surface for empty states and dead ends.
+Both require their empty copy rather than accepting a blank panel.
 
 ### Navigation
 
-- **Style:** a deep navy rail with 48px rows, light ink, line icons, and Karla labels; the active row gains a brighter blue field and a 5px light-blue registration bar.
-- **Hover / Active:** hover introduces an 8% white wash; active state remains visible without hover and is reinforced by `aria-current`.
-- **Mobile:** collapse to a short top mast that retains the wordmark and highest-priority destinations as 44px-safe icon controls.
+A deep navy rail with 48px rows, light ink and Karla labels; the active row takes
+`rail-current` with a 5px `rail-current-edge` registration bar and `aria-current`.
+**The rail shows only what the account can actually do:** destinations are gated
+on the roles a person has been accepted for, so a judge does not carry a Teams
+tab they can never use. It collapses to a 64px top mast at 950px.
 
-### Role Tabs
+### Role tabs, stamps and seals
 
-Role tabs are the signature orientation control. The active hacker tab rises to `102px` in saturated Berkeley blue; queued roles step down through warm paper and coral materials, use clipped leading edges, and expose their icon, role name, and three-word operational purpose. On mobile all four become equal-height, fully labeled tabs so role choice remains explicit without the desktop overlap.
+Role tabs are the dashboard's orientation control: the active role rises to
+`102px` in saturated blue and the queued roles step down through the warm role
+tints with clipped leading edges. Status stamps use a 2px current-colour border,
+Space Mono, uppercase and a `-8deg` rotation. Progress is a conic seal with the
+value at centre. Never rely on colour alone — every one of these pairs its colour
+with words.
 
-### Status Stamps and Progress Seals
+## Motion
 
-Stamps use a 2px current-color border, Space Mono, uppercase text, and a restrained `-8deg` rotation. Progress uses a circular conic seal with the numeric value at center; checklist states pair a written status with a shaped or symbolic marker. Never rely on color alone.
+**The Shell Owns Every Entrance Rule.** An entrance animation may only be
+attached to DOM the persistent shell owns. Routed content gets no entrance
+keyframes at all; its only arrival motion is the `.route-change` view transition.
 
-### Event Docket
+This is the system's second load-bearing correction. Every surface used to have a
+rehearsed arrival — the cover opened, the tabs seated, the sheet was dealt, the
+stamp pressed last — built from keyframes starting at `opacity: 0` with
+`animation-fill-mode: both` and delays running out to 760ms. Those elements mount
+fresh on every navigation, so the stage was genuinely blank for most of a second
+after every click, and the whole sequence replayed on every Server Action as
+well, because `useActionState` submits inside a React transition. It read as the
+page flashing.
 
-The footer docket is a compact, ruled strip for the next event, deadline, team state, detail link, and synthetic-data provenance. It stays fixed to the bottom of the desktop stage when space permits and becomes an in-flow, vertically grouped record on mobile.
+The rail and the Campanile mount once per page load and keep their entrances.
+Dialogs keep theirs, because they are genuinely on-demand mounts. Everything
+else is bare. `--motion-shift` scales every remaining distance and reduced motion
+sets it to `0`, which keeps state changes while removing all travel.
+
+## Voice
+
+**The Name The Job Rule.** Copy says what the reader is doing. The interface
+world is called a run-of-show binder in this document and nowhere else: `docket`,
+`desk`, `runbook`, `credential`, `control` and `handoff` are vocabulary for
+describing the design, and every one of them had leaked into product copy — the
+sign-in page was once headed "Open your runbook". Schema words leak the same way;
+"records", "capacity and ownership" and "deterministic" are not things a reader
+is doing either.
+
+Corollaries: an empty state says what would appear here and why it has not;
+an error says what did not happen and what is still intact; nothing invents
+institutional detail, which is why a fabricated founding year and three invented
+mottos were deleted from a product that states elsewhere that the organisation is
+fictional.
 
 ## Do's and Don'ts
 
 ### Do:
 
 - **Do** preserve one unmistakable primary action within the active work sheet.
-- **Do** keep role context visible through tabs or explicit mobile role labels while another role is active.
-- **Do** use cool paper, thin ink rules, docket labels, and restrained structural shadows as one coherent material system.
-- **Do** pair every colored status with text or a recognizable symbol and retain the 3px Keyboard Gold focus outline.
-- **Do** transform desktop layering into an ordered mobile work packet at the established 950px and 620px breakpoints.
-- **Do** label all synthetic event data with persistent coral provenance language.
+- **Do** name every colour in `app/styles/tokens.css` before using it.
+- **Do** let containers set layout and components set appearance.
+- **Do** show a person only the destinations their accepted roles actually reach.
+- **Do** pair every coloured status with text or a recognizable symbol, and keep
+  the 3px Keyboard Gold focus outline.
+- **Do** write copy that names the reader's job.
+- **Do** transform desktop layering into an ordered mobile work packet at the
+  established 950px and 620px breakpoints.
+- **Do** label synthetic event data as sample data.
 
 ### Don't:
 
-- **Don't** replace the binder topology with a generic floating-card dashboard grid.
-- **Don't** use glassmorphism, gradient meshes, neon accents, decorative analytics charts, or excessive rounding.
-- **Don't** let the mascot, paper texture, handwriting, or line art obscure live data or controls.
+- **Don't** write a hex literal outside the token file.
+- **Don't** style a control from its container — that is how a primary button
+  became invisible.
+- **Don't** attach an entrance animation to routed content.
+- **Don't** add an eyebrow above a heading that already reads clearly.
+- **Don't** let this document's vocabulary — binder, docket, sheet, stamp —
+  appear in user-facing copy.
+- **Don't** use glassmorphism, gradient meshes, neon accents, decorative
+  analytics charts, or excessive rounding.
 - **Don't** use coral as a broad background or decoration; it is a scarce signal.
-- **Don't** communicate application, review, or system state through color alone.
-- **Don't** shrink desktop sheets until their content becomes unreadable; reorder and restack them instead.
+- **Don't** communicate application, review, or system state through colour alone.
+- **Don't** invent institutional detail — founding years, mottos, counts.
+- **Don't** shrink desktop sheets until their content becomes unreadable; reorder
+  and restack them instead.
