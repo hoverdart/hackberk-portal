@@ -78,9 +78,20 @@ export async function signInAction(_: AuthActionState, formData: FormData): Prom
   if (!parsed.success) return validationError(parsed.error);
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { status: "error", message: "We could not sign you in. Check your email and password." };
-  redirect("/dashboard");
+  // Send organizers directly to their dedicated control room instead of briefly
+  // rendering an applicant URL and relying on a second redirect to correct it.
+  const { data: organizerMembership } = data.user
+    ? await supabase
+        .from("staff_members")
+        .select("id")
+        .eq("user_id", data.user.id)
+        .eq("role", "organizer")
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
+  redirect(organizerMembership ? "/organizer/applications" : "/dashboard");
 }
 
 /**

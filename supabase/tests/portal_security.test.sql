@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
-select plan(12);
+select plan(14);
 
 -- Stable synthetic identities keep every policy assertion readable and leave no
 -- residue because the file runs inside a transaction.
@@ -16,11 +16,13 @@ insert into auth.users (id, email, raw_user_meta_data) values
   ('10000000-0000-4000-8000-000000000007', 'teammate-b@example.test', '{"full_name":"Teammate B"}'),
   ('10000000-0000-4000-8000-000000000008', 'teammate-c@example.test', '{"full_name":"Teammate C"}'),
   ('10000000-0000-4000-8000-000000000009', 'teammate-d@example.test', '{"full_name":"Teammate D"}'),
-  ('10000000-0000-4000-8000-000000000010', 'test-organizer@example.test', '{"full_name":"Test Organizer"}');
+  ('10000000-0000-4000-8000-000000000010', 'test-organizer@example.test', '{"full_name":"Test Organizer"}'),
+  ('10000000-0000-4000-8000-000000000011', 'organizer-two@example.test', '{"full_name":"Organizer Two"}');
 
 insert into public.staff_members (event_id, user_id, role, created_by) values
   ('00000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 'organizer', '10000000-0000-4000-8000-000000000002'),
-  ('00000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', 'reviewer', '10000000-0000-4000-8000-000000000002');
+  ('00000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', 'reviewer', '10000000-0000-4000-8000-000000000002'),
+  ('00000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000011', 'organizer', '10000000-0000-4000-8000-000000000002');
 
 insert into public.applications (id, event_id, applicant_id, role, status) values
   ('20000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'hacker', 'submitted'),
@@ -34,9 +36,6 @@ insert into public.applications (id, event_id, applicant_id, role, status) value
 insert into public.application_answers (application_id, section_key, answers, is_identity_sensitive) values
   ('20000000-0000-4000-8000-000000000001', 'identity', '{"school":"Cal"}', true),
   ('20000000-0000-4000-8000-000000000001', 'motivation', '{"why":"Build together"}', false);
-insert into public.review_assignments (id, application_id, reviewer_id, assigned_by) values
-  ('30000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000002');
-
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000005', true);
 set local role authenticated;
 select results_eq(
@@ -59,9 +58,9 @@ select results_eq(
 
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000003', true);
 select results_eq(
-  $$select section_key from public.application_answers where application_id = '20000000-0000-4000-8000-000000000001' order by section_key$$,
-  $$values ('motivation'::text)$$,
-  'assigned application reviewers receive only blind answers'
+  $$select count(*)::bigint from public.application_answers where application_id = '20000000-0000-4000-8000-000000000001'$$,
+  $$values (0::bigint)$$,
+  'legacy reviewer accounts cannot access organizer blind-review data'
 );
 
 reset role;
@@ -97,20 +96,26 @@ select results_eq(
   'an unassigned account cannot read a submitted project'
 );
 select throws_ok(
-  $$select public.assign_application_reviewer('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003')$$,
+  $$select public.claim_application_review('20000000-0000-4000-8000-000000000001')$$,
   'Organizer access required',
-  'a non-organizer cannot assign application reviewers'
+  'a non-organizer cannot claim an organizer blind review'
 );
 
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000002', true);
 select lives_ok(
-  $$select public.assign_application_reviewer('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002')$$,
-  'an organizer can assign an eligible event staff member'
+  $$select public.claim_application_review('20000000-0000-4000-8000-000000000001')$$,
+  'an organizer can claim the one blind review'
 );
 select results_eq(
   $$select status from public.applications where id = '20000000-0000-4000-8000-000000000001'$$,
   $$values ('under_review'::public.application_status)$$,
-  'the first assignment advances a submitted application to review'
+  'the organizer claim advances a submitted application to review'
+);
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000011', true);
+select throws_ok(
+  $$select public.claim_application_review('20000000-0000-4000-8000-000000000001')$$,
+  'Each application may have one active organizer review',
+  'a second organizer cannot create a second active blind review'
 );
 
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000010', true);

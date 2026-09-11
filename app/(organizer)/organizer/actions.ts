@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { requireEventStaff, requireOrganizer } from "@/lib/auth/guards";
+import { requireOrganizer } from "@/lib/auth/guards";
 import { parseRubric } from "@/lib/reviews/rubric";
 import {
   reviewIdSchema,
@@ -25,15 +25,14 @@ import type { Json } from "@/lib/supabase/database.types";
  */
 
 /**
- * Assign a reviewer to an application.
+ * Claim the one organizer-owned blind review for an application.
  *
- * Delegates to the `assign_application_reviewer` function in Postgres rather than
- * inserting directly, so the rules — two reviewers maximum, no self-assignment,
- * no duplicates — live next to the data and hold for every caller.
+ * The database owns the race-sensitive parts: one active claim, organizer-only
+ * access, and the transition into review. The action deliberately accepts no
+ * reviewer id, so an organizer can never assign somebody else through this UI.
  */
-export async function assignReviewerAction(applicationIdValue: string, reviewerIdValue: string) {
+export async function claimReviewAction(applicationIdValue: string) {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
-  const reviewerId = reviewIdSchema.parse(reviewerIdValue);
   const supabase = await createClient();
   const { data: application } = await supabase
     .from("applications")
@@ -42,16 +41,13 @@ export async function assignReviewerAction(applicationIdValue: string, reviewerI
     .single();
   if (!application) redirect("/organizer/applications?error=missing");
   await requireOrganizer(application.event_id);
-  const { error } = await supabase.rpc("assign_application_reviewer", {
-    target_application: applicationId,
-    target_reviewer: reviewerId,
-  });
-  if (error) redirect(`/organizer/applications/${applicationId}/review?error=assign`);
+  const { error } = await supabase.rpc("claim_application_review", { target_application: applicationId });
+  if (error) redirect(`/organizer/applications/${applicationId}/review?error=claim`);
   revalidatePath(`/organizer/applications/${applicationId}/review`);
 }
 
 /**
- * Save or submit one reviewer's scores.
+ * Save or submit the claiming organizer's scores.
  *
  * The assignment lookup filters on `reviewer_id` as well as the assignment id, so
  * a staff member cannot post to somebody else's assignment by guessing its id.
@@ -68,18 +64,19 @@ export async function saveReviewAction(
 ): Promise<ReviewActionState> {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
   const assignmentId = reviewIdSchema.parse(assignmentIdValue);
-  const reviewer = await requireEventStaff();
   const supabase = await createClient();
+  const { data: application } = await supabase.from("applications").select("event_id").eq("id", applicationId).single();
+  if (!application) return { status: "error", message: "This application is no longer available." };
+  const organizer = await requireOrganizer(application.event_id);
   const { data: assignment } = await supabase
     .from("review_assignments")
     .select("id,reviewer_id,status,application_id")
     .eq("id", assignmentId)
     .eq("application_id", applicationId)
-    .eq("reviewer_id", reviewer.id)
+    .eq("reviewer_id", organizer.id)
     .maybeSingle();
   if (!assignment || assignment.status === "conflict")
     return { status: "error", message: "This review assignment is not available." };
-  const { data: application } = await supabase.from("applications").select("event_id").eq("id", applicationId).single();
   const { data: event } = application
     ? await supabase.from("events").select("application_rubric").eq("id", application.event_id).single()
     : { data: null };
@@ -99,7 +96,7 @@ export async function saveReviewAction(
   const payload = {
     assignment_id: assignmentId,
     application_id: applicationId,
-    reviewer_id: reviewer.id,
+    reviewer_id: organizer.id,
     scores: scores as Json,
     recommendation: recommendation.success ? recommendation.data : null,
     private_notes: String(formData.get("privateNotes") ?? "").slice(0, 5000),
@@ -110,7 +107,7 @@ export async function saveReviewAction(
   revalidatePath(`/organizer/applications/${applicationId}/review`);
   return {
     status: submit ? "submitted" : "saved",
-    message: submit ? "Independent review submitted and locked." : "Review draft saved.",
+    message: submit ? "Organizer blind review submitted and locked." : "Review draft saved.",
   };
 }
 
@@ -123,27 +120,27 @@ export async function saveReviewAction(
 export async function reportConflictAction(applicationIdValue: string, assignmentIdValue: string, formData: FormData) {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
   const assignmentId = reviewIdSchema.parse(assignmentIdValue);
-  const reviewer = await requireEventStaff();
+  const supabase = await createClient();
+  const { data: application } = await supabase.from("applications").select("event_id").eq("id", applicationId).single();
+  if (!application) redirect("/organizer/applications?error=missing");
+  const organizer = await requireOrganizer(application.event_id);
   const reason = String(formData.get("reason") ?? "")
     .trim()
     .slice(0, 1000);
   if (!reason) redirect(`/organizer/applications/${applicationId}/review?error=conflict-reason`);
-  const supabase = await createClient();
   await supabase
     .from("review_assignments")
     .update({ status: "conflict", conflict_reason: reason })
     .eq("id", assignmentId)
-    .eq("reviewer_id", reviewer.id);
+    .eq("reviewer_id", organizer.id);
   revalidatePath(`/organizer/applications/${applicationId}/review`);
 }
 
 /**
  * Record the final decision on an application.
  *
- * Separate from the reviews on purpose: reviewers recommend, an organizer
- * decides. The status transition is validated by a database trigger, so an
- * illegal move (deciding an application that was never submitted, for instance)
- * fails in Postgres.
+ * The same organizer role owns both the blind rubric and final decision. Postgres
+ * requires its submitted blind review before any terminal status can be recorded.
  */
 export async function decideApplicationAction(applicationIdValue: string, decisionValue: string) {
   const applicationId = reviewIdSchema.parse(applicationIdValue);
@@ -156,7 +153,10 @@ export async function decideApplicationAction(applicationIdValue: string, decisi
     target_application: applicationId,
     target_decision: decision,
   });
-  if (error) redirect(`/organizer/applications/${applicationId}/review?error=decision`);
+  if (error) {
+    const errorCode = error.message.includes("One submitted organizer review") ? "one-review-required" : "decision";
+    redirect(`/organizer/applications/${applicationId}/review?error=${errorCode}`);
+  }
   revalidatePath("/organizer/applications");
   redirect(`/organizer/applications/${applicationId}/review?success=decision`);
 }

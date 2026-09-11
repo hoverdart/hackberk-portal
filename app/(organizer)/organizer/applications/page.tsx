@@ -41,7 +41,7 @@ export default async function OrganizerApplicationsPage({ searchParams }: PagePr
         <div>
           <p>ORGANIZER · APPLICATION CONTROL</p>
           <h1>Application queue</h1>
-          <span>{queue.count.toLocaleString()} records · two-reviewer blind grading</span>
+          <span>{queue.count.toLocaleString()} records · single-organizer blind grading</span>
         </div>
         <Link className="export-link" href={`/organizer/applications/export?${exportQuery}`}>
           <Download aria-hidden />
@@ -90,10 +90,10 @@ export default async function OrganizerApplicationsPage({ searchParams }: PagePr
                 </td>
                 <td>
                   <span className="review-meter">
-                    <i style={{ width: `${(row.submitted_reviews / 2) * 100}%` }} />
+                    <i style={{ width: `${Math.min(row.submitted_reviews, 1) * 100}%` }} />
                   </span>
                   <small>
-                    {row.submitted_reviews}/2 submitted · {row.assigned_reviewers}/2 assigned
+                    {row.submitted_reviews}/1 submitted · {row.assigned_reviewers}/1 assigned
                   </small>
                 </td>
                 <td>{row.aggregate_score ? `${row.aggregate_score} / 5` : "—"}</td>

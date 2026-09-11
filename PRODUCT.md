@@ -33,7 +33,7 @@ Applicants often complete forms between classes or on mobile. Organizers review 
 - Multi-event schema with one seeded synthetic Backathons at Herkeley event.
 - Immediate-session email/password authentication with cookie-based server rendering.
 - Separate, versioned applications for hacker, judge, mentor, and volunteer roles.
-- Two independent blind organizer reviews per application and explicit final decisions.
+- One organizer-owned blind review per application and explicit final decisions.
 - Team matching is opt-in, explainable, invitation-based, and capped at four members.
 - Project Lens supports public GitHub repositories only and never executes submitted code.
 - Role Ops combines deadlines, judge assignments, mentor requests, and volunteer shifts.

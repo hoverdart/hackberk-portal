@@ -17,7 +17,7 @@ describe("blind-review scoring", () => {
     ).toBeNull();
   });
 
-  it("applies rubric weights across submitted independent reviews", () => {
+  it("applies rubric weights to a submitted organizer blind review", () => {
     expect(
       aggregateSubmittedReviews(
         [

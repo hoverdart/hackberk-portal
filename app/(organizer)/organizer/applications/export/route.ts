@@ -40,19 +40,21 @@ export async function GET(request: NextRequest) {
     );
   const { data, error } = await query;
   if (error) return NextResponse.json({ error: "Export could not be generated." }, { status: 500 });
-  const headers = [
-    "application_id",
-    "applicant_name",
-    "role",
-    "status",
-    "submitted_at",
-    "assigned_reviewers",
-    "submitted_reviews",
-    "aggregate_score",
-  ];
+  // Keep the exported terminology aligned with the single-organizer workflow
+  // while retaining the stable view column name behind the API.
+  const columns = [
+    { source: "application_id", header: "application_id" },
+    { source: "applicant_name", header: "applicant_name" },
+    { source: "role", header: "role" },
+    { source: "status", header: "status" },
+    { source: "submitted_at", header: "submitted_at" },
+    { source: "assigned_reviewers", header: "assigned_organizer_reviews" },
+    { source: "submitted_reviews", header: "submitted_organizer_reviews" },
+    { source: "aggregate_score", header: "aggregate_score" },
+  ] as const;
   const csv = [
-    headers.join(","),
-    ...(data ?? []).map((row) => headers.map((key) => csvCell(row[key as keyof typeof row])).join(",")),
+    columns.map(({ header }) => header).join(","),
+    ...(data ?? []).map((row) => columns.map(({ source }) => csvCell(row[source])).join(",")),
   ].join("\n");
   return new NextResponse(csv, {
     headers: {

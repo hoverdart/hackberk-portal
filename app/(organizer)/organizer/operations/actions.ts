@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireOrganizer } from "@/lib/auth/guards";
+import { parseEventDateTime } from "@/lib/formatters/event-time";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -15,15 +16,13 @@ import { createClient } from "@/lib/supabase/server";
  */
 
 const idSchema = z.string().uuid();
-const shiftSchema = z
-  .object({
-    title: z.string().trim().min(3).max(120),
-    location: z.string().trim().min(2).max(160),
-    startsAt: z.coerce.date(),
-    endsAt: z.coerce.date(),
-    capacity: z.coerce.number().int().min(1).max(500),
-  })
-  .refine((shift) => shift.startsAt < shift.endsAt, { message: "Shift end must follow its start." });
+const shiftSchema = z.object({
+  title: z.string().trim().min(3).max(120),
+  location: z.string().trim().min(2).max(160),
+  startsAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/),
+  endsAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/),
+  capacity: z.coerce.number().int().min(1).max(500),
+});
 
 /**
  * Assign a judge to a project.
@@ -74,12 +73,23 @@ export async function createVolunteerShiftAction(eventIdValue: string, formData:
   });
   if (!parsed.success) redirect("/organizer/operations?error=shift-validation");
   const supabase = await createClient();
+  const { data: event } = await supabase.from("events").select("timezone").eq("id", eventId).maybeSingle();
+  if (!event) redirect("/organizer/operations?error=shift");
+  let startsAt: Date;
+  let endsAt: Date;
+  try {
+    startsAt = parseEventDateTime(parsed.data.startsAt, event.timezone);
+    endsAt = parseEventDateTime(parsed.data.endsAt, event.timezone);
+  } catch {
+    redirect("/organizer/operations?error=shift-validation");
+  }
+  if (startsAt >= endsAt) redirect("/organizer/operations?error=shift-validation");
   const { error } = await supabase.from("volunteer_shifts").insert({
     event_id: eventId,
     title: parsed.data.title,
     location: parsed.data.location,
-    starts_at: parsed.data.startsAt.toISOString(),
-    ends_at: parsed.data.endsAt.toISOString(),
+    starts_at: startsAt.toISOString(),
+    ends_at: endsAt.toISOString(),
     capacity: parsed.data.capacity,
     checklist: [],
   });

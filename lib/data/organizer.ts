@@ -42,7 +42,7 @@ export async function getApplicationQueue(eventId: string, filters: QueueFilters
 }
 
 /**
- * Everything one reviewer needs to review one application — and nothing more.
+ * Everything the claiming organizer needs to review one application — and nothing more.
  *
  * This is the blind-review boundary. The answers query filters
  * `is_identity_sensitive = false`, so the applicant's name, school, graduation
@@ -50,11 +50,11 @@ export async function getApplicationQueue(eventId: string, filters: QueueFilters
  * the browser. Hiding them in the component would not be equivalent: the data
  * would still be in the page payload for anyone who opened devtools.
  *
- * `assignments` (all reviewers) is separate from `ownAssignment` (this reviewer)
- * because the page shows review *progress* — how many of the two required reviews
- * are done — while only ever letting you edit your own.
+ * `assignments` contains the one active claim and `ownAssignment` identifies the
+ * current organizer's claim. Keeping those separate lets a different organizer
+ * see that an application is unavailable without exposing who claimed it.
  */
-export async function getReviewWorkspace(applicationId: string, reviewerId: string) {
+export async function getReviewWorkspace(applicationId: string, organizerId: string) {
   const supabase = await createClient();
   const { data: application } = await supabase
     .from("applications")
@@ -69,12 +69,17 @@ export async function getReviewWorkspace(applicationId: string, reviewerId: stri
       .select("section_key,answers")
       .eq("application_id", applicationId)
       .eq("is_identity_sensitive", false),
-    supabase.from("review_assignments").select("id,reviewer_id,status").eq("application_id", applicationId),
+    supabase
+      .from("review_assignments")
+      .select("id,reviewer_id,status")
+      .eq("application_id", applicationId)
+      .neq("status", "conflict"),
     supabase
       .from("review_assignments")
       .select("id,status,conflict_reason")
       .eq("application_id", applicationId)
-      .eq("reviewer_id", reviewerId)
+      .eq("reviewer_id", organizerId)
+      .neq("status", "conflict")
       .maybeSingle(),
   ]);
   const { data: review } = ownAssignment

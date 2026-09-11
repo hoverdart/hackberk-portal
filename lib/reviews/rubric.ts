@@ -51,7 +51,7 @@ export function aggregateSubmittedReviews(
   const submitted = reviews.filter((review) => review.status === "submitted");
   if (submitted.length === 0 || criteria.length === 0) return null;
   const totalWeight = criteria.reduce((sum, criterion) => sum + criterion.weight, 0);
-  // A criterion the reviewer never scored contributes 0 rather than breaking the sum.
+  // A criterion the organizer did not score contributes 0 rather than breaking the sum.
   const perReview = submitted.map(
     (review) =>
       criteria.reduce((sum, criterion) => sum + (review.scores[criterion.key] ?? 0) * criterion.weight, 0) /

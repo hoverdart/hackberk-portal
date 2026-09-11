@@ -31,12 +31,12 @@ const workflows = [
   {
     name: "Blind organizer review",
     detail:
-      "Every submitted application is read twice, independently, by organizers who cannot see the applicant's name, school, or demographic answers. The review packet is assembled server-side, so the identifying fields are never sent to the browser in the first place.",
+      "Every submitted application receives one accountable organizer blind review. The review packet is assembled server-side, so the applicant's name, school, and demographic answers are never sent to the review browser in the first place.",
   },
   {
     name: "Explicit decisions",
     detail:
-      "Two blind reviews resolve into one recorded decision with a rubric trail. Nothing is accepted or rejected implicitly, and a decision always names the reviewers behind it.",
+      "One organizer blind review resolves into one recorded decision with a rubric trail. Nothing is accepted or rejected implicitly, and every decision retains its accountable organizer review.",
   },
   {
     name: "Team Match",

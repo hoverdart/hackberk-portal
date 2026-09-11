@@ -10,7 +10,7 @@ export async function getOrganizerOperations(eventId: string) {
   const [event, projects, judges, mentorRequests, shifts, audit] = await Promise.all([
     supabase
       .from("events")
-      .select("id,name,venue,starts_at,ends_at,applications_close_at,is_synthetic")
+      .select("id,name,venue,timezone,starts_at,ends_at,applications_close_at,is_synthetic")
       .eq("id", eventId)
       .single(),
     supabase
@@ -43,12 +43,43 @@ export async function getOrganizerOperations(eventId: string) {
       .order("created_at", { ascending: false })
       .limit(50),
   ]);
+  // `audit_log.entity_id` is deliberately polymorphic, so resolve only the
+  // application rows named by this bounded audit page. Fetching the whole event
+  // roster here would turn a 50-row activity feed into an unbounded read.
+  const auditedApplicationIds = [
+    ...new Set(
+      (audit.data ?? []).filter((entry) => entry.entity_type === "application").map((entry) => entry.entity_id),
+    ),
+  ];
+  const { data: auditedApplications } = auditedApplicationIds.length
+    ? await supabase
+        .from("applications")
+        .select("id,role,profiles(full_name,preferred_name)")
+        .in("id", auditedApplicationIds)
+    : { data: [] };
+  const applicationsById = new Map(
+    (auditedApplications ?? []).map((application) => {
+      const profile = application.profiles as unknown as { full_name: string; preferred_name: string | null } | null;
+      return [
+        application.id,
+        {
+          id: application.id,
+          role: application.role,
+          applicantName: profile?.preferred_name || profile?.full_name || "Applicant",
+        },
+      ];
+    }),
+  );
+
   return {
     event: event.data,
     projects: projects.data ?? [],
     judges: judges.data ?? [],
     mentorRequests: mentorRequests.data ?? [],
     shifts: shifts.data ?? [],
-    audit: audit.data ?? [],
+    audit: (audit.data ?? []).map((entry) => ({
+      ...entry,
+      application: applicationsById.get(entry.entity_id) ?? null,
+    })),
   };
 }

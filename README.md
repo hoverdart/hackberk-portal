@@ -95,7 +95,7 @@ npm test
 npm run build
 ```
 
-Database tests require Docker. The pgTAP suite covers status transitions, team capacity, organizer and reviewer access, blind-answer filtering, judge project scope, and cross-user RLS denial:
+Database tests require Docker. The pgTAP suite covers status transitions, one-organizer blind-review claims, team capacity, organizer access, blind-answer filtering, judge project scope, and cross-user RLS denial:
 
 ```bash
 npm run db:reset && npm run db:test

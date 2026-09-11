@@ -6,14 +6,15 @@ The portal is a multi-event Next.js App Router application backed by Supabase Au
 
 - `profiles` contains shared identity data. One user can own one `applications` row per event and role.
 - `application_answers.is_identity_sensitive` separates applicant identity from blind-review content.
-- `staff_members` is the only organizer/reviewer authority. Bootstrap it through an administrative database connection, never auth metadata.
-- `review_assignments` is capped at two rows per application. A submitted `application_reviews` row is independent from the other reviewer.
+- `staff_members` is the only organizer authority for application grading. Bootstrap it through an administrative database connection, never auth metadata.
+- `review_assignments` has one active organizer-owned row per application. A submitted `application_reviews` row is its auditable blind rubric record; a conflict releases the application for another organizer to claim.
 - Team Match is accepted-hacker-only. Ranking is deterministic and explainable; transactional functions and row locks enforce one team per event and four people per team.
 - Project Lens accepts only canonical public `github.com/{owner}/{repository}` URLs. The server constructs GitHub API destinations, enforces time and byte limits, caches metadata, renders source as escaped highlighted text, and never executes repository code.
 - Project review assignments require an accepted judge application for the same event. Judges can read only submitted projects explicitly assigned to them.
 - Mentor claims and volunteer shift joins are transactional; shift joins lock capacity before insertion.
 - Team, project, mentor, and shift tables share the event foreign key so the same components and policies support future events.
-- audit rows are append-only from application code; decisions preserve before/after state and actor identity.
+- audit rows are append-only from the application-status trigger; decisions preserve before/after state and actor identity.
+- Organizer shift forms interpret browser `datetime-local` values in the event's IANA time zone before storing UTC instants, so a local operational time cannot drift with the server's time zone.
 
 ## Route boundaries
 

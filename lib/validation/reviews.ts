@@ -3,10 +3,9 @@ import { z } from "zod";
 /**
  * Validation for the organizer review form.
  *
- * A reviewer may recommend one of three outcomes — note that this is narrower
- * than `applicationStatuses`. A reviewer recommends; only a final decision, made
- * separately, moves the application. `under_review` and `withdrawn` are therefore
- * not recommendable.
+ * An organizer blind review may recommend one of three outcomes — narrower than
+ * `applicationStatuses`. The recommendation supports a separately recorded final
+ * decision, so `under_review` and `withdrawn` are not recommendable.
  */
 export const reviewRecommendationSchema = z.enum(["accepted", "waitlisted", "rejected"]);
 

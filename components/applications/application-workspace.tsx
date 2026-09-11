@@ -18,8 +18,9 @@ import { initialApplicationState } from "@/lib/validation/applications";
  *
  * A Client Component because the step navigation and local draft storage are
  * genuinely interactive. Everything that touches data still runs in Server
- * Actions — this component holds no application state of its own beyond which
- * step is on screen.
+ * Actions. It keeps only ephemeral UI state: the visible step, local
+ * completeness indicators, and a pending navigation intent. Answers remain in
+ * the form controls until an explicit account save.
  *
  * The section heading tells the applicant whether the answers they are typing are
  * identity-sensitive and therefore withheld from blind reviewers. That promise is
@@ -167,8 +168,8 @@ export function ApplicationWorkspace({
             </small>
           )}
         </div>
-        {/* Keep each section mounted. An editor's short autosave can then finish
-            when someone moves to the next section immediately after typing. */}
+        {/* Keep each section mounted so local drafts and unsaved controls survive
+            step navigation while the active section is explicitly saved. */}
         {sections.map((candidate, index) => (
           <SectionEditor
             key={candidate.key}
@@ -711,6 +712,8 @@ function isComplete(section: SectionDefinition, values: Record<string, unknown> 
   return section.fields
     .filter((field) => field.required)
     .every((field) =>
-      Array.isArray(values[field.key]) ? (values[field.key] as unknown[]).length > 0 : Boolean(values[field.key]),
+      Array.isArray(values[field.key])
+        ? (values[field.key] as unknown[]).length > 0
+        : String(values[field.key] ?? "").trim().length > 0,
     );
 }

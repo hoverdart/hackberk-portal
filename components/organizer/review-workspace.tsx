@@ -16,8 +16,8 @@ import { initialReviewState } from "@/lib/validation/reviews";
  * not in this component's props and never reach the browser. Do not add a lookup
  * here to "enrich" the display; that would defeat the entire mechanism.
  *
- * `canDecide` is separate from being able to review: a reviewer scores, and only
- * an organizer resolves the reviews into a decision.
+ * One organizer owns this blind rubric and records the final decision after it
+ * is submitted. Identity-sensitive answers still never reach this component.
  */
 
 type ReviewWorkspaceProps = {
@@ -45,9 +45,9 @@ export function ReviewWorkspace({
   canDecide,
   notice,
 }: ReviewWorkspaceProps) {
-  // A submitted review is final, and declaring a conflict withdraws you from this
-  // application — either way the form becomes read-only rather than disappearing,
-  // so the reviewer can still see what they recorded.
+  // A submitted review is final, and declaring a conflict releases the assignment
+  // — either way the form becomes read-only rather than disappearing, so the
+  // organizer can still see what they recorded.
   const locked = review?.status === "submitted" || assignment.status === "conflict";
   const [showConflict, setShowConflict] = useState(false);
   const saveAction = saveReviewAction.bind(null, application.id, assignment.id, false);
@@ -77,7 +77,7 @@ export function ReviewWorkspace({
             STATUS <strong>{application.status.replaceAll("_", " ")}</strong>
           </span>
           <span>
-            REVIEWS <strong>{submittedReviewCount}/2 submitted</strong>
+            REVIEW <strong>{submittedReviewCount}/1 submitted</strong>
           </span>
           <span>
             AGGREGATE <strong>{aggregate ? `${aggregate.toFixed(2)} / 5` : "Hidden until submission"}</strong>
@@ -106,8 +106,8 @@ export function ReviewWorkspace({
         </article>
         <form action={saveFormAction} className="rubric-sheet">
           <fieldset disabled={locked || saving || submitting}>
-            <p>INDEPENDENT RUBRIC</p>
-            <h2>Your review</h2>
+            <p>ORGANIZER RUBRIC</p>
+            <h2>Blind evaluation</h2>
             {criteria.map((criterion) => (
               <fieldset className="rubric-row" key={criterion.key}>
                 <legend>
@@ -191,12 +191,14 @@ function DecisionBar({ applicationId, reviewCount }: { applicationId: string; re
       <div>
         <p>FINAL DECISION</p>
         <strong>
-          {reviewCount < 2 ? "Two independent reviews are required." : "Both reviews are in. Choose the final status."}
+          {reviewCount < 1
+            ? "Submit the organizer blind review before deciding."
+            : "Blind review submitted. Choose the final status."}
         </strong>
       </div>
       {(["accepted", "waitlisted", "rejected"] as const).map((decision) => (
         <form key={decision} action={decideApplicationAction.bind(null, applicationId, decision)}>
-          <button type="submit" disabled={reviewCount < 2}>
+          <button type="submit" disabled={reviewCount < 1}>
             {decision === "accepted" ? "Accept" : decision === "waitlisted" ? "Waitlist" : "Reject"}
           </button>
         </form>

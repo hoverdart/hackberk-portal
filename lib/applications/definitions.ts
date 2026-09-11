@@ -27,8 +27,8 @@ export type FieldDefinition = {
  * `identitySensitive` is the important flag. Sections marked true are stored with
  * `is_identity_sensitive = true` and are excluded from the blind review packet by
  * the query in `lib/data/organizer.ts`. This is where the blind-review promise is
- * actually configured — mark a section wrong and identifying answers reach
- * reviewers.
+ * actually configured — mark a section wrong and identifying answers reach the
+ * organizer blind-review packet.
  */
 export type SectionDefinition = {
   key: string;
@@ -41,7 +41,7 @@ export type SectionDefinition = {
 const commonProfile: SectionDefinition = {
   key: "profile",
   title: "Profile",
-  summary: "Identity and eligibility details. Hidden from blind reviewers.",
+  summary: "Identity and eligibility details. Hidden from the organizer blind review.",
   identitySensitive: true,
   fields: [
     { key: "school", label: "School or organization", type: "text", required: true, maxLength: 160 },

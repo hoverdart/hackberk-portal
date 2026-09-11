@@ -9,6 +9,7 @@ import {
 import { requireOrganizer } from "@/lib/auth/guards";
 import { getOrganizerOperations } from "@/lib/data/organizer-ops";
 import { MessageSheet } from "@/components/ui/message-sheet";
+import { formatEventDateTime, formatShiftRange } from "@/lib/formatters/event-time";
 
 /**
  * The organizer control sheet: judge assignment, mentor triage, shifts, audit.
@@ -32,6 +33,7 @@ export default async function OrganizerOperationsPage({
         back={{ href: "/organizer/applications", label: "Return to the application queue" }}
       />
     );
+  const event = data.event;
 
   return (
     <main className="organizer-page">
@@ -44,7 +46,7 @@ export default async function OrganizerOperationsPage({
           <p>ORGANIZER · EVENT CONTROL</p>
           <h1>Operations docket</h1>
           <span>
-            {data.event.name} · {data.event.venue}
+            {event.name} · {event.venue}
           </span>
         </div>
         <Link className="export-link" href="/dashboard">
@@ -165,7 +167,7 @@ export default async function OrganizerOperationsPage({
           <h2>
             <CalendarClock aria-hidden /> Publish a shift
           </h2>
-          <form action={createVolunteerShiftAction.bind(null, data.event.id)}>
+          <form action={createVolunteerShiftAction.bind(null, event.id)}>
             <label>
               Shift title
               <input name="title" minLength={3} maxLength={120} required />
@@ -188,49 +190,77 @@ export default async function OrganizerOperationsPage({
             </label>
             <button className="primary-button">Publish shift</button>
           </form>
-          {data.shifts.length ? (
-            <ul>
-              {data.shifts.map((shift) => {
-                const assigned = (shift.volunteer_shift_assignments as unknown as unknown[]).length;
-                return (
-                  <li key={shift.id}>
-                    <strong>{shift.title}</strong>
-                    <span>
-                      {shift.location} · {assigned}/{shift.capacity} assigned
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
+          <section className="shift-roster" aria-labelledby="published-shifts-title">
+            <div className="shift-roster__header">
+              <h3 id="published-shifts-title">Published shifts</h3>
+              <span>{data.shifts.length} on the roster</span>
+            </div>
+            {data.shifts.length ? (
+              <ul>
+                {data.shifts.map((shift) => {
+                  const assigned = (shift.volunteer_shift_assignments as unknown as unknown[]).length;
+                  return (
+                    <li key={shift.id}>
+                      <div>
+                        <strong>{shift.title}</strong>
+                        <span>{formatShiftRange(shift.starts_at, shift.ends_at, event.timezone)}</span>
+                      </div>
+                      <p>
+                        {shift.location} · {assigned}/{shift.capacity} assigned
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="shift-roster__empty">No volunteer shifts have been published yet.</p>
+            )}
+          </section>
         </section>
         <section className="action-feed">
           <header>
             <p>AUDIT HISTORY</p>
             <h2>
-              <ClipboardCheck aria-hidden /> Recent decisions
+              <ClipboardCheck aria-hidden /> Recent application decisions
             </h2>
           </header>
           {data.audit.length ? (
             <ol>
-              {data.audit.map((entry) => (
-                <li key={entry.id}>
-                  <span className="feed-marker">
-                    <ClipboardCheck aria-hidden />
-                  </span>
-                  <div>
-                    <strong>{entry.action.replaceAll("_", " ")}</strong>
-                    <p>
-                      {entry.entity_type} · {entry.entity_id.slice(0, 8)}
-                    </p>
-                    <small>
-                      {new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(
-                        new Date(entry.created_at),
-                      )}
-                    </small>
-                  </div>
-                </li>
-              ))}
+              {data.audit.map((entry) => {
+                const resultingStatus = readStatus(entry.after_state);
+                const detail = entry.application
+                  ? `Status changed${resultingStatus ? ` to ${resultingStatus}` : ""}`
+                  : entry.action.replaceAll("_", " ");
+                const content = (
+                  <>
+                    <strong>
+                      {entry.application
+                        ? `${entry.application.applicantName}'s ${entry.application.role} application`
+                        : `${entry.entity_type} · ${entry.entity_id.slice(0, 8)}`}
+                    </strong>
+                    <p>{detail}</p>
+                    <small>{formatEventDateTime(entry.created_at, event.timezone)}</small>
+                  </>
+                );
+                return (
+                  <li key={entry.id}>
+                    <span className="feed-marker">
+                      <ClipboardCheck aria-hidden />
+                    </span>
+                    {entry.application ? (
+                      <Link
+                        className="audit-entry"
+                        href={`/organizer/applications/${entry.application.id}/review`}
+                        aria-label={`Open ${entry.application.applicantName}'s ${entry.application.role} application`}
+                      >
+                        {content}
+                      </Link>
+                    ) : (
+                      <div>{content}</div>
+                    )}
+                  </li>
+                );
+              })}
             </ol>
           ) : (
             <div className="empty-state">
@@ -242,4 +272,10 @@ export default async function OrganizerOperationsPage({
       </div>
     </main>
   );
+}
+
+function readStatus(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const status = (value as Record<string, unknown>).status;
+  return typeof status === "string" ? status.replaceAll("_", " ") : null;
 }
