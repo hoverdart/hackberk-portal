@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, ChevronLeft, ChevronRight, Cloud, CloudOff, LockKeyhole } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type { KeyboardEvent, ReactNode, RefObject } from "react";
 import { useActionState, useEffect, useRef, useState } from "react";
 
@@ -17,7 +16,7 @@ import { initialApplicationState } from "@/lib/validation/applications";
 /**
  * The multi-step application wizard.
  *
- * A Client Component because the step navigation and the autosave timer are
+ * A Client Component because the step navigation and local draft storage are
  * genuinely interactive. Everything that touches data still runs in Server
  * Actions — this component holds no application state of its own beyond which
  * step is on screen.
@@ -42,6 +41,11 @@ type ApplicationWorkspaceProps = {
   notice?: { tone: "success" | "error"; message: string };
 };
 
+type SaveIntent = {
+  id: number;
+  destination: number | "review";
+};
+
 export function ApplicationWorkspace({
   application,
   eventName,
@@ -56,8 +60,43 @@ export function ApplicationWorkspace({
     sections.findIndex((section) => section.key === initialSection),
   );
   const [step, setStep] = useState(initialIndex);
+  const [completedSections, setCompletedSections] = useState(() =>
+    Object.fromEntries(
+      sections.map((candidate) => [candidate.key, isComplete(candidate, application.answers[candidate.key])]),
+    ),
+  );
+  const [saveIntent, setSaveIntent] = useState<SaveIntent | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const nextSaveIntentId = useRef(0);
   const section = sections[step];
   const locked = application.status !== "draft";
+  const progress = Math.round((Object.values(completedSections).filter(Boolean).length / sections.length) * 100);
+
+  function requestSaveBefore(destination: SaveIntent["destination"]) {
+    if (typeof destination === "number" && destination === step) return;
+    if (locked) {
+      if (typeof destination === "number") setStep(destination);
+      return;
+    }
+    if (saveIntent) return;
+    nextSaveIntentId.current += 1;
+    setSaveIntent({ id: nextSaveIntentId.current, destination });
+  }
+
+  function finishSaveIntent(result: "saved" | "error") {
+    if (!saveIntent) return;
+    const intent = saveIntent;
+    setSaveIntent(null);
+    if (result !== "saved") return;
+    if (intent.destination === "review") setReviewOpen(true);
+    else setStep(intent.destination);
+  }
+
+  function setSectionCompletion(sectionKey: string, complete: boolean) {
+    setCompletedSections((current) =>
+      current[sectionKey] === complete ? current : { ...current, [sectionKey]: complete },
+    );
+  }
 
   return (
     <main className="form-workspace">
@@ -74,10 +113,15 @@ export function ApplicationWorkspace({
         <h1>{eventName}</h1>
         <ol>
           {sections.map((candidate, index) => {
-            const complete = isComplete(candidate, application.answers[candidate.key]);
+            const complete = completedSections[candidate.key];
             return (
               <li key={candidate.key}>
-                <button type="button" onClick={() => setStep(index)} aria-current={step === index ? "step" : undefined}>
+                <button
+                  type="button"
+                  onClick={() => requestSaveBefore(index)}
+                  aria-current={step === index ? "step" : undefined}
+                  disabled={Boolean(saveIntent)}
+                >
                   <span>{index + 1}</span>
                   <span>
                     <strong>{candidate.title}</strong>
@@ -95,10 +139,10 @@ export function ApplicationWorkspace({
           aria-label="Application completion"
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={application.progress}
+          aria-valuenow={progress}
         >
-          <span style={{ transform: `scaleX(${application.progress / 100})` }} />
-          <strong>{application.progress}% ready</strong>
+          <span style={{ transform: `scaleX(${progress / 100})` }} />
+          <strong>{progress}% ready</strong>
         </div>
       </nav>
       <section className="form-sheet" aria-labelledby="section-title">
@@ -135,16 +179,27 @@ export function ApplicationWorkspace({
             values={application.answers[candidate.key] ?? {}}
             answerVersion={application.answerVersions[candidate.key] ?? 0}
             locked={locked}
+            saveIntentId={step === index ? saveIntent?.id : undefined}
+            onSaveIntentComplete={finishSaveIntent}
+            onCompletionChange={setSectionCompletion}
           />
         ))}
         <nav className="form-pagination" aria-label="Application section navigation">
-          <button type="button" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0}>
+          <button
+            type="button"
+            onClick={() => requestSaveBefore(Math.max(0, step - 1))}
+            disabled={step === 0 || Boolean(saveIntent)}
+          >
             <ChevronLeft aria-hidden />
             Previous
           </button>
           {step < sections.length - 1 ? (
-            <button type="button" onClick={() => setStep((current) => Math.min(sections.length - 1, current + 1))}>
-              Next section
+            <button
+              type="button"
+              onClick={() => requestSaveBefore(Math.min(sections.length - 1, step + 1))}
+              disabled={Boolean(saveIntent)}
+            >
+              {saveIntent?.destination === step + 1 ? "Saving draft…" : "Next section"}
               <ChevronRight aria-hidden />
             </button>
           ) : canWithdraw(application.status) ? (
@@ -154,7 +209,15 @@ export function ApplicationWorkspace({
               This application is {application.status.replaceAll("_", " ")} and cannot be changed here.
             </p>
           ) : (
-            <Submission applicationId={application.id} role={application.role} progress={application.progress} />
+            <Submission
+              applicationId={application.id}
+              role={application.role}
+              progress={progress}
+              open={reviewOpen}
+              onClose={() => setReviewOpen(false)}
+              onRequestReview={() => requestSaveBefore("review")}
+              saving={Boolean(saveIntent)}
+            />
           )}
         </nav>
       </section>
@@ -163,12 +226,12 @@ export function ApplicationWorkspace({
 }
 
 /**
- * The form for one section, with debounced autosave.
+ * The form for one section, with browser-local drafts and explicit saves.
  *
  * The `answerVersion` hidden input is what makes concurrent editing safe: it is
  * posted with every save, and the action refuses the write if the stored version
- * has moved on. `state.answerVersion` then replaces it, so consecutive autosaves
- * chain correctly instead of the second one going stale against the first.
+ * has moved on. Browser-local state is written while typing; the account save
+ * happens only when the applicant asks to save or changes sections.
  */
 function SectionEditor({
   active,
@@ -178,6 +241,9 @@ function SectionEditor({
   values,
   answerVersion,
   locked,
+  saveIntentId,
+  onSaveIntentComplete,
+  onCompletionChange,
 }: {
   active: boolean;
   applicationId: string;
@@ -186,13 +252,16 @@ function SectionEditor({
   values: Record<string, unknown>;
   answerVersion: number;
   locked: boolean;
+  saveIntentId?: number;
+  onSaveIntentComplete: (result: "saved" | "error") => void;
+  onCompletionChange: (sectionKey: string, complete: boolean) => void;
 }) {
   const action = saveApplicationSectionAction.bind(null, applicationId, role, section.key);
   const [state, formAction, pending] = useActionState(action, { ...initialApplicationState, answerVersion });
-  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
-  const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const refreshedVersion = useRef<number | null>(null);
+  const submittedDraft = useRef<string | null>(null);
+  const lastHandledSaveVersion = useRef<number | null>(null);
+  const requestedSave = useRef<{ id: number; baselineVersion: number; observedPending: boolean } | null>(null);
   const version = state.answerVersion ?? answerVersion;
 
   // A stale save means the on-screen answers may be out of date. Move focus into
@@ -202,26 +271,51 @@ function SectionEditor({
     if (state.status === "stale") formRef.current?.querySelector<HTMLElement>("input, textarea, select")?.focus();
   }, [state.status]);
 
-  // Server actions revalidate this route, and refreshing merges the new progress
-  // and section completion into the mounted workspace without discarding fields.
+  // Restore the latest unsent browser-local draft after mount. This is deliberately
+  // local-only: typing never causes a network request or takes the form away.
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    restoreLocalDraft(form, localDraftKey(applicationId, section.key));
+    onCompletionChange(section.key, isSectionComplete(form, section.fields));
+  }, [applicationId, onCompletionChange, section.fields, section.key]);
+
+  // A navigation or review request asks the active form to save once. Wait for
+  // the server result before changing the visible section or opening review.
+  useEffect(() => {
+    if (!saveIntentId || requestedSave.current?.id === saveIntentId) return;
+    requestedSave.current = { id: saveIntentId, baselineVersion: version, observedPending: false };
+    formRef.current?.requestSubmit();
+  }, [saveIntentId, version]);
+
+  useEffect(() => {
+    const request = requestedSave.current;
+    if (!request) return;
+    if (pending) {
+      request.observedPending = true;
+      return;
+    }
+    const receivedNewVersion =
+      state.status === "saved" && (state.answerVersion ?? request.baselineVersion) > request.baselineVersion;
+    if (!request.observedPending && !receivedNewVersion) return;
+    requestedSave.current = null;
+    onSaveIntentComplete(state.status === "saved" ? "saved" : "error");
+  }, [onSaveIntentComplete, pending, state.answerVersion, state.status]);
+
+  // Remove a local draft only if it is exactly the snapshot the server accepted.
+  // If somebody continues typing during a save, their newer local work remains.
   useEffect(() => {
     if (
       state.status !== "saved" ||
       state.answerVersion === undefined ||
-      refreshedVersion.current === state.answerVersion
+      lastHandledSaveVersion.current === state.answerVersion
     )
       return;
-    refreshedVersion.current = state.answerVersion;
-    router.refresh();
-  }, [router, state.answerVersion, state.status]);
-
-  // Cancel a pending autosave when leaving the application entirely.
-  useEffect(
-    () => () => {
-      if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
-    },
-    [],
-  );
+    lastHandledSaveVersion.current = state.answerVersion;
+    const key = localDraftKey(applicationId, section.key);
+    if (submittedDraft.current && window.localStorage.getItem(key) === submittedDraft.current)
+      window.localStorage.removeItem(key);
+  }, [applicationId, section.key, state.answerVersion, state.status]);
 
   return (
     <form
@@ -232,17 +326,20 @@ function SectionEditor({
       noValidate
       onChange={(event) => {
         if (locked) return;
-        if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
         const form = event.currentTarget;
-        // 900ms after typing stops: long enough not to save every keystroke, short
-        // enough that a closed tab rarely loses work. The form deliberately has
-        // `noValidate`: incomplete drafts are valid product state and the server
-        // still validates every provided answer.
-        autosaveTimer.current = setTimeout(() => form.requestSubmit(), 900);
+        persistLocalDraft(form, localDraftKey(applicationId, section.key), section.fields);
+        onCompletionChange(section.key, isSectionComplete(form, section.fields));
+      }}
+      onSubmit={(event) => {
+        submittedDraft.current = persistLocalDraft(
+          event.currentTarget,
+          localDraftKey(applicationId, section.key),
+          section.fields,
+        );
       }}
     >
       <input type="hidden" name="answerVersion" value={version} />
-      <fieldset disabled={locked || pending}>
+      <fieldset disabled={locked}>
         {section.fields.map((field) => (
           <ApplicationField
             key={field.key}
@@ -260,10 +357,10 @@ function SectionEditor({
         ) : (
           <Cloud aria-hidden />
         )}
-        {pending ? "Saving…" : (state.message ?? (locked ? "Answers locked" : "Save draft"))}
+        {pending ? "Saving…" : (state.message ?? (locked ? "Answers locked" : "Save to account"))}
       </button>
-      {/* Autosave is silent by design, so its outcome has to be announced
-          somewhere a screen reader will hear it. */}
+      {/* Saving is intentional, but its outcome still needs a non-disruptive
+          announcement for screen-reader users. */}
       <p className={`save-announcement save-announcement--${state.status}`} aria-live="polite">
         {state.status === "saved"
           ? "Your answers are saved."
@@ -379,16 +476,92 @@ function inputType(type: FieldDefinition["type"]) {
   return "text";
 }
 
+function localDraftKey(applicationId: string, sectionKey: string) {
+  return `backathons:application-draft:${applicationId}:${sectionKey}`;
+}
+
+function persistLocalDraft(form: HTMLFormElement, key: string, fields: FieldDefinition[]) {
+  const data = new FormData(form);
+  const snapshot = JSON.stringify(
+    Object.fromEntries(
+      fields.map((field) => [
+        field.key,
+        field.type === "multiselect" ? data.getAll(field.key) : (data.get(field.key) ?? ""),
+      ]),
+    ),
+  );
+  try {
+    window.localStorage.setItem(key, snapshot);
+  } catch {
+    // Private-browsing or quota restrictions should not prevent an applicant
+    // from continuing; the explicit account save remains available.
+  }
+  return snapshot;
+}
+
+function restoreLocalDraft(form: HTMLFormElement, key: string) {
+  try {
+    const stored = window.localStorage.getItem(key);
+    if (!stored) return;
+    const values: unknown = JSON.parse(stored);
+    if (!values || typeof values !== "object" || Array.isArray(values)) return;
+    for (const [fieldKey, value] of Object.entries(values)) {
+      const controls = form.elements.namedItem(fieldKey);
+      if (controls instanceof RadioNodeList) {
+        const selected = new Set(Array.isArray(value) ? value.map(String) : []);
+        for (const control of controls) {
+          if (control instanceof HTMLInputElement && control.type === "checkbox")
+            control.checked = selected.has(control.value);
+        }
+      } else if (
+        controls instanceof HTMLInputElement ||
+        controls instanceof HTMLTextAreaElement ||
+        controls instanceof HTMLSelectElement
+      ) {
+        controls.value = typeof value === "string" ? value : "";
+      }
+    }
+  } catch {
+    // Storage is optional resilience, not a prerequisite for filling the form.
+  }
+}
+
+function isSectionComplete(form: HTMLFormElement, fields: FieldDefinition[]) {
+  const data = new FormData(form);
+  return fields.every((field) => {
+    const controls = form.elements.namedItem(field.key);
+    const control = controls instanceof RadioNodeList ? controls[0] : controls;
+    const valid =
+      !(
+        control instanceof HTMLInputElement ||
+        control instanceof HTMLTextAreaElement ||
+        control instanceof HTMLSelectElement
+      ) || control.validity.valid;
+    if (!valid) return false;
+    if (!field.required) return true;
+    return field.type === "multiselect"
+      ? data.getAll(field.key).length > 0
+      : String(data.get(field.key) ?? "").trim().length > 0;
+  });
+}
+
 function Submission({
   applicationId,
   role,
   progress,
+  open,
+  onClose,
+  onRequestReview,
+  saving,
 }: {
   applicationId: string;
   role: ApplicationRole;
   progress: number;
+  open: boolean;
+  onClose: () => void;
+  onRequestReview: () => void;
+  saving: boolean;
 }) {
-  const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const action = submitApplicationAction.bind(null, applicationId, role);
   return (
@@ -397,10 +570,10 @@ function Submission({
         ref={triggerRef}
         type="button"
         className="submit-application"
-        onClick={() => setOpen(true)}
-        disabled={progress < 100}
+        onClick={onRequestReview}
+        disabled={progress < 100 || saving}
       >
-        Review &amp; submit
+        {saving ? "Saving draft…" : "Review & submit"}
       </button>
       {open ? (
         <ConfirmationDialog
@@ -408,7 +581,7 @@ function Submission({
           title={`Lock and submit this ${role} application?`}
           description="Your answers become read-only after submission. You can still withdraw later."
           cancelLabel="Keep editing"
-          onClose={() => setOpen(false)}
+          onClose={onClose}
           returnFocusRef={triggerRef}
         >
           <form action={action}>

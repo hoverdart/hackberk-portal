@@ -29,6 +29,12 @@ describe("application form definitions", () => {
     ).toBe(true);
   });
 
+  it("accepts omitted optional answers during final validation", () => {
+    const [profile, , logistics] = getApplicationDefinition("hacker");
+    expect(schemaForSection(profile).safeParse({ school: "UC Berkeley", graduationYear: "2027" }).success).toBe(true);
+    expect(schemaForSection(logistics).safeParse({ availability: ["Saturday"] }).success).toBe(true);
+  });
+
   it("computes progress from valid complete sections", () => {
     expect(
       completionForAnswers("hacker", { profile: { school: "UC Berkeley", graduationYear: 2027, portfolioUrl: "" } }),

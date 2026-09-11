@@ -215,7 +215,10 @@ export function schemaForSection(section: SectionDefinition) {
                 )
               : stringSchema;
         }
-        return [field.key, schema];
+        // Optional answers are allowed to be absent altogether. Draft saving
+        // intentionally omits blank fields, so accepting only an empty string
+        // would still make an untouched optional answer block final submission.
+        return [field.key, field.required ? schema : schema.optional()];
       }),
     ),
   );
