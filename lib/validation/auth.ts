@@ -28,6 +28,7 @@ export const signUpSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your full name.").max(120),
   email: emailSchema,
   password: passwordSchema,
+  accountType: z.enum(["applicant", "organizer"]).default("applicant"),
 });
 
 /**

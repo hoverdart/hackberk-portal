@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, CalendarDays, CircleHelp, Folder, LogOut, UserRound, Users } from "lucide-react";
+import { BookOpen, CalendarDays, CircleHelp, ClipboardCheck, Folder, LogOut, UserRound, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -28,12 +28,14 @@ type PortalFrameProps = {
   children: ReactNode;
   /** Set by the `/design/hero` fixture, which renders the frame without a session. */
   preview?: boolean;
+  /** Organizers get a focused control-room rail rather than applicant destinations. */
+  audience?: "applicant" | "organizer";
 };
 
 // `owns` lists the route subtrees an entry is responsible for, which is not
 // always just its own href: the wizard lives at `/applications/:role` but
 // belongs to Applications, whose link points at the dashboard.
-const navigation = [
+const applicantNavigation = [
   { label: "Applications", href: "/dashboard", owns: ["/dashboard", "/applications"], Icon: Folder },
   { label: "Event", href: "/ops", owns: ["/ops", "/organizer"], Icon: CalendarDays },
   { label: "Teams", href: "/teams", owns: ["/teams"], Icon: Users },
@@ -41,13 +43,26 @@ const navigation = [
   { label: "Profile", href: "/profile", owns: ["/profile"], Icon: UserRound },
 ];
 
-export function PortalFrame({ children, preview = false }: PortalFrameProps) {
+const organizerNavigation = [
+  {
+    label: "Application queue",
+    href: "/organizer/applications",
+    owns: ["/organizer/applications"],
+    Icon: ClipboardCheck,
+  },
+  { label: "Event operations", href: "/organizer/operations", owns: ["/organizer/operations"], Icon: CalendarDays },
+  { label: "Profile", href: "/profile", owns: ["/profile"], Icon: UserRound },
+];
+
+export function PortalFrame({ children, preview = false, audience = "applicant" }: PortalFrameProps) {
   const pathname = usePathname();
+  const navigation = audience === "organizer" ? organizerNavigation : applicantNavigation;
+  const homeHref = audience === "organizer" ? "/organizer/applications" : "/dashboard";
 
   return (
     <div className="runbook-shell">
       <aside className="runbook-rail">
-        <Wordmark href="/dashboard" />
+        <Wordmark href={homeHref} />
 
         <nav aria-label="Primary navigation">
           {navigation.map(({ label, href, owns, Icon }) => {

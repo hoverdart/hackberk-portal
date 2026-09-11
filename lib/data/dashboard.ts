@@ -53,7 +53,7 @@ const fallback = {
   name: "Herkeley Build 2027",
   venue: "Herkeley · Pauley Ballroom",
   startsAt: "2027-03-07T01:00:00.000Z",
-  closesAt: "2027-01-20T07:59:00.000Z",
+  closesAt: "2027-03-07T07:59:00.000Z",
   synthetic: true,
 };
 

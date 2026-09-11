@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
-select plan(9);
+select plan(12);
 
 -- Stable synthetic identities keep every policy assertion readable and leave no
 -- residue because the file runs inside a transaction.
@@ -15,7 +15,8 @@ insert into auth.users (id, email, raw_user_meta_data) values
   ('10000000-0000-4000-8000-000000000006', 'teammate-a@example.test', '{"full_name":"Teammate A"}'),
   ('10000000-0000-4000-8000-000000000007', 'teammate-b@example.test', '{"full_name":"Teammate B"}'),
   ('10000000-0000-4000-8000-000000000008', 'teammate-c@example.test', '{"full_name":"Teammate C"}'),
-  ('10000000-0000-4000-8000-000000000009', 'teammate-d@example.test', '{"full_name":"Teammate D"}');
+  ('10000000-0000-4000-8000-000000000009', 'teammate-d@example.test', '{"full_name":"Teammate D"}'),
+  ('10000000-0000-4000-8000-000000000010', 'test-organizer@example.test', '{"full_name":"Test Organizer"}');
 
 insert into public.staff_members (event_id, user_id, role, created_by) values
   ('00000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 'organizer', '10000000-0000-4000-8000-000000000002'),
@@ -110,6 +111,22 @@ select results_eq(
   $$select status from public.applications where id = '20000000-0000-4000-8000-000000000001'$$,
   $$values ('under_review'::public.application_status)$$,
   'the first assignment advances a submitted application to review'
+);
+
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000010', true);
+select lives_ok(
+  $$select public.claim_test_organizer_membership()$$,
+  'a signed-in test account can claim organizer membership for the synthetic event'
+);
+select results_eq(
+  $$select role from public.staff_members where user_id = '10000000-0000-4000-8000-000000000010'$$,
+  $$values ('organizer'::public.staff_role)$$,
+  'test organizer signup creates a database-backed organizer membership'
+);
+select throws_ok(
+  $$insert into public.applications (event_id, applicant_id, role, status) values ('00000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000010', 'hacker', 'draft')$$,
+  'Organizer accounts cannot create or submit applicant applications',
+  'organizer accounts cannot create applicant applications through the Data API'
 );
 
 reset role;

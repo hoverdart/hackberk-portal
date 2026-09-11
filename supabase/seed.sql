@@ -14,7 +14,7 @@ insert into public.events (
   '2027-03-06 17:00:00-08',
   '2027-03-08 17:00:00-08',
   '2026-10-01 09:00:00-07',
-  '2027-01-19 23:59:00-08',
+  '2027-03-06 23:59:00-08',
   '{"version":1,"roles":["hacker","judge","mentor","volunteer"]}',
   '{"version":1,"criteria":[{"key":"motivation","label":"Motivation","weight":0.35},{"key":"growth","label":"Growth potential","weight":0.35},{"key":"community","label":"Community contribution","weight":0.30}]}',
   '{"version":1,"criteria":[{"key":"innovation","label":"Innovation","weight":0.30},{"key":"execution","label":"Execution","weight":0.30},{"key":"impact","label":"Impact","weight":0.25},{"key":"story","label":"Story","weight":0.15}]}',
@@ -22,13 +22,17 @@ insert into public.events (
   true
 ) on conflict (id) do update set
   name = excluded.name,
+  starts_at = excluded.starts_at,
+  ends_at = excluded.ends_at,
+  applications_open_at = excluded.applications_open_at,
+  applications_close_at = excluded.applications_close_at,
   application_forms = excluded.application_forms,
   application_rubric = excluded.application_rubric,
   project_rubric = excluded.project_rubric,
   updated_at = now();
 
 insert into public.event_milestones (id, event_id, audience, title, description, due_at, sort_order) values
-  ('00000000-0000-4000-8001-000000000001', '00000000-0000-4000-8000-000000000001', 'hacker', 'Applications close', 'Submit every required section before the docket closes.', '2027-01-19 23:59:00-08', 10),
+  ('00000000-0000-4000-8001-000000000001', '00000000-0000-4000-8000-000000000001', 'hacker', 'Applications close', 'Submit every required section before the docket closes.', '2027-03-06 23:59:00-08', 10),
   ('00000000-0000-4000-8001-000000000002', '00000000-0000-4000-8000-000000000001', 'hacker', 'Team lock', 'Confirm a team of one to four accepted hackers.', '2027-02-19 23:59:00-08', 20),
   ('00000000-0000-4000-8001-000000000003', '00000000-0000-4000-8000-000000000001', 'judge', 'Judging briefing', 'Review assigned tracks and scoring calibration.', '2027-03-07 10:00:00-08', 30),
   ('00000000-0000-4000-8001-000000000004', '00000000-0000-4000-8000-000000000001', 'mentor', 'Mentor desk opens', 'Set expertise tags before requests arrive.', '2027-03-06 18:00:00-08', 40),

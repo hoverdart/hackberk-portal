@@ -42,6 +42,33 @@ export const requireUser = cache(async () => {
 });
 
 /**
+ * Resolve the current account's organizer membership, if it has one.
+ *
+ * This is intentionally a database read rather than a JWT claim: membership is
+ * current immediately after the test-signup action and is the same authority RLS
+ * uses for organizer routes.
+ */
+export const getOrganizerMembership = cache(async () => {
+  const user = await requireUser();
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("staff_members")
+    .select("event_id")
+    .eq("user_id", user.id)
+    .eq("role", "organizer")
+    .limit(1)
+    .maybeSingle();
+  return data ? { ...user, eventId: data.event_id as string } : null;
+});
+
+/** Redirect organizer accounts out of applicant-only workflows. */
+export async function requireApplicant() {
+  const organizer = await getOrganizerMembership();
+  if (organizer) redirect("/organizer/applications");
+  return requireUser();
+}
+
+/**
  * Require that the user is an organizer, optionally for one specific event.
  *
  * The check reads `staff_members` rather than the JWT's `app_metadata`. That is
@@ -51,17 +78,22 @@ export const requireUser = cache(async () => {
  * what the RLS policies consult, so the interface and the database agree.
  */
 export async function requireOrganizer(eventId?: string) {
-  const user = await requireUser();
+  const organizer = await getOrganizerMembership();
+  if (!organizer) redirect("/dashboard?notice=organizer-required");
+  if (!eventId || organizer.eventId === eventId) return organizer;
+
   const supabase = await createClient();
-
-  let query = supabase.from("staff_members").select("event_id").eq("user_id", user.id).eq("role", "organizer").limit(1);
-  if (eventId) query = query.eq("event_id", eventId);
-
-  const { data } = await query.maybeSingle();
+  const { data } = await supabase
+    .from("staff_members")
+    .select("event_id")
+    .eq("user_id", organizer.id)
+    .eq("role", "organizer")
+    .eq("event_id", eventId)
+    .maybeSingle();
   if (!data) redirect("/dashboard?notice=organizer-required");
 
   // Callers get the event id back so they do not have to re-query for it.
-  return { ...user, eventId: data.event_id as string };
+  return { ...organizer, eventId: data.event_id as string };
 }
 
 /**

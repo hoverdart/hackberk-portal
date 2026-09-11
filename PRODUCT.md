@@ -31,7 +31,7 @@ Applicants often complete forms between classes or on mobile. Organizers review 
 ## Capabilities and Constraints
 
 - Multi-event schema with one seeded synthetic Backathons at Herkeley event.
-- Verified email/password authentication with cookie-based server rendering.
+- Immediate-session email/password authentication with cookie-based server rendering.
 - Separate, versioned applications for hacker, judge, mentor, and volunteer roles.
 - Two independent blind organizer reviews per application and explicit final decisions.
 - Team matching is opt-in, explainable, invitation-based, and capped at four members.

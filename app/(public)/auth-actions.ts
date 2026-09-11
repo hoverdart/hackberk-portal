@@ -22,38 +22,45 @@ function validationError(error: { flatten(): { fieldErrors: Record<string, strin
 }
 
 /**
- * Register an account and send the verification email.
+ * Register an account and open its first session immediately.
  *
  * `full_name` goes into the user's metadata, where a database trigger copies it
- * into `profiles`. No session is created here — the account is unusable until the
- * emailed link is followed, which is what `/auth/callback` handles.
+ * into `profiles`. Email confirmation is disabled in the Auth provider, so
+ * `signUp` returns a session and the person can continue directly to the portal.
  */
 export async function signUpAction(_: AuthActionState, formData: FormData): Promise<AuthActionState> {
   const parsed = signUpSchema.safeParse({
     fullName: formData.get("fullName"),
     email: formData.get("email"),
     password: formData.get("password"),
+    accountType: formData.get("accountType") ?? "applicant",
   });
   if (!parsed.success) return validationError(parsed.error);
 
-  // The redirect target is built from the request's own origin so the link works
-  // in local, preview, and production without per-environment configuration.
-  const origin = (await headers()).get("origin") ?? "http://localhost:3000";
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.fullName },
-      emailRedirectTo: `${origin}/auth/callback?next=/dashboard`,
     },
   });
   if (error) return { status: "error", message: error.message };
+  if (!data.session)
+    return { status: "error", message: "Your account was created, but we could not open a session. Please sign in." };
 
-  return {
-    status: "success",
-    message: "Check your inbox to verify your email, then return to your dashboard.",
-  };
+  if (parsed.data.accountType === "organizer") {
+    const { error: organizerError } = await supabase.rpc("claim_test_organizer_membership");
+    if (organizerError)
+      return {
+        status: "error",
+        message:
+          "Your account was created, but test organizer access could not be set up. Please sign in and try again.",
+      };
+    redirect("/organizer/applications");
+  }
+
+  redirect("/dashboard");
 }
 
 /**

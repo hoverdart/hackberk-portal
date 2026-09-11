@@ -9,6 +9,25 @@ describe("signUpSchema", () => {
     ).toBe(true);
   });
 
+  it("accepts only the two intentional account types", () => {
+    expect(
+      signUpSchema.safeParse({
+        fullName: "Alex Chen",
+        email: "alex@example.com",
+        password: "runbook2027",
+        accountType: "organizer",
+      }).success,
+    ).toBe(true);
+    expect(
+      signUpSchema.safeParse({
+        fullName: "Alex Chen",
+        email: "alex@example.com",
+        password: "runbook2027",
+        accountType: "admin",
+      }).success,
+    ).toBe(false);
+  });
+
   it("returns field-level recovery guidance", () => {
     const result = signUpSchema.safeParse({ fullName: "A", email: "not-an-email", password: "short" });
     expect(result.success).toBe(false);

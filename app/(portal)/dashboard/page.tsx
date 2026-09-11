@@ -1,5 +1,5 @@
 import { PortalShell } from "@/components/shell/portal-shell";
-import { requireUser } from "@/lib/auth/guards";
+import { requireApplicant } from "@/lib/auth/guards";
 import { getDashboardData } from "@/lib/data/dashboard";
 import { applicationRoleSchema } from "@/lib/validation/applications";
 
@@ -21,7 +21,7 @@ type PageProps = { searchParams: Promise<{ role?: string }> };
  * at `/design/hero`, which is how the design and the production page stay in step.
  */
 export default async function DashboardPage({ searchParams }: PageProps) {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const [data, query] = await Promise.all([getDashboardData(user.id), searchParams]);
   const activeRole = applicationRoleSchema.safeParse(query.role).data ?? "hacker";
   return <PortalShell {...data} activeRole={activeRole} />;

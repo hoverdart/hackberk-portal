@@ -8,5 +8,5 @@ export default async function OrganizerLayout({ children }: { children: ReactNod
   // The guard runs here so every route in the group is protected even if a
   // page forgets its own; the pages still guard individually.
   await requireUser();
-  return <PortalFrame>{children}</PortalFrame>;
+  return <PortalFrame audience="organizer">{children}</PortalFrame>;
 }

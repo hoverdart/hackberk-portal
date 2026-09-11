@@ -80,9 +80,21 @@ export function AuthForm({ mode, action }: AuthFormProps) {
             error={state.errors?.password?.[0]}
           />
         ) : null}
-        <button className="primary-button" type="submit" disabled={pending}>
-          {pending ? "Working…" : labels.submit}
-        </button>
+        {mode === "sign-up" ? (
+          <div className="signup-actions">
+            <button className="primary-button" type="submit" name="accountType" value="applicant" disabled={pending}>
+              {pending ? "Working…" : "Create applicant account"}
+            </button>
+            <button className="organizer-signup" type="submit" name="accountType" value="organizer" disabled={pending}>
+              Create organizer test account
+            </button>
+            <p>Test portal only. Organizer accounts can review and manage applications, not submit them.</p>
+          </div>
+        ) : (
+          <button className="primary-button" type="submit" disabled={pending}>
+            {pending ? "Working…" : labels.submit}
+          </button>
+        )}
         {/* `aria-live` announces the result to a screen reader without moving
             focus, and the element is always present so the announcement fires
             reliably rather than being missed as a newly-inserted node. */}

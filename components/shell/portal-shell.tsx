@@ -135,7 +135,11 @@ export function PortalShell({
                   <>
                     <strong className="queued-role">{capitalize(application.role)}</strong>
                     <StatusStamp status={application.status} />
-                    <div className="queued-progress">
+                    <div
+                      className="queued-progress"
+                      aria-label={`${application.progress}% complete`}
+                      style={{ "--progress": `${application.progress}%` } as CSSProperties}
+                    >
                       <strong>{application.progress}%</strong>
                       <span />
                     </div>
@@ -232,7 +236,7 @@ function ActiveSheet({
           </div>
         </dl>
         <Link className="mobile-continue primary-button" href={`/applications/${role}`}>
-          {started ? "Continue" : "Start"} application <span aria-hidden>→</span>
+          {applicationActionLabel(application.status)} <span aria-hidden>→</span>
         </Link>
       </header>
 
@@ -248,7 +252,7 @@ function ActiveSheet({
         ))}
         <div className="sheet-actions">
           <Link className="primary-button" href={`/applications/${role}`}>
-            {started ? "Continue" : "Start"} application <span aria-hidden>→</span>
+            {applicationActionLabel(application.status)} <span aria-hidden>→</span>
           </Link>
         </div>
         <footer className="sheet-footer">
@@ -323,4 +327,13 @@ function greeting() {
 
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+/** The dashboard must describe the action available for the actual workflow state. */
+function applicationActionLabel(status: ApplicationSummary["status"]) {
+  if (status === "not_started") return "Start application";
+  if (status === "draft") return "Continue application";
+  if (status === "submitted") return "View submitted application";
+  if (status === "under_review") return "View review status";
+  return "View application decision";
 }

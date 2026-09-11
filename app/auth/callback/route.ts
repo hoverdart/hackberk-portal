@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * The email verification and password-reset landing route.
+ * The password-reset and email-link landing route.
  *
  * Supabase sends users here from an email link, in one of two shapes: a `code` to
  * exchange (PKCE) or a `token_hash` plus `type` to verify (OTP). Whichever

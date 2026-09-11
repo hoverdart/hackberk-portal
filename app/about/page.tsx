@@ -208,8 +208,8 @@ export default function AboutPage() {
         <section aria-labelledby="about-next">
           <h2 id="about-next">See it working</h2>
           <p>
-            Create an account to walk the applicant path end to end. Email verification is on, and the portal seeds a
-            sample event so there is something to apply to.
+            Create an account to walk the applicant path end to end. Your account opens immediately, and the portal
+            seeds a sample event so there is something to apply to.
           </p>
           <div className="about-actions">
             <Link className="primary-button" href="/sign-up">

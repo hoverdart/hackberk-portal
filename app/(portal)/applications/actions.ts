@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getApplicationDefinition, schemaForSection } from "@/lib/applications/definitions";
-import { requireUser } from "@/lib/auth/guards";
+import { requireApplicant } from "@/lib/auth/guards";
 import { applicationRoleSchema, uuidSchema, type ApplicationActionState } from "@/lib/validation/applications";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/database.types";
@@ -27,7 +27,7 @@ import type { Json } from "@/lib/supabase/database.types";
  * failing on the unique constraint.
  */
 export async function startApplicationAction(eventId: string, roleValue: string) {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const event = uuidSchema.parse(eventId);
   const role = applicationRoleSchema.parse(roleValue);
   const supabase = await createClient();
@@ -62,7 +62,7 @@ export async function saveApplicationSectionAction(
   _: ApplicationActionState,
   formData: FormData,
 ): Promise<ApplicationActionState> {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const applicationId = uuidSchema.parse(applicationIdValue);
   const role = applicationRoleSchema.parse(roleValue);
   const section = getApplicationDefinition(role).find((candidate) => candidate.key === sectionKey);
@@ -154,7 +154,7 @@ export async function saveApplicationSectionAction(
  * generic error.
  */
 export async function submitApplicationAction(applicationIdValue: string, roleValue: string) {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const applicationId = uuidSchema.parse(applicationIdValue);
   const role = applicationRoleSchema.parse(roleValue);
   const supabase = await createClient();
@@ -194,7 +194,7 @@ export async function submitApplicationAction(applicationIdValue: string, roleVa
  * relying on this action to have checked.
  */
 export async function withdrawApplicationAction(applicationIdValue: string, roleValue: string) {
-  const user = await requireUser();
+  const user = await requireApplicant();
   const applicationId = uuidSchema.parse(applicationIdValue);
   const role = applicationRoleSchema.parse(roleValue);
   const supabase = await createClient();

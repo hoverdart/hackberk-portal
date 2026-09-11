@@ -31,7 +31,7 @@ Every protected page and Server Action repeats authorization near its query. `pr
 3. Run `npm run db:test` for pgTAP policies and constraints.
 4. Regenerate TypeScript types with `npm run db:types` after every schema change.
 
-To bootstrap an organizer after they create and verify an account, run a parameterized statement through the SQL editor or `psql`:
+For a real event, bootstrap an organizer after they create an account by running a parameterized statement through the SQL editor or `psql`:
 
 ```sql
 insert into public.staff_members (event_id, user_id, role, created_by)
@@ -39,3 +39,5 @@ values (:event_id, :user_id, 'organizer', :user_id);
 ```
 
 Do not expose `CONNECTION_URL`, a secret/service-role key, or GitHub token to a `NEXT_PUBLIC_` variable.
+
+The synthetic test event additionally exposes a deliberately constrained self-service organizer signup: it can grant only the signed-in caller membership in the active synthetic event. It must not be reused for a real event.

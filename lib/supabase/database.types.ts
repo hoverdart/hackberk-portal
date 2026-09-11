@@ -123,6 +123,7 @@ export type Database = {
       respond_team_invitation: { Args: { target_invitation: string; accept_invitation: boolean }; Returns: undefined };
       claim_mentor_request: { Args: { target_request: string }; Returns: undefined };
       join_volunteer_shift: { Args: { target_shift: string }; Returns: undefined };
+      claim_test_organizer_membership: { Args: Record<PropertyKey, never>; Returns: undefined };
     };
     Enums: {
       application_role: ApplicationRole;

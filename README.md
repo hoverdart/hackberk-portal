@@ -16,7 +16,9 @@ cp .env.example .env
 npm run dev
 ```
 
-The app requires a Supabase project with email verification enabled. Supabase's default SMTP is intentionally limited; configure project email delivery before a public launch.
+The app creates an authenticated session immediately after password sign-up; keep **Confirm email** disabled in Supabase Auth to match that flow. Configure a production SMTP provider before launch so password-reset and email-change messages can be delivered.
+
+For this synthetic test portal, the sign-up screen also offers **Create organizer test account**. It grants organizer membership only for the active synthetic event and intentionally blocks that account from creating applicant applications. Do not carry that self-service path into a real event.
 
 ## Migrations
 

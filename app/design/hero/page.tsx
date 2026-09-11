@@ -30,7 +30,7 @@ export default async function HeroReproductionPage({ searchParams }: { searchPar
           name: "Herkeley Build 2027",
           venue: "Herkeley · Pauley Ballroom",
           startsAt: "2027-03-06T17:00:00-08:00",
-          closesAt: "2027-01-19T23:59:00-08:00",
+          closesAt: "2027-03-06T23:59:00-08:00",
           synthetic: true,
         }}
         applications={applicationRoles.map((role, index) => ({

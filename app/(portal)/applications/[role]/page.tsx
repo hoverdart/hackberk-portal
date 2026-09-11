@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { startApplicationAction } from "@/app/(portal)/applications/actions";
 import { ApplicationWorkspace } from "@/components/applications/application-workspace";
 import { getApplicationDefinition } from "@/lib/applications/definitions";
-import { requireUser } from "@/lib/auth/guards";
+import { requireApplicant } from "@/lib/auth/guards";
 import { getActiveEvent, getApplication } from "@/lib/data/applications";
 import { applicationRoleSchema } from "@/lib/validation/applications";
 import { MessageSheet } from "@/components/ui/message-sheet";
@@ -25,7 +25,7 @@ export default async function ApplicationPage({ params, searchParams }: PageProp
   const roleResult = applicationRoleSchema.safeParse((await params).role);
   if (!roleResult.success) notFound();
   const role = roleResult.data;
-  const user = await requireUser();
+  const user = await requireApplicant();
   const event = await getActiveEvent();
   if (!event) return <ApplicationUnavailable />;
   const application = await getApplication(user.id, event.id, role);
