@@ -3,7 +3,6 @@
 import {
   BookOpen,
   CalendarDays,
-  CircleHelp,
   ClipboardCheck,
   Folder,
   Heart,
@@ -107,10 +106,6 @@ export function PortalFrame({ children, preview = false, audience = "applicant",
         </nav>
 
         <div className="app-rail-bottom">
-          <Link href="/ops#support">
-            <CircleHelp aria-hidden size={21} />
-            Help &amp; support
-          </Link>
           {preview ? (
             <Link href="/sign-in">
               <LogOut aria-hidden size={21} />

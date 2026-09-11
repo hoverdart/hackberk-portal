@@ -11,7 +11,7 @@ import {
   withdrawApplicationAction,
 } from "@/app/(app)/(portal)/applications/actions";
 import type { FieldDefinition, SectionDefinition } from "@/lib/applications/definitions";
-import type { ApplicationRole, ApplicationStatus } from "@/lib/domain/applications";
+import { capitalize, type ApplicationRole, type ApplicationStatus } from "@/lib/domain/applications";
 import { initialApplicationState } from "@/lib/validation/applications";
 
 /**
@@ -663,10 +663,6 @@ function outcomeLabel(status: ApplicationStatus) {
   if (status === "waitlisted") return "Waitlisted. We’ll be in touch if a place opens.";
   if (status === "rejected") return "Not accepted this time.";
   return "Withdrawn.";
-}
-
-function capitalize(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function canWithdraw(status: ApplicationStatus) {

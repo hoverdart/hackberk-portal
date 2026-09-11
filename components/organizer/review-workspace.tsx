@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { AlertTriangle, Check, EyeOff, Save } from "lucide-react";
+import { SheetHeader } from "@/components/ui/sheet-header";
+import { AlertTriangle, Check, Eye, EyeOff, Save } from "lucide-react";
 import { useActionState, useState } from "react";
 
 import {
@@ -34,6 +35,16 @@ type ReviewWorkspaceProps = {
   criteria: RubricCriterion[];
   aggregate: number | null;
   submittedReviewCount: number;
+  /** Present only once a blind review is submitted; the query withholds it until then. */
+  applicant: {
+    full_name: string | null;
+    preferred_name: string | null;
+    school: string | null;
+    graduation_year: number | null;
+    pronouns: string | null;
+  } | null;
+  /** Logistics and access needs — organizer context, never scoring input. */
+  identityAnswers: Array<{ section_key: string; answers: unknown }>;
   canDecide: boolean;
   notice?: { tone: "success" | "error"; message: string };
 };
@@ -47,6 +58,8 @@ export function ReviewWorkspace({
   criteria,
   aggregate,
   submittedReviewCount,
+  applicant,
+  identityAnswers,
   canDecide,
   notice,
 }: ReviewWorkspaceProps) {
@@ -193,6 +206,7 @@ export function ReviewWorkspace({
           </div>
         </form>
       </div>
+      {applicant ? <ApplicantPanel applicant={applicant} answers={identityAnswers} /> : null}
       {canDecide ? <DecisionBar applicationId={application.id} reviewCount={submittedReviewCount} /> : null}
       {showConflict ? (
         <Dialog
@@ -212,6 +226,57 @@ export function ReviewWorkspace({
         </Dialog>
       ) : null}
     </main>
+  );
+}
+
+/**
+ * Who the applicant is, and what they need in order to take part.
+ *
+ * Only rendered once the blind review is in, and only populated then — the
+ * query withholds both until a score exists, so this panel cannot be coaxed
+ * into appearing early. Logistics sits here rather than in the scoring packet on
+ * purpose: an organizer has to know about a dietary need or an accommodation to
+ * run the event, and a review must never be influenced by one.
+ */
+function ApplicantPanel({
+  applicant,
+  answers,
+}: {
+  applicant: NonNullable<ReviewWorkspaceProps["applicant"]>;
+  answers: ReviewWorkspaceProps["identityAnswers"];
+}) {
+  const details: Array<[string, string]> = [
+    ["Name", applicant.preferred_name || applicant.full_name || "Not given"],
+    ["School", applicant.school || "Not given"],
+    ["Graduation", applicant.graduation_year ? String(applicant.graduation_year) : "Not given"],
+    ["Pronouns", applicant.pronouns || "Not given"],
+  ];
+  return (
+    <section className="applicant-panel">
+      <SheetHeader
+        icon={Eye}
+        title="Applicant and logistics"
+        eyebrow="Revealed after scoring · not part of the review"
+      />
+      <dl className="applicant-details">
+        {details.map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+      {answers.map((section) => (
+        <div key={section.section_key} className="applicant-answers">
+          {Object.entries(section.answers as Record<string, unknown>).map(([key, value]) => (
+            <div key={key}>
+              <strong>{key.replaceAll(/([A-Z])/g, " $1")}</strong>
+              <p>{Array.isArray(value) ? value.join(", ") : String(value) || "Not given"}</p>
+            </div>
+          ))}
+        </div>
+      ))}
+    </section>
   );
 }
 

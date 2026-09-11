@@ -65,6 +65,8 @@ export default async function ReviewPage({ params, searchParams }: PageProps) {
       criteria={criteria}
       aggregate={aggregateSubmittedReviews(submittedReviews, criteria)}
       submittedReviewCount={submittedReviews.length}
+      applicant={workspace.applicant}
+      identityAnswers={workspace.identityAnswers}
       canDecide
       notice={reviewNotice(query)}
     />

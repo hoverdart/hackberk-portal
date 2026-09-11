@@ -122,7 +122,7 @@ export default async function OpsPage({
   });
 
   return (
-    <main className="ops-page" id="support">
+    <main className="ops-page">
       <header className="feature-mast">
         <h1>Event day</h1>
         <span>Everything waiting on you, across every role you hold.</span>

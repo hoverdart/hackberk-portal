@@ -1,10 +1,12 @@
-import { CalendarDays, Heart, Laptop, MapPin, Scale, Users, UserRoundCog } from "lucide-react";
+import { roleIcons } from "@/components/ui/role-icon";
+import { CalendarDays, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 import { ViewTransition, type CSSProperties } from "react";
 
 import { StatusStamp } from "@/components/ui/status-stamp";
 import { ButtonLink } from "@/components/ui/button";
 import {
+  capitalize,
   roleCopy,
   statusLabel,
   type ApplicationRole,
@@ -40,8 +42,6 @@ type PortalShellProps = {
   basePath?: string;
   preview?: boolean;
 };
-
-const roleIcons = { hacker: Laptop, judge: Scale, mentor: UserRoundCog, volunteer: Heart };
 
 export function PortalShell({
   profileName,
@@ -312,10 +312,6 @@ function greeting() {
   );
   if (hour < 12) return "Good morning";
   return hour < 18 ? "Good afternoon" : "Good evening";
-}
-
-function capitalize(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 /** The dashboard must describe the action available for the actual workflow state. */

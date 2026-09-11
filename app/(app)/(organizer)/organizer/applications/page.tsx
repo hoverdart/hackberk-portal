@@ -7,7 +7,7 @@ import { StatusStamp } from "@/components/ui/status-stamp";
 import { requireOrganizer } from "@/lib/auth/guards";
 import { getApplicationQueue } from "@/lib/data/organizer";
 import { applicationRoleSchema } from "@/lib/validation/applications";
-import { applicationStatuses, type ApplicationStatus } from "@/lib/domain/applications";
+import { applicationStatuses, capitalize, type ApplicationStatus } from "@/lib/domain/applications";
 
 type PageProps = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -76,8 +76,14 @@ export default async function OrganizerApplicationsPage({ searchParams }: PagePr
           <tbody>
             {queue.rows.map((row) => (
               <tr key={row.application_id}>
+                {/* Blind until scored. The review screen promises the
+                    applicant's identity is hidden while you score, and that
+                    promise was worth nothing while the list you clicked through
+                    to get there printed their name. */}
                 <td>
-                  <strong>{row.applicant_name}</strong>
+                  <strong>
+                    {row.submitted_reviews > 0 ? row.applicant_name : `${capitalize(row.role)} applicant`}
+                  </strong>
                   <small>{row.application_id.slice(0, 8)}</small>
                 </td>
                 <td>{row.role}</td>
@@ -96,14 +102,20 @@ export default async function OrganizerApplicationsPage({ searchParams }: PagePr
                     <i style={{ width: `${Math.min(row.submitted_reviews, 1) * 100}%` }} />
                   </span>
                   <small>
-                    {row.submitted_reviews}/1 submitted · {row.assigned_reviewers}/1 assigned
+                    {row.submitted_reviews > 0 ? "Scored" : row.assigned_reviewers > 0 ? "Claimed" : "Unclaimed"}
                   </small>
                 </td>
                 <td>{row.aggregate_score ? `${row.aggregate_score} / 5` : "—"}</td>
                 <td>
                   <Link href={`/organizer/applications/${row.application_id}/review`}>
                     <Eye aria-hidden />
-                    Review<span className="sr-only"> {row.applicant_name}</span>
+                    Review
+                    <span className="sr-only">
+                      {" "}
+                      {row.submitted_reviews > 0
+                        ? row.applicant_name
+                        : `${row.role} application ${row.application_id.slice(0, 8)}`}
+                    </span>
                   </Link>
                 </td>
               </tr>

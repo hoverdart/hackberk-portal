@@ -53,12 +53,16 @@ export async function getApplicationQueue(eventId: string, filters: QueueFilters
  * `assignments` contains the one active claim and `ownAssignment` identifies the
  * current organizer's claim. Keeping those separate lets a different organizer
  * see that an application is unavailable without exposing who claimed it.
+ *
+ * Identity and logistics are returned only after a blind review has been
+ * submitted. That is the whole rule: you score what was written, then you learn
+ * who wrote it and what they need to take part.
  */
 export async function getReviewWorkspace(applicationId: string, organizerId: string) {
   const supabase = await createClient();
   const { data: application } = await supabase
     .from("applications")
-    .select("id,event_id,role,status,form_version")
+    .select("id,event_id,applicant_id,role,status,form_version")
     .eq("id", applicationId)
     .maybeSingle();
   if (!application) return null;
@@ -94,6 +98,32 @@ export async function getReviewWorkspace(applicationId: string, organizerId: str
     .select("scores,status")
     .eq("application_id", applicationId)
     .eq("status", "submitted");
+  // Identity and logistics unlock only once the blind score is recorded, and
+  // they are fetched here rather than filtered in the page for the same reason
+  // the blind packet is: an answer the server never sends cannot leak through a
+  // rendering mistake or be read out of the page payload.
+  //
+  // Logistics is kept out of the scoring packet deliberately even though it does
+  // not identify anyone. Availability, dietary needs and accommodations are
+  // things an organizer has to know in order to run the event, and things a
+  // review must never be influenced by — an accommodation request is not a
+  // quality signal.
+  const decided = (submittedReviews ?? []).length > 0;
+  const [{ data: applicant }, { data: logistics }] = decided
+    ? await Promise.all([
+        supabase
+          .from("profiles")
+          .select("full_name,preferred_name,school,graduation_year,pronouns")
+          .eq("id", application.applicant_id)
+          .maybeSingle(),
+        supabase
+          .from("application_answers")
+          .select("section_key,answers")
+          .eq("application_id", applicationId)
+          .eq("is_identity_sensitive", true),
+      ])
+    : [{ data: null }, { data: null }];
+
   return {
     application,
     event,
@@ -102,6 +132,8 @@ export async function getReviewWorkspace(applicationId: string, organizerId: str
     ownAssignment,
     review,
     submittedReviews: submittedReviews ?? [],
+    applicant,
+    identityAnswers: logistics ?? [],
   };
 }
 

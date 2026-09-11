@@ -72,3 +72,8 @@ export function statusLabel(status: ApplicationSummary["status"]) {
     ? "Not started"
     : status.replaceAll("_", " ").replace(/^./, (letter) => letter.toUpperCase());
 }
+
+/** Title-case a single stored value — a role, a status word. */
+export function capitalize(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}

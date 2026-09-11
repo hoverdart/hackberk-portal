@@ -71,3 +71,14 @@
 .decision-bar p { margin: 0; color: var(--ink-3); font: 700 .55rem var(--font-data); letter-spacing: .16em; }
 .decision-bar strong { display: block; margin-top: 4px; }
 .decision-bar form { margin: 0; }
+
+/* Who the applicant is, and what they need to take part. Rendered only once a
+   blind review is submitted, and only sent by the server at that point. */
+.applicant-panel { width: min(100% - 40px, 1300px); margin: 0 auto 24px; border-radius: 5px 5px 8px 8px; background: var(--paper); padding: clamp(24px, 4vw, 44px); box-shadow: 0 12px 30px rgb(10 36 87 / 11%); }
+.applicant-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 28px; margin: 0; border-top: 1px solid var(--rule); }
+.applicant-details div { border-bottom: 1px solid var(--rule-hair); padding: 14px 0; }
+.applicant-details dt { color: var(--ink-4); font-size: var(--text-xs); }
+.applicant-details dd { margin: 5px 0 0; overflow-wrap: anywhere; font-weight: 700; }
+.applicant-answers { display: grid; gap: 18px; margin-top: 22px; }
+.applicant-answers strong { color: var(--ink-3); font-size: var(--text-sm); text-transform: capitalize; }
+.applicant-answers p { max-width: 72ch; margin: 6px 0 0; white-space: pre-wrap; line-height: 1.55; }

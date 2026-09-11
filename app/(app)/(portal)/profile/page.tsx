@@ -1,17 +1,17 @@
-import { Heart, Laptop, Scale, UserRound, UserRoundCog } from "lucide-react";
+import { roleIcons } from "@/components/ui/role-icon";
+import { UserRound } from "lucide-react";
 import Link from "next/link";
 
 import { getOrganizerMembership, requireUser } from "@/lib/auth/guards";
 import { getActiveEvent } from "@/lib/data/applications";
 import {
   applicationRoles,
+  capitalize,
   statusLabel,
   type ApplicationRole,
   type ApplicationSummary,
 } from "@/lib/domain/applications";
 import { createClient } from "@/lib/supabase/server";
-
-const roleIcons = { hacker: Laptop, judge: Scale, mentor: UserRoundCog, volunteer: Heart };
 
 /**
  * The account sheet.
@@ -109,8 +109,4 @@ export default async function ProfilePage() {
       </section>
     </main>
   );
-}
-
-function capitalize(value: string) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
 }
