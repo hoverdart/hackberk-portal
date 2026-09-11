@@ -8,7 +8,7 @@ test("public application entry points remain usable", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Herkeley");
   await page.getByRole("link", { name: "Start an application" }).click();
-  await expect(page.getByRole("heading", { name: "Get your credentials" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   await expect(page.getByLabel("Full name")).toBeEditable();
   await expect(page.getByLabel("Email")).toHaveAttribute("type", "email");
 });
@@ -72,7 +72,7 @@ test("selecting a role deals its sheet to the front of the deck", async ({ page 
     // The cursor is left sitting over whichever tab took the clicked one's old
     // slot, and hovering lifts a tab 2px. Park it away before measuring.
     await page.mouse.move(0, 0);
-    // The tabs seat with a staggered entrance, so poll until they settle
+    // Hovering lifts a tab by 2px, so park the cursor before measuring
     // rather than sampling a single frame mid-animation.
     await expect
       .poll(() =>

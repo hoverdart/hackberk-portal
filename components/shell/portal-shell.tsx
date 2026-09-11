@@ -74,7 +74,7 @@ export function PortalShell({
 
   return (
     <main className="dashboard-page">
-      <header className="runbook-header">
+      <header className="stage-header">
         <h1>
           {greeting()}, {profileName}.
         </h1>

@@ -1,14 +1,12 @@
 "use client";
 
 import { BookOpen, CalendarDays, CircleHelp, ClipboardCheck, Folder, LogOut, UserRound, Users } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ViewTransition, type ReactNode } from "react";
 
-import tower from "@/assets/plates/tower-illustration.png";
 import { signOutAction } from "@/app/(public)/auth-actions";
-import { Wordmark } from "@/components/ui/wordmark";
+import { BrandRail } from "@/components/shell/brand-rail";
 
 /**
  * The one signed-in frame, shared by every participant and organizer route.
@@ -60,10 +58,8 @@ export function PortalFrame({ children, preview = false, audience = "applicant" 
   const homeHref = audience === "organizer" ? "/organizer/applications" : "/dashboard";
 
   return (
-    <div className="runbook-shell">
-      <aside className="runbook-rail">
-        <Wordmark href={homeHref} />
-
+    <div className="app-shell">
+      <BrandRail homeHref={homeHref}>
         <nav aria-label="Primary navigation">
           {navigation.map(({ label, href, owns, Icon }) => {
             const current = preview ? href === "/dashboard" : owns.some((base) => isCurrent(pathname, base));
@@ -84,7 +80,7 @@ export function PortalFrame({ children, preview = false, audience = "applicant" 
           })}
         </nav>
 
-        <div className="runbook-rail-bottom">
+        <div className="app-rail-bottom">
           <Link href="/ops#support">
             <CircleHelp aria-hidden size={21} />
             Help &amp; support
@@ -103,25 +99,13 @@ export function PortalFrame({ children, preview = false, audience = "applicant" 
             </form>
           )}
         </div>
-
-        <Image src={tower} alt="Campanile line illustration" className="runbook-tower" priority />
-        <p className="runbook-motto">
-          BUILD
-          <br />
-          PEOPLE
-          <br />
-          IDEAS
-          <br />A BRIGHTER
-          <br />
-          TOMORROW
-        </p>
-      </aside>
+      </BrandRail>
 
       {/* One transition around the routed content, so moving between rail
           destinations is a settle rather than a hard swap. Surfaces that name
           their own transitions — the dashboard's role sheets — nest inside this
           one and take precedence over it. */}
-      <section className="runbook-stage">
+      <section className="app-stage">
         <ViewTransition default="route-change">{children}</ViewTransition>
       </section>
     </div>

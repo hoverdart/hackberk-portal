@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Wordmark } from "@/components/ui/wordmark";
+import { BrandRail } from "@/components/shell/brand-rail";
 import { ButtonLink } from "@/components/ui/button";
 
 /**
@@ -15,35 +15,37 @@ import { ButtonLink } from "@/components/ui/button";
  */
 export default function HomePage() {
   return (
-    <main className="landing">
-      <nav>
-        <Wordmark href={null} />
-        <div>
-          <Link href="/about">About</Link>
-          <Link className="landing-signin" href="/sign-in">
-            Sign in
-          </Link>
-          <ButtonLink variant="primary" size="sm" href="/sign-up">
-            Apply now
-          </ButtonLink>
-        </div>
-      </nav>
-      <section>
-        <h1>Build something at Herkeley.</h1>
-        <p>Apply as a hacker, judge, mentor or volunteer. Find a team. See what needs you on the day.</p>
-        <div>
-          <ButtonLink variant="primary" href="/sign-up">
-            Start an application
-          </ButtonLink>
-          <ButtonLink variant="ghost" href="/sign-in" trailing={<span aria-hidden>→</span>}>
-            Sign in instead
-          </ButtonLink>
-        </div>
-      </section>
-      <footer>
-        <Link href="/privacy">Privacy</Link>
-        <Link href="/terms">Terms</Link>
-      </footer>
+    <main className="app-shell landing desk">
+      <BrandRail homeHref={null} />
+      <div className="landing-stage">
+        <nav>
+          <div>
+            <Link href="/about">About</Link>
+            <Link className="landing-signin" href="/sign-in">
+              Sign in
+            </Link>
+            <ButtonLink variant="primary" size="sm" href="/sign-up">
+              Apply now
+            </ButtonLink>
+          </div>
+        </nav>
+        <section>
+          <h1>Build something at Herkeley.</h1>
+          <p>Apply as a hacker, judge, mentor or volunteer. Find a team. See what needs you on the day.</p>
+          <div>
+            <ButtonLink variant="primary" href="/sign-up">
+              Start an application
+            </ButtonLink>
+            <ButtonLink variant="ghost" href="/sign-in" trailing={<span aria-hidden>→</span>}>
+              Sign in instead
+            </ButtonLink>
+          </div>
+        </section>
+        <footer>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+        </footer>
+      </div>
     </main>
   );
 }

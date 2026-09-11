@@ -110,7 +110,6 @@ export default function AboutPage() {
       </header>
 
       <article className="about-sheet">
-        <p className="about-docket">ABOUT THIS BUILD · SAMPLE DATA</p>
         <h1>A demonstration portal, built the way a real one would be.</h1>
         <p className="about-lede">
           Backathons at Herkeley is a fictional organization. The event, the applicants, the reviews, the teams, and the
