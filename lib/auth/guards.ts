@@ -4,6 +4,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import type { ApplicationRole } from "@/lib/domain/applications";
 
 /**
  * Route guards.
@@ -95,3 +96,22 @@ export async function requireOrganizer(eventId?: string) {
   // Callers get the event id back so they do not have to re-query for it.
   return { ...organizer, eventId: data.event_id as string };
 }
+
+/**
+ * The roles this account has actually been accepted for.
+ *
+ * Holding a role is not something you pick at sign-up: every account can apply
+ * for all four, and you hold one only once an organizer accepts that
+ * application. This is the single place that decides it, so the rail, the
+ * event-day page and the judging queue cannot disagree about who someone is.
+ *
+ * `cache`d per request, because the layout and the page both ask.
+ */
+export const getAcceptedRoles = cache(async (eventId?: string) => {
+  const user = await requireUser();
+  const supabase = await createClient();
+  let query = supabase.from("applications").select("role").eq("applicant_id", user.id).eq("status", "accepted");
+  if (eventId) query = query.eq("event_id", eventId);
+  const { data } = await query;
+  return new Set((data ?? []).map((row) => row.role as ApplicationRole));
+});

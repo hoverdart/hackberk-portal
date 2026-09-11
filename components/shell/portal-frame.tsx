@@ -1,6 +1,18 @@
 "use client";
 
-import { BookOpen, CalendarDays, CircleHelp, ClipboardCheck, Folder, LogOut, UserRound, Users } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  CircleHelp,
+  ClipboardCheck,
+  Folder,
+  Heart,
+  LifeBuoy,
+  LogOut,
+  Scale,
+  UserRound,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ViewTransition, type ReactNode } from "react";
@@ -26,18 +38,28 @@ type PortalFrameProps = {
   children: ReactNode;
   /** Set by the `/design/hero` fixture, which renders the frame without a session. */
   preview?: boolean;
-  /** Organizers get a focused control-room rail rather than applicant destinations. */
+  /** Organizers get a focused rail rather than applicant destinations. */
   audience?: "applicant" | "organizer";
+  /** Roles this account has been accepted for. Decides which entries appear. */
+  roles?: string[];
 };
 
 // `owns` lists the route subtrees an entry is responsible for, which is not
 // always just its own href: the wizard lives at `/applications/:role` but
 // belongs to Applications, whose link points at the dashboard.
+//
+// `role` gates an entry on an accepted application. Everyone used to see all
+// five destinations regardless of what they had been accepted for, so a judge
+// carried a Teams tab they could never use and a volunteer carried Projects.
+// An entry with no `role` is for everyone.
 const applicantNavigation = [
   { label: "Applications", href: "/dashboard", owns: ["/dashboard", "/applications"], Icon: Folder },
-  { label: "Event", href: "/ops", owns: ["/ops", "/organizer"], Icon: CalendarDays },
-  { label: "Teams", href: "/teams", owns: ["/teams"], Icon: Users },
-  { label: "Projects", href: "/projects", owns: ["/projects"], Icon: BookOpen },
+  { label: "Event day", href: "/ops", owns: ["/ops"], Icon: CalendarDays },
+  { label: "Teams", href: "/teams", owns: ["/teams"], Icon: Users, role: "hacker" },
+  { label: "Projects", href: "/projects", owns: ["/projects"], Icon: BookOpen, role: "hacker" },
+  { label: "Judging", href: "/judging", owns: ["/judging", "/projects"], Icon: Scale, role: "judge" },
+  { label: "Help requests", href: "/ops#mentor", owns: [], Icon: LifeBuoy, role: "mentor" },
+  { label: "Shifts", href: "/ops#volunteer", owns: [], Icon: Heart, role: "volunteer" },
   { label: "Profile", href: "/profile", owns: ["/profile"], Icon: UserRound },
 ];
 
@@ -52,9 +74,13 @@ const organizerNavigation = [
   { label: "Profile", href: "/profile", owns: ["/profile"], Icon: UserRound },
 ];
 
-export function PortalFrame({ children, preview = false, audience = "applicant" }: PortalFrameProps) {
+export function PortalFrame({ children, preview = false, audience = "applicant", roles = [] }: PortalFrameProps) {
   const pathname = usePathname();
-  const navigation = audience === "organizer" ? organizerNavigation : applicantNavigation;
+  const held = new Set(preview ? ["hacker"] : roles);
+  const navigation =
+    audience === "organizer"
+      ? organizerNavigation
+      : applicantNavigation.filter((entry) => !entry.role || held.has(entry.role));
   const homeHref = audience === "organizer" ? "/organizer/applications" : "/dashboard";
 
   return (

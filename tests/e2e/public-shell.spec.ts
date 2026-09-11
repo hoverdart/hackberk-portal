@@ -33,15 +33,22 @@ test("Portal fixture keeps the role deck and every real destination usable", asy
   await expect(page.locator(".progress-seal")).toContainText("33%");
 
   // Every rail destination is a route that exists, and the ones that lied are gone.
-  for (const destination of ["Applications", "Event", "Teams", "Projects", "Profile"]) {
+  for (const destination of ["Applications", "Event day", "Teams", "Projects", "Profile"]) {
     await expect(page.getByRole("link", { name: destination, exact: true })).toBeVisible();
   }
   await expect(page.getByRole("link", { name: "Messages", exact: true })).toHaveCount(0);
   await expect(page.getByRole("searchbox")).toHaveCount(0);
 
+  // The rail follows the roles the account has actually been accepted for. The
+  // fixture holds hacker, so the judge, mentor and volunteer destinations are
+  // absent rather than present-and-empty.
+  for (const gated of ["Judging", "Help requests", "Shifts"]) {
+    await expect(page.getByRole("link", { name: gated, exact: true })).toHaveCount(0);
+  }
+
   // The rail is the only chrome: no second bar, and none of the decorative
   // plates that used to sit on top of the content.
-  await expect(page.locator(".runbook-topbar, .role-mascot, .queued-notes")).toHaveCount(0);
+  await expect(page.locator(".app-topbar, .role-mascot, .queued-notes")).toHaveCount(0);
 
   // No demo-scaffolding chrome on a surface an applicant sees.
   await expect(page.locator(".synthetic-label")).toHaveCount(0);

@@ -91,7 +91,14 @@ export async function createVolunteerShiftAction(eventIdValue: string, formData:
     starts_at: startsAt.toISOString(),
     ends_at: endsAt.toISOString(),
     capacity: parsed.data.capacity,
-    checklist: [],
+    // One task per line. The column and the volunteer-side `checklist_state`
+    // have existed since the first migration; this form used to hardcode an
+    // empty list, so no shift ever had anything to work through.
+    checklist: String(formData.get("checklist") ?? "")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, 20),
   });
   revalidatePath("/organizer/operations");
   redirect(error ? "/organizer/operations?error=shift" : "/organizer/operations?success=shift");

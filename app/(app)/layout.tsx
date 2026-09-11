@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { PortalFrame } from "@/components/shell/portal-frame";
-import { getOrganizerMembership, requireUser } from "@/lib/auth/guards";
+import { getAcceptedRoles, getOrganizerMembership, requireUser } from "@/lib/auth/guards";
 
 /**
  * The one layout every signed-in route renders inside — applicant and organizer
@@ -23,5 +23,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   // page forgets its own; the pages still guard individually.
   await requireUser();
   const organizer = await getOrganizerMembership();
-  return <PortalFrame audience={organizer ? "organizer" : "applicant"}>{children}</PortalFrame>;
+  // An organizer holds no application roles, so skip the query entirely.
+  const roles = organizer ? [] : [...(await getAcceptedRoles())];
+  return (
+    <PortalFrame audience={organizer ? "organizer" : "applicant"} roles={roles}>
+      {children}
+    </PortalFrame>
+  );
 }

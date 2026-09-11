@@ -174,6 +174,10 @@ export default async function OrganizerOperationsPage({
               How many volunteers
               <input name="capacity" type="number" min="1" max="500" required />
             </label>
+            <label>
+              What they need to do <small>One per line, optional</small>
+              <textarea name="checklist" rows={3} maxLength={1200} />
+            </label>
             <Button variant="primary" type="submit">
               Add shift
             </Button>

@@ -458,6 +458,22 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .shift-roster li span, .shift-roster li p { color: var(--ink-4); font-size: var(--text-sm); line-height: 1.35; }
 .shift-roster li p { max-width: 27ch; margin: 0; text-align: right; }
 .shift-roster__empty { margin: 12px 0 0; }
+
+/* A volunteer's own shifts: join, check in, work the list. */
+.shift-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.shift-card { border: 1px solid var(--rule-hair); padding: 14px 16px; }
+.shift-card__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.shift-card__head strong { display: block; font: 700 1rem var(--font-display); }
+.shift-card__head span { color: var(--ink-4); font-size: var(--text-sm); }
+.shift-card__state { display: inline-flex; align-items: center; gap: 7px; color: var(--success); font-weight: 700; font-size: var(--text-sm); }
+.shift-card__state svg { width: 17px; }
+.shift-tasks { display: grid; gap: 4px; margin: 14px 0 0; padding: 0; list-style: none; }
+.shift-tasks form { margin: 0; }
+.shift-tasks button { width: 100%; min-height: 40px; display: flex; align-items: center; gap: 10px; border: 0; background: transparent; color: var(--ink-2); padding: 6px 4px; font: 500 var(--text-md) var(--font-body); text-align: left; cursor: pointer; }
+.shift-tasks button:hover { background: rgb(61 104 187 / 6%); }
+.shift-tasks button > span { width: 22px; height: 22px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid var(--rule); border-radius: 3px; font: 700 .8rem/1 var(--font-body); }
+.shift-tasks button[aria-pressed="true"] { color: var(--ink-4); text-decoration: line-through; }
+.shift-tasks button[aria-pressed="true"] > span { border-color: var(--success); background: var(--success); color: #ffffff; }
 .action-feed li > .audit-entry { display: grid; gap: 3px; min-width: 0; color: var(--ink-navy); font-size: inherit; font-weight: inherit; text-decoration: none; }
 .action-feed li > .audit-entry:hover strong { color: #1458aa; text-decoration: underline; text-underline-offset: 3px; }
 .action-feed li > .audit-entry:focus-visible { outline: 3px solid rgb(216 156 48 / 48%); outline-offset: 4px; }
