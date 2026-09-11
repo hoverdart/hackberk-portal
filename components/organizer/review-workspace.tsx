@@ -92,8 +92,10 @@ export function ReviewWorkspace({
           identity is deliberately absent from the page. */}
       <header>
         <span>
-          <EyeOff aria-hidden />
-          The applicant’s name and school are hidden while you score this
+          {applicant ? <Eye aria-hidden /> : <EyeOff aria-hidden />}
+          {applicant
+            ? "Scored. Who they are, and what they need, is below."
+            : "You score what was written. Who wrote it stays hidden until you submit."}
         </span>
       </header>
       <section className="review-context">
@@ -112,6 +114,7 @@ export function ReviewWorkspace({
         </div>
       </section>
       {notice ? <p className={`workspace-notice workspace-notice--${notice.tone}`}>{notice.message}</p> : null}
+      {applicant ? <ApplicantPanel applicant={applicant} answers={logisticsAnswers} /> : null}
       <div className="review-columns">
         <article className="blind-answers">
           <h2>Application answers</h2>
@@ -210,7 +213,6 @@ export function ReviewWorkspace({
           </div>
         </form>
       </div>
-      {applicant ? <ApplicantPanel applicant={applicant} answers={logisticsAnswers} /> : null}
       {canDecide ? <DecisionBar applicationId={application.id} reviewCount={submittedReviewCount} /> : null}
       {showConflict ? (
         <Dialog
@@ -257,11 +259,7 @@ function ApplicantPanel({
   ];
   return (
     <section className="applicant-panel">
-      <SheetHeader
-        icon={Eye}
-        title="Applicant and logistics"
-        eyebrow="Revealed after scoring · not part of the review"
-      />
+      <SheetHeader icon={Eye} title="Who this is, and what they need" eyebrow="Not part of the score" />
       <dl className="applicant-details">
         {details.map(([label, value]) => (
           <div key={label}>
@@ -270,16 +268,20 @@ function ApplicantPanel({
           </div>
         ))}
       </dl>
-      {answers.map((section) => (
-        <div key={section.section_key} className="applicant-answers">
-          {Object.entries(section.answers as Record<string, unknown>).map(([key, value]) => (
-            <div key={key}>
-              <strong>{key.replaceAll(/([A-Z])/g, " $1")}</strong>
-              <p>{Array.isArray(value) ? value.join(", ") : String(value) || "Not given"}</p>
-            </div>
-          ))}
-        </div>
-      ))}
+      {answers.length ? (
+        answers.map((section) => (
+          <div key={section.section_key} className="applicant-answers">
+            {Object.entries(section.answers as Record<string, unknown>).map(([key, value]) => (
+              <div key={key}>
+                <strong>{key.replaceAll(/([A-Z])/g, " $1")}</strong>
+                <p>{(Array.isArray(value) ? value.join(", ") : String(value)) || "Not given"}</p>
+              </div>
+            ))}
+          </div>
+        ))
+      ) : (
+        <p className="applicant-empty">This applicant left the logistics section blank.</p>
+      )}
     </section>
   );
 }

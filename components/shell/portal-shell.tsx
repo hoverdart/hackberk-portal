@@ -162,7 +162,7 @@ export function PortalShell({
         })}
       </section>
 
-      <footer className="event-docket">
+      <footer className="event-summary">
         <CalendarDays aria-hidden />
         <div>
           <small>Next event</small>

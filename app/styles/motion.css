@@ -69,7 +69,7 @@
 .queued-sheet:nth-child(3) { animation-delay: 150ms; }
 .queued-sheet:nth-child(4) { animation-delay: 180ms; }
 .status-stamp { animation: stamp-press 300ms 220ms var(--ease-settle) both; }
-.event-docket { animation: docket-rise 340ms 200ms var(--ease-settle) both; }
+.event-summary { animation: docket-rise 340ms 200ms var(--ease-settle) both; }
 
 /* Signed out. These pages are full loads rather than routed content, so their
    arrival plays once and the budget is easy to keep. */
