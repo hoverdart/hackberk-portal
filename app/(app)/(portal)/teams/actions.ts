@@ -1,5 +1,6 @@
 "use server";
 
+import { uuidSchema } from "@/lib/validation/applications";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -16,8 +17,6 @@ import { createClient } from "@/lib/supabase/server";
  * simultaneous acceptances cannot produce a team of five.
  */
 
-const idSchema = z.string().uuid();
-
 /**
  * Save the matching profile that drives the ranking.
  *
@@ -27,7 +26,7 @@ const idSchema = z.string().uuid();
  */
 export async function saveMatchingProfileAction(eventIdValue: string, formData: FormData) {
   const user = await requireUser();
-  const eventId = idSchema.parse(eventIdValue);
+  const eventId = uuidSchema.parse(eventIdValue);
   const payload = {
     event_id: eventId,
     user_id: user.id,
@@ -48,7 +47,7 @@ export async function saveMatchingProfileAction(eventIdValue: string, formData: 
 /** Create a team and add the creator as its first member. */
 export async function createTeamAction(eventIdValue: string, formData: FormData) {
   await requireUser();
-  const eventId = idSchema.parse(eventIdValue);
+  const eventId = uuidSchema.parse(eventIdValue);
   const name = z.string().trim().min(2).max(80).parse(formData.get("name"));
   const supabase = await createClient();
   const { error } = await supabase.rpc("create_hacker_team", { target_event: eventId, team_name: name });
@@ -59,8 +58,8 @@ export async function createTeamAction(eventIdValue: string, formData: FormData)
 /** Invite one hacker to a team. Creates a pending invitation, not a membership. */
 export async function inviteToTeamAction(teamIdValue: string, recipientIdValue: string) {
   const user = await requireUser();
-  const teamId = idSchema.parse(teamIdValue);
-  const recipientId = idSchema.parse(recipientIdValue);
+  const teamId = uuidSchema.parse(teamIdValue);
+  const recipientId = uuidSchema.parse(recipientIdValue);
   const supabase = await createClient();
   const { error } = await supabase
     .from("team_invitations")
@@ -77,7 +76,7 @@ export async function inviteToTeamAction(teamIdValue: string, recipientIdValue: 
  */
 export async function respondInvitationAction(invitationIdValue: string, accept: boolean) {
   await requireUser();
-  const invitationId = idSchema.parse(invitationIdValue);
+  const invitationId = uuidSchema.parse(invitationIdValue);
   const supabase = await createClient();
   const { error } = await supabase.rpc("respond_team_invitation", {
     target_invitation: invitationId,

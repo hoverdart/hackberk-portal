@@ -10,7 +10,9 @@
 .form-workspace { display: grid; grid-template-columns: minmax(246px, 300px) minmax(0, 1fr); align-items: stretch; min-height: 100%; }
 .workspace-state { display: inline-block; border: 1px solid currentColor; padding: 4px 7px; color: var(--ink-4); font: 700 .58rem var(--font-data); letter-spacing: .12em; text-transform: uppercase; }
 .workspace-state--submitted, .workspace-state--under_review { color: var(--link); }
-.workspace-state--accepted { color: var(--success); }
+.workspace-state--accepted { color: var(--success-ink); }
+.workspace-state--waitlisted { color: var(--warn-ink); }
+.workspace-state--draft, .workspace-state--not_started { color: var(--ink-4); }
 .workspace-state--rejected, .workspace-state--withdrawn { color: var(--danger); }
 .form-steps { position: sticky; top: 0; align-self: start; min-height: 100svh; border-right: 1px solid var(--rule-hair); background: rgb(246 247 243 / 94%); padding: clamp(30px, 3vw, 44px) clamp(20px, 2.25vw, 32px); box-shadow: 10px 0 28px rgb(10 36 87 / 5%); }
 .form-steps > p { display: grid; gap: 10px; justify-items: start; margin: 0; color: var(--ink-3); font: 700 var(--text-sm) var(--font-body); }

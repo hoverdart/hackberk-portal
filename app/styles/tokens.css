@@ -12,26 +12,6 @@
    appeared under eighteen spellings.
    -------------------------------------------------------------------------- */
 
-/* =============================================================================
-   Backathons at Herkeley — interface system.
-
-   The visual world is an event-operations binder: a navy control rail, cool paper
-   sheets, role tabs, stamped statuses and a docket strip. Reading order:
-
-     1. Tokens          the palette, type and shadow vocabulary
-     2. Primitives      the wordmark and the primary button
-     3. Portal shell    the signed-in binder (rail, tabs, sheets, docket)
-     4. Public surfaces auth, landing, legal, about
-     5. Feature pages   application wizard, organizer queue, teams, lens, ops
-     6. About           the Read surface
-     7. Motion          the arrival sequences and interaction feedback
-     8. Breakpoints     950px and 620px, then the reduced-motion path
-
-   Tailwind supplies the reset and the token bridge; everything with a material
-   quality — sheets, tabs, stamps, rules — is authored by hand below, because it
-   is a coherent system rather than a set of utility combinations.
-   ============================================================================= */
-@import "tailwindcss";
 /* -----------------------------------------------------------------------------
    1. Tokens. These are the source of truth and are mirrored in DESIGN.md; the
    @theme block below re-exports them to Tailwind so utility classes and authored
@@ -137,19 +117,6 @@
   --font-data: "Space Mono", monospace;
   --font-comp: "Encode Sans Semi Condensed", sans-serif;
   color-scheme: light;
-}
-@theme inline {
-  --color-primary: var(--berkeley-blue);
-  --color-ink: var(--ink-navy);
-  --color-paper: var(--paper);
-  --color-paper-cool: var(--paper-cool);
-  --color-paper-warm: var(--paper-warm);
-  --color-gold: var(--ddoski-gold);
-  --color-brown: var(--ddoski-brown);
-  --color-coral: var(--coral);
-  --font-sans: var(--font-body);
-  --font-display: var(--font-display);
-  --font-mono: var(--font-data);
 }
 /* ---------------------------------------------------------------------------
    Motion.

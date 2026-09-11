@@ -17,13 +17,17 @@ import { initialReviewState } from "@/lib/validation/reviews";
 /**
  * The blind review workspace.
  *
- * `answers` arrives already filtered — the query in `lib/data/organizer.ts`
- * excludes identity-sensitive sections, so the applicant's name and school are
- * not in this component's props and never reach the browser. Do not add a lookup
- * here to "enrich" the display; that would defeat the entire mechanism.
+ * Scoring happens against `answers`, which arrives already filtered — the query
+ * in `lib/data/organizer.ts` excludes identity-sensitive sections, so the
+ * applicant's name and school are not in those props and never reach the
+ * browser. Do not add a lookup here to "enrich" that display; it would defeat
+ * the mechanism.
  *
- * One organizer owns this blind rubric and records the final decision after it
- * is submitted. Identity-sensitive answers still never reach this component.
+ * `applicant` and `logisticsAnswers` are the deliberate exception, and they are
+ * the reason the rule is a sequence rather than a prohibition: you score what
+ * was written, and then you learn who wrote it and what they need to take part.
+ * The same query withholds both until a blind review exists, so this component
+ * cannot show them early even if it tried.
  */
 
 type ReviewWorkspaceProps = {
@@ -44,7 +48,7 @@ type ReviewWorkspaceProps = {
     pronouns: string | null;
   } | null;
   /** Logistics and access needs — organizer context, never scoring input. */
-  identityAnswers: Array<{ section_key: string; answers: unknown }>;
+  logisticsAnswers: Array<{ section_key: string; answers: unknown }>;
   canDecide: boolean;
   notice?: { tone: "success" | "error"; message: string };
 };
@@ -59,7 +63,7 @@ export function ReviewWorkspace({
   aggregate,
   submittedReviewCount,
   applicant,
-  identityAnswers,
+  logisticsAnswers,
   canDecide,
   notice,
 }: ReviewWorkspaceProps) {
@@ -206,7 +210,7 @@ export function ReviewWorkspace({
           </div>
         </form>
       </div>
-      {applicant ? <ApplicantPanel applicant={applicant} answers={identityAnswers} /> : null}
+      {applicant ? <ApplicantPanel applicant={applicant} answers={logisticsAnswers} /> : null}
       {canDecide ? <DecisionBar applicationId={application.id} reviewCount={submittedReviewCount} /> : null}
       {showConflict ? (
         <Dialog
@@ -243,7 +247,7 @@ function ApplicantPanel({
   answers,
 }: {
   applicant: NonNullable<ReviewWorkspaceProps["applicant"]>;
-  answers: ReviewWorkspaceProps["identityAnswers"];
+  answers: ReviewWorkspaceProps["logisticsAnswers"];
 }) {
   const details: Array<[string, string]> = [
     ["Name", applicant.preferred_name || applicant.full_name || "Not given"],

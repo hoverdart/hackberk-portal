@@ -11,7 +11,7 @@ import { getOrganizerOperations } from "@/lib/data/organizer-ops";
 import { Button } from "@/components/ui/button";
 import { MessageSheet } from "@/components/ui/message-sheet";
 import { SheetHeader } from "@/components/ui/sheet-header";
-import { formatEventDateTime, formatShiftRange } from "@/lib/formatters/event-time";
+import { formatEventDateTime, formatMinutes, formatShiftRange } from "@/lib/formatters/event-time";
 
 /**
  * Event operations: assign judges, clear mentor requests, run shifts, read the
@@ -236,15 +236,6 @@ export default async function OrganizerOperationsPage({
       </div>
     </main>
   );
-}
-
-/** Total volunteered time on one shift. */
-function formatMinutes(total: number) {
-  const rounded = Math.round(total);
-  const hours = Math.floor(rounded / 60);
-  const rest = rounded % 60;
-  if (!hours) return `${rest} min`;
-  return rest ? `${hours}h ${rest}m` : `${hours}h`;
 }
 
 function readStatus(value: unknown) {

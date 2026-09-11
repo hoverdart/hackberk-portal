@@ -5,15 +5,10 @@ import { ButtonLink } from "@/components/ui/button";
 /**
  * The About page.
  *
- * This route sits outside the `(public)` group on purpose. `(public)` wraps its
- * children in `AuthShell`, which centres a narrow 520px credential sheet — the
- * right frame for a sign-in form and the wrong one for a page you actually read.
- * Living at `app/about/page.tsx` means this page inherits only the root layout
- * and can lay out its own wide reading sheet.
- *
- * Mode is Read: the visitor's success here is understanding what the portal is,
- * how it works, and how it was built. Structure comes first, then the reading
- * experience.
+ * This route sits outside the `(public)` group on purpose: that group's stage
+ * centres one 520px credential sheet, which is the wrong frame for a page meant
+ * to be read at length. It shares the signed-out rail from `app/(site)/layout.tsx`
+ * and supplies its own wide reading stage.
  */
 
 export const metadata: Metadata = {

@@ -10,7 +10,6 @@
 .organizer-mast p { margin: 26px 0 7px; font: 700 .62rem var(--font-data); letter-spacing: .18em; }
 .organizer-mast h1 { margin: 0; font: 700 clamp(2.2rem, 3.4vw, 3.2rem)/1 var(--font-display); letter-spacing: -.035em; }
 .organizer-mast span { display: block; margin-top: 10px; color: var(--ink-4); }
-.organizer-mast .export-link { min-height: 44px; display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--ink-3); background: var(--surface-2); padding: 10px 14px; color: var(--ink-navy); font-weight: 700; text-decoration: none; }
 .queue-filters { display: grid; grid-template-columns: minmax(260px, 1fr) 180px 190px auto; gap: 10px; margin: 34px 0 18px; }
 .queue-filters label { min-height: 46px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--rule); background: var(--surface-2); padding: 0 12px; }
 .queue-filters svg { width: 18px; color: var(--ink-4); }

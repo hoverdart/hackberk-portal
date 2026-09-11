@@ -110,7 +110,6 @@ export type Database = {
       };
     };
     Functions: {
-      assign_application_reviewer: { Args: { target_application: string; target_reviewer: string }; Returns: string };
       claim_application_review: { Args: { target_application: string }; Returns: string };
       decide_application: {
         Args: { target_application: string; target_decision: ApplicationStatus };

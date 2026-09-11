@@ -27,6 +27,17 @@ function validationError(error: { flatten(): { fieldErrors: Record<string, strin
  * `full_name` goes into the user's metadata, where a database trigger copies it
  * into `profiles`. Email confirmation is disabled in the Auth provider, so
  * `signUp` returns a session and the person can continue directly to the portal.
+ *
+ * The `organizer` branch below is the one genuinely dangerous path in this file.
+ * It lets a caller grant themselves organizer membership — review access to
+ * every application in the event — with no invitation and no approval. It exists
+ * so this portfolio build can be evaluated without someone hand-running SQL, and
+ * the RPC is narrowed as far as it can be: it takes no arguments, so a caller
+ * cannot name a different user or a different event, and it refuses any event
+ * not marked `is_synthetic`. That last check is the only thing standing between
+ * this and a privilege-escalation hole, so a real event must never carry the
+ * flag. See `docs/ARCHITECTURE.md` and the RPC in
+ * `supabase/migrations/20260911052721_add_test_organizer_signup.sql`.
  */
 export async function signUpAction(_: AuthActionState, formData: FormData): Promise<AuthActionState> {
   const parsed = signUpSchema.safeParse({

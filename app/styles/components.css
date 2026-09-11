@@ -50,6 +50,7 @@
 .status-stamp--draft { color: var(--warn-ink); }
 .status-stamp--submitted, .status-stamp--under_review { color: var(--link); }
 .status-stamp--accepted { color: var(--success-ink); }
+.status-stamp--waitlisted { color: var(--warn-ink); }
 .status-stamp--rejected, .status-stamp--withdrawn { color: var(--danger-ink); }
 .field { display: grid; gap: 7px; font-weight: 700; }
 .field input { min-height: 46px; border: 1px solid var(--rule-hair); border-radius: 3px; background: var(--paper-white); padding: 0 12px; color: var(--ink-navy); font: 500 1rem var(--font-body); }

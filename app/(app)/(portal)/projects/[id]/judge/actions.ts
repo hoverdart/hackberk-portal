@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
 
 import { requireUser } from "@/lib/auth/guards";
 import { parseRubric } from "@/lib/reviews/rubric";
+import { uuidSchema } from "@/lib/validation/applications";
 import { scoreSchema } from "@/lib/validation/reviews";
 import { createClient } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/database.types";
@@ -18,8 +18,6 @@ import type { Json } from "@/lib/supabase/database.types";
  * enforces the same restriction at the database, and the pgTAP suite covers it.
  */
 
-const idSchema = z.string().uuid();
-
 export async function saveProjectReviewAction(
   projectIdValue: string,
   assignmentIdValue: string,
@@ -27,8 +25,8 @@ export async function saveProjectReviewAction(
   formData: FormData,
 ) {
   const user = await requireUser();
-  const projectId = idSchema.parse(projectIdValue);
-  const assignmentId = idSchema.parse(assignmentIdValue);
+  const projectId = uuidSchema.parse(projectIdValue);
+  const assignmentId = uuidSchema.parse(assignmentIdValue);
   const supabase = await createClient();
   const { data: assignment } = await supabase
     .from("project_review_assignments")

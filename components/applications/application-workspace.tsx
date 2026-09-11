@@ -24,8 +24,9 @@ import { initialApplicationState } from "@/lib/validation/applications";
  * the form controls until an explicit account save.
  *
  * The section heading tells the applicant whether the answers they are typing are
- * identity-sensitive and therefore withheld from blind reviewers. That promise is
- * only worth making if it is visible at the moment those answers are entered.
+ * identity-sensitive and therefore withheld while an organizer scores the
+ * application. That promise is only worth making if it is visible at the moment
+ * those answers are entered.
  */
 
 type ApplicationWorkspaceProps = {
@@ -171,7 +172,7 @@ export function ApplicationWorkspace({
           <span>{section.summary}</span>
           {section.identitySensitive ? (
             <small>
-              <LockKeyhole aria-hidden /> Identity-sensitive — excluded from blind review
+              <LockKeyhole aria-hidden /> Hidden from organizers until after they score this
             </small>
           ) : (
             <small>

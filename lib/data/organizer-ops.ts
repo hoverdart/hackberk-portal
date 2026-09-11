@@ -2,7 +2,19 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
-/** Read model for the organizer's event-day and project-judging control sheet. */
+/**
+ * Read model for the organizer's event-day page.
+ *
+ * Seven independent reads, issued together rather than in sequence.
+ *
+ * Unlike its siblings this helper performs no authorization of its own: it
+ * takes an `eventId` and trusts that `requireOrganizer(eventId)` has already run
+ * in the page. That is deliberate — an organizer's reach is per-event, and the
+ * guard that establishes which event is the caller's belongs with the route, not
+ * here. RLS is what makes the arrangement safe: every table below has a policy
+ * keyed on event staff membership, so passing somebody else's event id returns
+ * empty lists rather than their data.
+ */
 export async function getOrganizerOperations(eventId: string) {
   const supabase = await createClient();
   // Judges are "accepted judge applications", not a separate roster — the

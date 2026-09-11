@@ -17,7 +17,7 @@ import { SheetHeader } from "@/components/ui/sheet-header";
 import { requireApplicant } from "@/lib/auth/guards";
 import { getActiveEvent } from "@/lib/data/applications";
 import { getOpsHub } from "@/lib/data/ops";
-import { shiftDuration } from "@/lib/formatters/event-time";
+import { formatMinutes, shiftDuration } from "@/lib/formatters/event-time";
 
 /**
  * Event day: what needs this person, in the roles they actually hold.
@@ -296,15 +296,6 @@ function ShiftBoard({
       </ul>
     </>
   );
-}
-
-/** Total volunteered time, in the same shape as a single shift's duration. */
-function formatMinutes(total: number) {
-  const rounded = Math.round(total);
-  const hours = Math.floor(rounded / 60);
-  const rest = rounded % 60;
-  if (!hours) return `${rest} min`;
-  return rest ? `${hours}h ${rest}m` : `${hours}h`;
 }
 
 /** What a hacker should be told about a request they raised. */

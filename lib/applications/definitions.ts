@@ -41,7 +41,7 @@ export type SectionDefinition = {
 const commonProfile: SectionDefinition = {
   key: "profile",
   title: "Profile",
-  summary: "Identity and eligibility details. Hidden from the organizer blind review.",
+  summary: "Identity and eligibility details. Hidden from organizers until after they score your application.",
   identitySensitive: true,
   fields: [
     { key: "school", label: "School or organization", type: "text", required: true, maxLength: 160 },
@@ -53,7 +53,7 @@ const commonProfile: SectionDefinition = {
 const logistics: SectionDefinition = {
   key: "logistics",
   title: "Logistics",
-  summary: "Availability and accommodations. Shared only with authorized operations staff.",
+  summary: "Availability and access needs. Seen by organizers after scoring, and never part of the score.",
   identitySensitive: true,
   fields: [
     {
@@ -190,6 +190,14 @@ const roleSections: Record<ApplicationRole, SectionDefinition> = {
   },
 };
 
+/**
+ * The sections of one role's form, in order.
+ *
+ * The order is a product rule, not a layout choice: the two identity-sensitive
+ * sections bracket the blind-reviewable content, so the part an organizer scores
+ * is always the middle of the form. Reordering these changes what a reviewer
+ * sees, not merely where it appears.
+ */
 export function getApplicationDefinition(role: ApplicationRole): SectionDefinition[] {
   return [commonProfile, roleSections[role], logistics];
 }

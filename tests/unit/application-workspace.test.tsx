@@ -54,7 +54,7 @@ describe("application workspace", () => {
     expect(screen.getByRole("progressbar", { name: "Application completion" })).toHaveAttribute("aria-valuenow", "0");
     expect(screen.getByRole("heading", { name: "Profile" })).toBeVisible();
     expect(screen.getByLabelText("School or organization")).toBeVisible();
-    expect(screen.getByText("Identity-sensitive — excluded from blind review")).toBeVisible();
+    expect(screen.getByText("Hidden from organizers until after they score this")).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: new RegExp(getApplicationDefinition(role)[1].title) }));
     expect(await screen.findByRole("heading", { name: getApplicationDefinition(role)[1].title })).toBeVisible();

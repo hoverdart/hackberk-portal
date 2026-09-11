@@ -22,7 +22,7 @@
 .landing nav > div > a:not(.btn):hover { text-decoration: underline; }
 .landing section { align-self: center; max-width: 850px; padding: 60px clamp(28px, 7vw, 110px); }
 .landing h1 { max-width: 750px; margin: 20px 0; font: 700 clamp(3rem, 7vw, 6rem)/.92 var(--font-display); letter-spacing: -.04em; text-wrap: balance; }
-.landing section > p:not(.landing-docket) { max-width: 62ch; color: var(--ink-2); font-size: 1.25rem; line-height: 1.5; }
+.landing section > p { max-width: 62ch; color: var(--ink-2); font-size: 1.25rem; line-height: 1.5; }
 .landing section > div { display: flex; align-items: center; gap: 24px; margin-top: 32px; }
 .landing footer a { color: var(--link); text-underline-offset: 3px; }
 .landing footer { display: flex; gap: 22px; padding: 22px clamp(24px, 5vw, 72px); color: var(--ink-3); font-size: var(--text-sm); }
@@ -32,7 +32,6 @@
 .start-sheet::before { content: ""; position: absolute; inset: 0; opacity: .14; pointer-events: none; background: var(--texture-paper) repeat; mix-blend-mode: multiply; }
 .start-sheet > * { position: relative; z-index: 1; }
 .start-sheet h1 { max-width: 20ch; margin: 16px 0; font: 700 clamp(2rem, 3.4vw, 3rem)/1.02 var(--font-display); letter-spacing: -.035em; }
-.start-sheet__event { display: block; color: var(--ink-2); font: 700 var(--text-lg) var(--font-display); }
 .start-sheet__lede { max-width: 62ch; margin: 12px 0 0; color: var(--ink-3); font-size: var(--text-lg); line-height: 1.5; }
 .start-sheet form, .start-sheet__action { margin: 28px 0 18px; }
 /* ---------------------------------------------------------------------------

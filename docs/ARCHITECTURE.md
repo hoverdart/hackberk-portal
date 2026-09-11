@@ -5,7 +5,8 @@ The portal is a multi-event Next.js App Router application backed by Supabase Au
 ## Data boundaries
 
 - `profiles` contains shared identity data. One user can own one `applications` row per event and role.
-- `application_answers.is_identity_sensitive` separates applicant identity from blind-review content.
+- `application_answers.is_identity_sensitive` gates applicant identity out of the blind-review packet. It is a phase gate rather than a permanent separation: once an organizer submits a blind review, `getReviewWorkspace` also returns the applicant's profile and their logistics answers, and the queue stops masking their name. Both are withheld by the query rather than hidden by the page, so nothing identifying is in the payload before a score exists.
+- Logistics stays out of the scoring packet even though it identifies nobody. Availability, dietary needs and accommodations are things an organizer must know to run the event and must never be scored on.
 - `staff_members` is the only organizer authority for application grading. Bootstrap it through an administrative database connection, never auth metadata.
 - `review_assignments` has one active organizer-owned row per application. A submitted `application_reviews` row is its auditable blind rubric record; a conflict releases the application for another organizer to claim.
 - Team Match is accepted-hacker-only. Ranking is deterministic and explainable; transactional functions and row locks enforce one team per event and four people per team.
@@ -33,7 +34,7 @@ The portal is a multi-event Next.js App Router application backed by Supabase Au
 
 ## Route boundaries
 
-- Public: landing, sign-up, sign-in, verification callback, forgot/reset password, and legal placeholders.
+- Public: landing, `/about`, sign-up, sign-in, verification callback, forgot/reset password, and legal placeholders. `/design/hero` renders the signed-in shell without a session and is what the browser tests assert against.
 - Applicant: dashboard, four role applications, Team Match, Project Lens, and the event-day page.
 - Judge: `/judging` lists assigned projects and which still need a score; each opens a rubric score sheet.
 - Organizer: the paginated application queue, review workspaces, decisions, CSV export, and event operations for judge assignment, help requests, volunteer shifts, and decision history.
@@ -42,7 +43,7 @@ Every protected page and Server Action repeats authorization near its query. `pr
 
 ## Local database
 
-1. Copy `.env.example` to `.env` and use a Supabase session-pooler URL for `CONNECTION_URL`.
+1. Create `.env` with `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and `CONNECTION_URL`, using a Supabase session-pooler URL for the last.
 2. Start Docker, then run `npm run db:start` and `npm run db:reset`.
 3. Run `npm run db:test` for pgTAP policies and constraints.
 4. Regenerate TypeScript types with `npm run db:types` after every schema change.

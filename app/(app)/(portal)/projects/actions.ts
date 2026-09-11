@@ -1,5 +1,6 @@
 "use server";
 
+import { uuidSchema } from "@/lib/validation/applications";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -18,7 +19,6 @@ import type { Json } from "@/lib/supabase/database.types";
  * from the repository; it only ever reads and renders.
  */
 
-const idSchema = z.string().uuid();
 const projectSchema = z.object({
   name: z.string().trim().min(2).max(120),
   summary: z.string().trim().min(20).max(1200),
@@ -42,8 +42,8 @@ export async function saveProjectAction(
   formData: FormData,
 ) {
   await requireUser();
-  const teamId = idSchema.parse(teamIdValue);
-  const eventId = idSchema.parse(eventIdValue);
+  const teamId = uuidSchema.parse(teamIdValue);
+  const eventId = uuidSchema.parse(eventIdValue);
   const parsed = projectSchema.safeParse({
     name: formData.get("name"),
     summary: formData.get("summary"),
@@ -61,7 +61,7 @@ export async function saveProjectAction(
     demo_url: parsed.data.demoUrl || null,
   };
   const result = projectIdValue
-    ? await supabase.from("projects").update(payload).eq("id", idSchema.parse(projectIdValue)).select("id").single()
+    ? await supabase.from("projects").update(payload).eq("id", uuidSchema.parse(projectIdValue)).select("id").single()
     : await supabase.from("projects").insert(payload).select("id").single();
   if (result.error) redirect("/projects?error=save");
   revalidatePath("/projects");
@@ -76,7 +76,7 @@ export async function saveProjectAction(
  */
 export async function refreshProjectMetadataAction(projectIdValue: string) {
   await requireUser();
-  const projectId = idSchema.parse(projectIdValue);
+  const projectId = uuidSchema.parse(projectIdValue);
   const supabase = await createClient();
   const { data: project } = await supabase.from("projects").select("github_url").eq("id", projectId).single();
   if (!project) redirect("/projects?error=missing");
@@ -96,7 +96,7 @@ export async function refreshProjectMetadataAction(projectIdValue: string) {
 /** Mark the project submitted, which is what makes it visible to assigned judges. */
 export async function submitProjectAction(projectIdValue: string) {
   await requireUser();
-  const projectId = idSchema.parse(projectIdValue);
+  const projectId = uuidSchema.parse(projectIdValue);
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("projects")

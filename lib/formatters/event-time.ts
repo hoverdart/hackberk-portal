@@ -1,3 +1,12 @@
+/**
+ * Event times, rendered in the event's own zone.
+ *
+ * Every function here takes the zone rather than reading the server's, because
+ * an operational time that drifts with the host is worse than no time at all: a
+ * shift starting at "5:00 PM" has to mean five in the afternoon where the event
+ * is happening, not wherever the process runs. `events.timezone` is the source;
+ * this fallback covers the rows that predate it.
+ */
 const fallbackTimeZone = "America/Los_Angeles";
 const localDateTimePattern = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/;
 
@@ -14,7 +23,7 @@ export function formatEventDateTime(value: string, timeZone = fallbackTimeZone) 
   }).format(new Date(value));
 }
 
-/** Keep a shift's date, local hours, and Pacific-zone context together. */
+/** A shift's date and hours, with the zone named so the reader can trust them. */
 export function formatShiftRange(startsAt: string, endsAt: string, timeZone = fallbackTimeZone) {
   const starts = new Date(startsAt);
   const ends = new Date(endsAt);
@@ -94,9 +103,24 @@ function zonedParts(value: Date, timeZone: string) {
  */
 export function shiftDuration(checkedInAt: string | null, checkedOutAt: string | null) {
   if (!checkedInAt || !checkedOutAt) return null;
-  const minutes = Math.max(0, Math.round((Date.parse(checkedOutAt) - Date.parse(checkedInAt)) / 60000));
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
+  return formatMinutes(Math.max(0, (Date.parse(checkedOutAt) - Date.parse(checkedInAt)) / 60000));
+}
+
+/** Volunteered time, the way a person would say it: "3h", "2h 30m", "45 min". */
+export function formatMinutes(total: number) {
+  const rounded = Math.round(total);
+  const hours = Math.floor(rounded / 60);
+  const rest = rounded % 60;
   if (!hours) return `${rest} min`;
   return rest ? `${hours}h ${rest}m` : `${hours}h`;
+}
+
+/** A calendar date in the event's zone — no time, for list columns. */
+export function formatEventDate(value: string, timeZone?: string | null) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: timeZone || fallbackTimeZone,
+  }).format(new Date(value));
 }

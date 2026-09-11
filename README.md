@@ -1,4 +1,4 @@
-# Backathons at Herkeley 
+# Backathons at Herkeley
 
 A multi-event portal for hacker, judge, mentor, and volunteer applications; blind organizer review; team formation; safe public GitHub project review; and event-day operations.
 
@@ -12,13 +12,13 @@ A multi-event portal for hacker, judge, mentor, and volunteer applications; blin
 
 ```bash
 npm install
-cp .env.example .env
+cp .env.local.example .env   # or create .env with the three variables below
 npm run dev
 ```
 
 The app creates an authenticated session immediately after password sign-up; keep **Confirm email** disabled in Supabase Auth to match that flow. Configure a production SMTP provider before launch so password-reset and email-change messages can be delivered.
 
-For this synthetic test portal, the sign-up screen also offers **Create organizer test account**. It grants organizer membership only for the active synthetic event and intentionally blocks that account from creating applicant applications. Do not carry that self-service path into a real event.
+For this synthetic test portal, the sign-up screen also offers **Create an organizer account**. It grants organizer membership only for the active synthetic event and intentionally blocks that account from creating applicant applications. Do not carry that self-service path into a real event.
 
 ## Migrations
 
@@ -59,9 +59,16 @@ in the console, then sign in again).
 **See what is actually there**, sorted largest first:
 
 ```js
-Object.entries(Object.fromEntries(document.cookie.split("; ").map(c => {
-  const i = c.indexOf("="); return [c.slice(0, i), c.length];
-}))).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => console.log(v, k));
+Object.entries(
+  Object.fromEntries(
+    document.cookie.split("; ").map((c) => {
+      const i = c.indexOf("=");
+      return [c.slice(0, i), c.length];
+    }),
+  ),
+)
+  .sort((a, b) => b[1] - a[1])
+  .forEach(([k, v]) => console.log(v, k));
 ```
 
 `npm run dev` and `npm run start` raise the limit to 32768 bytes, which buys
@@ -114,11 +121,13 @@ produced it.
 
 ```
 app/(app)/            every signed-in route, inside one persistent shell
-  (portal)/           applicant, judge, mentor and volunteer surfaces
+  (portal)/           applications, event day, teams, projects, judging, profile
   (organizer)/        the application queue, review, event operations
-app/(public)/         sign-in, sign-up, password reset, legal
+app/(site)/           every signed-out route, inside the same rail
+  (public)/           sign-in, sign-up, password reset, legal
 app/styles/           tokens, base, components, shell, per-surface, motion, breakpoints
-components/ui/        Button, Dialog, Field, Sheet header, Eyebrow, MessageSheet
+components/ui/        Button, ButtonLink, Dialog, SheetHeader, Eyebrow,
+                      MessageSheet, StatusStamp, RoleIcon, Wordmark
 lib/auth/guards.ts    who may see what, including getAcceptedRoles
 lib/data/             one read model per surface, server-only
 supabase/migrations/  the schema, its policies and its triggers

@@ -6,7 +6,7 @@ button, a, input, select, textarea { caret-color: var(--berkeley-blue); }
 .save-announcement { min-height: 20px; margin: 2px 0 0; color: var(--ink-4); font-size: var(--text-sm); }
 .save-announcement--error, .save-announcement--stale { color: var(--danger); }
 .application-locked-note { margin: 0 0 0 auto; color: var(--ink-3); font-size: var(--text-sm); text-align: right; }
-/* Team Match, Project Lens, and Role Ops share the same operational-paper
+/* Team Match, Project Lens and the event-day page share the same operational-paper
    vocabulary. The shared mast and sheets keep new role tools composable. */
 .feature-page, .ops-page { padding: clamp(24px, 4vw, 58px); }
 .feature-mast { max-width: 980px; margin-bottom: 30px; }

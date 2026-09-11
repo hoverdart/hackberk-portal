@@ -203,7 +203,7 @@ divider such as a sheet header or section boundary, and **Hairline** (`rule-hair
 ### Named Rules
 
 **The Every Colour Is Named Rule.** No hex literal appears outside
-`app/styles/tokens.css`. This is the rule the system most recently failed: the
+`app/styles/tokens.css`, except `#ffffff` where a token would only ever mean white. This is the rule the system most recently failed: the
 stylesheet declared seventeen tokens and then carried about a hundred and sixty
 literal values across a hundred and thirty-six distinct colours. The navy rail
 was not `--ink-navy`. The link blue was written fourteen different ways. The same
@@ -392,9 +392,11 @@ to start at `opacity: 0` with `animation-fill-mode: both` and delays running out
 to 760ms, attached to content that remounts on every navigation, so the stage was
 genuinely blank for most of a second after every click.
 
-Two exemptions. The rail and the Campanile belong to the shell, which mounts once
-per page load, so they may take longer entrances that cannot re-fire. Dialogs
-keep theirs because they are genuinely on-demand mounts.
+One exemption and one prohibition. Dialogs keep their entrance, because they are
+genuinely on-demand mounts. The rail takes none at all — it is furniture, and
+furniture does not arrive; it had a wipe, and the wipe replayed every time a
+signed-out navigation rebuilt it. The Campanile inside it keeps its draw, because
+that mark is the point of the rail rather than its arrival.
 
 One exclusion. `.review-workspace` takes no arrival animation at all: recording a
 decision redirects to the same route, so an entrance there replays on a page the

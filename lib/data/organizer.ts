@@ -37,8 +37,20 @@ export async function getApplicationQueue(eventId: string, filters: QueueFilters
   if (filters.role) query = query.eq("role", filters.role);
   if (filters.status) query = query.eq("status", filters.status);
   const from = (page - 1) * pageSize;
-  const { data, count, error } = await query.range(from, from + pageSize - 1);
-  return { rows: data ?? [], count: count ?? 0, page, pageSize, error: error?.message };
+  // The event's zone travels with the rows, because a submitted-at date rendered
+  // in the server's zone disagrees with every other date on the site.
+  const [{ data, count, error }, { data: event }] = await Promise.all([
+    query.range(from, from + pageSize - 1),
+    supabase.from("events").select("timezone").eq("id", eventId).maybeSingle(),
+  ]);
+  return {
+    rows: data ?? [],
+    count: count ?? 0,
+    page,
+    pageSize,
+    timeZone: (event?.timezone as string | null) ?? null,
+    error: error?.message,
+  };
 }
 
 /**
@@ -108,19 +120,22 @@ export async function getReviewWorkspace(applicationId: string, organizerId: str
   // things an organizer has to know in order to run the event, and things a
   // review must never be influenced by — an accommodation request is not a
   // quality signal.
-  const decided = (submittedReviews ?? []).length > 0;
-  const [{ data: applicant }, { data: logistics }] = decided
+  const scored = (submittedReviews ?? []).length > 0;
+  const [{ data: applicant }, { data: logistics }] = scored
     ? await Promise.all([
         supabase
           .from("profiles")
           .select("full_name,preferred_name,school,graduation_year,pronouns")
           .eq("id", application.applicant_id)
           .maybeSingle(),
+        // Logistics only. `is_identity_sensitive` also covers the profile
+        // section, whose school and graduation year come from `profiles` just
+        // above — selecting on the flag alone rendered both twice.
         supabase
           .from("application_answers")
           .select("section_key,answers")
           .eq("application_id", applicationId)
-          .eq("is_identity_sensitive", true),
+          .eq("section_key", "logistics"),
       ])
     : [{ data: null }, { data: null }];
 
@@ -133,7 +148,7 @@ export async function getReviewWorkspace(applicationId: string, organizerId: str
     review,
     submittedReviews: submittedReviews ?? [],
     applicant,
-    identityAnswers: logistics ?? [],
+    logisticsAnswers: logistics ?? [],
   };
 }
 

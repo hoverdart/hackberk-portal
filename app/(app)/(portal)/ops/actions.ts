@@ -1,5 +1,6 @@
 "use server";
 
+import { uuidSchema } from "@/lib/validation/applications";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -8,7 +9,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Role Ops actions — the event-day interactions.
+ * Event-day actions.
  *
  * Each is small, and each writes a row that some other role reads immediately:
  * a hacker asks for help and it lands on the mentor desk; a mentor claims it and
@@ -16,12 +17,10 @@ import { createClient } from "@/lib/supabase/server";
  * constraints for their races rather than on read-then-write here.
  */
 
-const idSchema = z.string().uuid();
-
 /** A hacker asks for help. Expertise tags route it to the right mentors. */
 export async function createMentorRequestAction(eventIdValue: string, formData: FormData) {
   const user = await requireUser();
-  const eventId = idSchema.parse(eventIdValue);
+  const eventId = uuidSchema.parse(eventIdValue);
   const title = z.string().trim().min(4).max(120).parse(formData.get("title"));
   const description = z.string().trim().min(10).max(1200).parse(formData.get("description"));
   const expertiseTags = formData.getAll("expertiseTags").map(String).slice(0, 12);
@@ -46,7 +45,7 @@ export async function createMentorRequestAction(eventIdValue: string, formData: 
  */
 export async function claimMentorRequestAction(requestIdValue: string) {
   await requireUser();
-  const requestId = idSchema.parse(requestIdValue);
+  const requestId = uuidSchema.parse(requestIdValue);
   const supabase = await createClient();
   const { error } = await supabase.rpc("claim_mentor_request", { target_request: requestId });
   revalidatePath("/ops");
@@ -61,7 +60,7 @@ export async function claimMentorRequestAction(requestIdValue: string) {
  */
 export async function joinVolunteerShiftAction(shiftIdValue: string) {
   await requireUser();
-  const shiftId = idSchema.parse(shiftIdValue);
+  const shiftId = uuidSchema.parse(shiftIdValue);
   const supabase = await createClient();
   const { error } = await supabase.rpc("join_volunteer_shift", { target_shift: shiftId });
   revalidatePath("/ops");
@@ -83,7 +82,7 @@ export async function joinVolunteerShiftAction(shiftIdValue: string) {
  */
 export async function resolveOwnMentorRequestAction(requestIdValue: string) {
   const user = await requireUser();
-  const requestId = idSchema.parse(requestIdValue);
+  const requestId = uuidSchema.parse(requestIdValue);
   const supabase = await createClient();
   const { error } = await supabase
     .from("mentor_requests")
@@ -102,7 +101,7 @@ export async function resolveOwnMentorRequestAction(requestIdValue: string) {
  */
 export async function checkInShiftAction(shiftIdValue: string) {
   const user = await requireUser();
-  const shiftId = idSchema.parse(shiftIdValue);
+  const shiftId = uuidSchema.parse(shiftIdValue);
   const supabase = await createClient();
   const { error } = await supabase
     .from("volunteer_shift_assignments")
@@ -123,7 +122,7 @@ export async function checkInShiftAction(shiftIdValue: string) {
  */
 export async function checkOutShiftAction(shiftIdValue: string) {
   const user = await requireUser();
-  const shiftId = idSchema.parse(shiftIdValue);
+  const shiftId = uuidSchema.parse(shiftIdValue);
   const supabase = await createClient();
   const { error } = await supabase
     .from("volunteer_shift_assignments")
@@ -145,7 +144,7 @@ export async function checkOutShiftAction(shiftIdValue: string) {
  */
 export async function cancelMentorRequestAction(requestIdValue: string) {
   const user = await requireUser();
-  const requestId = idSchema.parse(requestIdValue);
+  const requestId = uuidSchema.parse(requestIdValue);
   const supabase = await createClient();
   const { error } = await supabase
     .from("mentor_requests")
@@ -170,7 +169,7 @@ export async function cancelMentorRequestAction(requestIdValue: string) {
  */
 export async function toggleShiftTaskAction(shiftIdValue: string, formData: FormData) {
   const user = await requireUser();
-  const shiftId = idSchema.parse(shiftIdValue);
+  const shiftId = uuidSchema.parse(shiftIdValue);
   const task = z.string().min(1).max(200).parse(formData.get("task"));
   const supabase = await createClient();
   const { data: assignment } = await supabase

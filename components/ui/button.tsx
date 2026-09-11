@@ -14,7 +14,7 @@ import type { ComponentProps, ComponentPropsWithRef, ReactNode } from "react";
  * won the colour. "Submit review" rendered as white text on pale paper: the
  * primary action of the whole review screen, invisible.
  *
- * So appearance lives here and only here, keyed on `data-variant`, which keeps
+ * So appearance lives here and only here, keyed on a variant class, which keeps
  * every rule at a flat (0,1,1). Containers may set layout — `display`, `gap`,
  * `justify-content` — and nothing else. A surface that needs a different colour
  * sets `--btn-bg` / `--btn-fg` / `--btn-border` on itself rather than growing a

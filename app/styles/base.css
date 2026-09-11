@@ -21,8 +21,3 @@ body {
 ::selection { background: var(--focus); color: var(--ink-navy); }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-/* Authentication and public pages reuse the binder's paper and rail materials. */
-/* -----------------------------------------------------------------------------
-   4. Public surfaces. Auth, landing and legal pages reuse the binder's materials
-   so the product does not change identity at the sign-in boundary.
-   -------------------------------------------------------------------------- */

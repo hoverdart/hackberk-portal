@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Download, Eye } from "lucide-react";
 import Link from "next/link";
 
 import { QueueFilters } from "@/components/organizer/queue-filters";
+import { formatEventDate } from "@/lib/formatters/event-time";
 import { StatusStamp } from "@/components/ui/status-stamp";
 import { requireOrganizer } from "@/lib/auth/guards";
 import { getApplicationQueue } from "@/lib/data/organizer";
@@ -90,13 +91,7 @@ export default async function OrganizerApplicationsPage({ searchParams }: PagePr
                 <td>
                   <StatusStamp status={row.status} />
                 </td>
-                <td>
-                  {row.submitted_at
-                    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(
-                        new Date(row.submitted_at),
-                      )
-                    : "Draft"}
-                </td>
+                <td>{row.submitted_at ? formatEventDate(row.submitted_at, queue.timeZone) : "Draft"}</td>
                 <td>
                   <span className="review-meter">
                     <i style={{ width: `${Math.min(row.submitted_reviews, 1) * 100}%` }} />

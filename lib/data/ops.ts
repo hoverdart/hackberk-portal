@@ -3,7 +3,7 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Read model for Role Ops — the event-day action feed.
+ * Read model for the event-day page.
  *
  * One page serves every role, so it loads every feed at once and lets the page
  * decide which sections to show based on the roles the user actually holds. All

@@ -7,6 +7,7 @@ import { saveProjectReviewAction } from "@/app/(app)/(portal)/projects/[id]/judg
 import { requireUser } from "@/lib/auth/guards";
 import { parseRubric } from "@/lib/reviews/rubric";
 import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
 import { MessageSheet } from "@/components/ui/message-sheet";
 
 /**
@@ -111,18 +112,17 @@ export default async function ProjectJudgePage({
           </label>
         </fieldset>
         <div className="rubric-actions">
-          <button type="submit" disabled={locked}>
-            <Save aria-hidden />
+          <Button type="submit" icon={<Save aria-hidden />} disabled={locked}>
             Save draft
-          </button>
-          <button
-            className="primary-button"
+          </Button>
+          <Button
+            variant="primary"
             type="submit"
             formAction={saveProjectReviewAction.bind(null, project.id, assignment.id, true)}
             disabled={locked}
           >
             Submit scores
-          </button>
+          </Button>
         </div>
       </form>
     </main>

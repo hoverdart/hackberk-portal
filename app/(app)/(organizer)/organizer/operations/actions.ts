@@ -1,5 +1,6 @@
 "use server";
 
+import { uuidSchema } from "@/lib/validation/applications";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -12,10 +13,9 @@ import { createClient } from "@/lib/supabase/server";
  * Organizer event-day operations: judge assignment, mentor triage, shift setup.
  *
  * These are the write side of the organizer control sheet in
- * `app/(organizer)/organizer/operations/page.tsx`.
+ * `app/(app)/(organizer)/organizer/operations/page.tsx`.
  */
 
-const idSchema = z.string().uuid();
 const shiftSchema = z.object({
   title: z.string().trim().min(3).max(120),
   location: z.string().trim().min(2).max(160),
@@ -32,8 +32,8 @@ const shiftSchema = z.object({
  * just scheduling.
  */
 export async function assignProjectJudgeAction(projectIdValue: string, formData: FormData) {
-  const projectId = idSchema.parse(projectIdValue);
-  const judgeId = idSchema.parse(formData.get("judgeId"));
+  const projectId = uuidSchema.parse(projectIdValue);
+  const judgeId = uuidSchema.parse(formData.get("judgeId"));
   const supabase = await createClient();
   const { data: project } = await supabase.from("projects").select("event_id").eq("id", projectId).single();
   if (!project) redirect("/organizer/operations?error=project");
@@ -47,7 +47,7 @@ export async function assignProjectJudgeAction(projectIdValue: string, formData:
 
 /** Close out a mentor request an organizer has handled or triaged away. */
 export async function resolveMentorRequestAction(requestIdValue: string) {
-  const requestId = idSchema.parse(requestIdValue);
+  const requestId = uuidSchema.parse(requestIdValue);
   const supabase = await createClient();
   const { data: request } = await supabase.from("mentor_requests").select("event_id").eq("id", requestId).single();
   if (!request) redirect("/organizer/operations?error=request");
@@ -62,7 +62,7 @@ export async function resolveMentorRequestAction(requestIdValue: string) {
 
 /** Publish a volunteer shift. The schema rejects a shift that ends before it starts. */
 export async function createVolunteerShiftAction(eventIdValue: string, formData: FormData) {
-  const eventId = idSchema.parse(eventIdValue);
+  const eventId = uuidSchema.parse(eventIdValue);
   await requireOrganizer(eventId);
   const parsed = shiftSchema.safeParse({
     title: formData.get("title"),

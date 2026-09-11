@@ -4,7 +4,7 @@
  * The rail lives in the layout above this, so it stays painted and interactive
  * while this renders — the point is that a navigation never blanks the whole
  * window. Deliberately un-animated: an entrance here would reintroduce exactly
- * the flash the motion rule in `globals.css` exists to prevent.
+ * the flash the motion rule in `app/styles/motion.css` exists to prevent.
  */
 export default function Loading() {
   return (

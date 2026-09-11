@@ -12,8 +12,10 @@ type PageProps = { params: Promise<{ id: string }>; searchParams: Promise<{ erro
 /**
  * One application's blind review sheet.
  *
- * The identity-sensitive answers are dropped by the query, not by this page, so
- * they are absent from the payload rather than merely unrendered.
+ * Identity is dropped by the query rather than by this page, so until a blind
+ * review is submitted it is absent from the payload rather than merely
+ * unrendered. After that the same query supplies it, along with the logistics an
+ * organizer needs in order to run the event.
  */
 export default async function ReviewPage({ params, searchParams }: PageProps) {
   const applicationId = reviewIdSchema.parse((await params).id);
@@ -66,7 +68,7 @@ export default async function ReviewPage({ params, searchParams }: PageProps) {
       aggregate={aggregateSubmittedReviews(submittedReviews, criteria)}
       submittedReviewCount={submittedReviews.length}
       applicant={workspace.applicant}
-      identityAnswers={workspace.identityAnswers}
+      logisticsAnswers={workspace.logisticsAnswers}
       canDecide
       notice={reviewNotice(query)}
     />

@@ -16,8 +16,3 @@ export const roleIcons: Record<ApplicationRole, LucideIcon> = {
   mentor: UserRoundCog,
   volunteer: Heart,
 };
-
-export function RoleIcon({ role }: { role: ApplicationRole }) {
-  const Icon = roleIcons[role];
-  return <Icon aria-hidden />;
-}
