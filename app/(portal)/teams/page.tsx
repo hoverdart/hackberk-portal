@@ -1,10 +1,15 @@
-import { ArrowLeft, Check, Sparkles, UserPlus, Users } from "lucide-react";
-import Link from "next/link";
+import { Check, Sparkles, UserPlus, Users } from "lucide-react";
 
-import { createTeamAction, inviteToTeamAction, respondInvitationAction, saveMatchingProfileAction } from "@/app/(portal)/teams/actions";
+import {
+  createTeamAction,
+  inviteToTeamAction,
+  respondInvitationAction,
+  saveMatchingProfileAction,
+} from "@/app/(portal)/teams/actions";
 import { requireUser } from "@/lib/auth/guards";
 import { getActiveEvent } from "@/lib/data/applications";
 import { getTeamMatchData } from "@/lib/data/teams";
+import { MessageSheet } from "@/components/ui/message-sheet";
 
 const skills = ["Frontend", "Backend", "AI / ML", "Design", "Hardware", "Product"];
 const interests = ["Climate", "Health", "Education", "Accessibility", "Community", "Creative tools"];
@@ -17,15 +22,199 @@ const interests = ["Climate", "Health", "Education", "Accessibility", "Community
  * in Postgres; `lib/team-match/ranking.ts` mirrors it so the explanations can be
  * unit tested.
  */
-export default async function TeamsPage({ searchParams }: { searchParams: Promise<{ success?: string; error?: string }> }) {
+export default async function TeamsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string; error?: string }>;
+}) {
   const user = await requireUser();
   const event = await getActiveEvent();
   if (!event) return <FeatureUnavailable title="Team Match is waiting for an active event." />;
   const data = await getTeamMatchData(user.id, event.id);
   const query = await searchParams;
   const team = data.membership?.teams as unknown as { id: string; name: string } | null;
-  return <main className="feature-page"><header className="feature-mast"><Link href="/dashboard"><ArrowLeft aria-hidden />Dashboard</Link><p>TEAM MATCH · ACCEPTED HACKERS</p><h1>Find the people your idea needs.</h1><span>Matches are deterministic, explainable, and never place more than four hackers on a team.</span></header>{query.success ? <p className="workspace-notice workspace-notice--success">Team Match updated.</p> : null}{query.error ? <p className="workspace-notice workspace-notice--error">That team action did not finish. No membership changed.</p> : null}<div className="team-layout"><section className="matching-sheet"><h2>Your matching signal</h2><form action={saveMatchingProfileAction.bind(null, event.id)}><ChoiceSet title="Skills" name="skills" choices={skills} selected={data.profile?.skills ?? []} /><ChoiceSet title="Interests" name="interests" choices={interests} selected={data.profile?.interests ?? []} /><ChoiceSet title="Availability" name="availability" choices={["Friday evening", "Saturday day", "Saturday night", "Sunday morning"]} selected={data.profile?.availability ?? []} /><ChoiceSet title="Goals" name="goals" choices={["Learn", "Ship", "Win a prize", "Meet collaborators"]} selected={data.profile?.goals ?? []} /><label className="range-field">Experience pace <input name="experienceLevel" type="range" min="1" max="5" defaultValue={data.profile?.experience_level ?? 1} /><span>New to hackathons → highly experienced</span></label><label className="rubric-notes">Short team bio<textarea name="bio" defaultValue={data.profile?.bio ?? ""} maxLength={800} rows={4} /></label><label className="opt-in"><input type="checkbox" name="optedIn" defaultChecked={data.profile?.opted_in ?? false} />Show me in Team Match and calculate candidates</label><button className="primary-button" type="submit">Save matching profile</button></form></section><section className="team-board">{team ? <article className="current-team"><p>YOUR TEAM · {data.members.length}/4</p><h2>{team.name}</h2><ul>{data.members.map((member) => { const profile = member.profiles as unknown as { preferred_name: string | null; full_name: string }; return <li key={member.user_id}><span>{(profile.preferred_name || profile.full_name).slice(0,1)}</span>{profile.preferred_name || profile.full_name}<Check aria-hidden /></li>; })}</ul></article> : <article className="create-team"><Users aria-hidden /><h2>Create your team</h2><p>You can start solo, then invite up to three matches.</p><form action={createTeamAction.bind(null, event.id)}><label>Team name<input name="name" minLength={2} maxLength={80} required /></label><button className="primary-button">Create team</button></form></article>}{data.invitations.length ? <section className="invitations"><h2>Invitations</h2>{data.invitations.map((invitation) => <article key={invitation.id}><div><strong>{(invitation.teams as unknown as { name: string }).name}</strong><span>invited you to join</span></div><form action={respondInvitationAction.bind(null, invitation.id, false)}><button>Decline</button></form><form action={respondInvitationAction.bind(null, invitation.id, true)}><button className="primary-button">Join team</button></form></article>)}</section> : null}<section className="match-list"><h2><Sparkles aria-hidden />Suggested collaborators</h2>{data.profile?.opted_in ? data.matches.map((match) => <article key={match.user_id}><div className="match-avatar">{(match.person?.preferred_name || match.person?.full_name || "H").slice(0,1)}</div><div><strong>{match.person?.preferred_name || match.person?.full_name || "Accepted hacker"}</strong><span>{match.person?.school || "Hackathon participant"}</span><ul>{Object.entries(match.reasons as Record<string, number>).map(([reason, value]) => <li key={reason}>{reason.replaceAll("_", " ")}: {value}</li>)}</ul></div><b>{match.score}</b>{team ? <form action={inviteToTeamAction.bind(null, team.id, match.user_id)}><button title="Invite to team"><UserPlus aria-hidden /><span className="sr-only">Invite {match.person?.preferred_name || "hacker"}</span></button></form> : null}</article>) : <div className="empty-state"><strong>Opt in to reveal your matches.</strong><span>Your profile controls every explanation.</span></div>}</section></section></div></main>;
+  return (
+    <main className="feature-page">
+      <header className="feature-mast">
+        <p>TEAM MATCH · ACCEPTED HACKERS</p>
+        <h1>Find the people your idea needs.</h1>
+        <span>Matches are deterministic, explainable, and never place more than four hackers on a team.</span>
+      </header>
+      {query.success ? <p className="workspace-notice workspace-notice--success">Team Match updated.</p> : null}
+      {query.error ? (
+        <p className="workspace-notice workspace-notice--error">
+          That team action did not finish. No membership changed.
+        </p>
+      ) : null}
+      <div className="team-layout">
+        <section className="matching-sheet">
+          <h2>Your matching signal</h2>
+          <form action={saveMatchingProfileAction.bind(null, event.id)}>
+            <ChoiceSet title="Skills" name="skills" choices={skills} selected={data.profile?.skills ?? []} />
+            <ChoiceSet
+              title="Interests"
+              name="interests"
+              choices={interests}
+              selected={data.profile?.interests ?? []}
+            />
+            <ChoiceSet
+              title="Availability"
+              name="availability"
+              choices={["Friday evening", "Saturday day", "Saturday night", "Sunday morning"]}
+              selected={data.profile?.availability ?? []}
+            />
+            <ChoiceSet
+              title="Goals"
+              name="goals"
+              choices={["Learn", "Ship", "Win a prize", "Meet collaborators"]}
+              selected={data.profile?.goals ?? []}
+            />
+            <label className="range-field">
+              Experience pace{" "}
+              <input
+                name="experienceLevel"
+                type="range"
+                min="1"
+                max="5"
+                defaultValue={data.profile?.experience_level ?? 1}
+              />
+              <span>New to hackathons → highly experienced</span>
+            </label>
+            <label className="rubric-notes">
+              Short team bio
+              <textarea name="bio" defaultValue={data.profile?.bio ?? ""} maxLength={800} rows={4} />
+            </label>
+            <label className="opt-in">
+              <input type="checkbox" name="optedIn" defaultChecked={data.profile?.opted_in ?? false} />
+              Show me in Team Match and calculate candidates
+            </label>
+            <button className="primary-button" type="submit">
+              Save matching profile
+            </button>
+          </form>
+        </section>
+        <section className="team-board">
+          {team ? (
+            <article className="current-team">
+              <p>YOUR TEAM · {data.members.length}/4</p>
+              <h2>{team.name}</h2>
+              <ul>
+                {data.members.map((member) => {
+                  const profile = member.profiles as unknown as { preferred_name: string | null; full_name: string };
+                  return (
+                    <li key={member.user_id}>
+                      <span>{(profile.preferred_name || profile.full_name).slice(0, 1)}</span>
+                      {profile.preferred_name || profile.full_name}
+                      <Check aria-hidden />
+                    </li>
+                  );
+                })}
+              </ul>
+            </article>
+          ) : (
+            <article className="create-team">
+              <Users aria-hidden />
+              <h2>Create your team</h2>
+              <p>You can start solo, then invite up to three matches.</p>
+              <form action={createTeamAction.bind(null, event.id)}>
+                <label>
+                  Team name
+                  <input name="name" minLength={2} maxLength={80} required />
+                </label>
+                <button className="primary-button">Create team</button>
+              </form>
+            </article>
+          )}
+          {data.invitations.length ? (
+            <section className="invitations">
+              <h2>Invitations</h2>
+              {data.invitations.map((invitation) => (
+                <article key={invitation.id}>
+                  <div>
+                    <strong>{(invitation.teams as unknown as { name: string }).name}</strong>
+                    <span>invited you to join</span>
+                  </div>
+                  <form action={respondInvitationAction.bind(null, invitation.id, false)}>
+                    <button>Decline</button>
+                  </form>
+                  <form action={respondInvitationAction.bind(null, invitation.id, true)}>
+                    <button className="primary-button">Join team</button>
+                  </form>
+                </article>
+              ))}
+            </section>
+          ) : null}
+          <section className="match-list">
+            <h2>
+              <Sparkles aria-hidden />
+              Suggested collaborators
+            </h2>
+            {data.profile?.opted_in ? (
+              data.matches.map((match) => (
+                <article key={match.user_id}>
+                  <div className="match-avatar">
+                    {(match.person?.preferred_name || match.person?.full_name || "H").slice(0, 1)}
+                  </div>
+                  <div>
+                    <strong>{match.person?.preferred_name || match.person?.full_name || "Accepted hacker"}</strong>
+                    <span>{match.person?.school || "Hackathon participant"}</span>
+                    <ul>
+                      {Object.entries(match.reasons as Record<string, number>).map(([reason, value]) => (
+                        <li key={reason}>
+                          {reason.replaceAll("_", " ")}: {value}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <b>{match.score}</b>
+                  {team ? (
+                    <form action={inviteToTeamAction.bind(null, team.id, match.user_id)}>
+                      <button title="Invite to team">
+                        <UserPlus aria-hidden />
+                        <span className="sr-only">Invite {match.person?.preferred_name || "hacker"}</span>
+                      </button>
+                    </form>
+                  ) : null}
+                </article>
+              ))
+            ) : (
+              <div className="empty-state">
+                <strong>Opt in to reveal your matches.</strong>
+                <span>Your profile controls every explanation.</span>
+              </div>
+            )}
+          </section>
+        </section>
+      </div>
+    </main>
+  );
 }
 
-function ChoiceSet({ title, name, choices, selected }: { title: string; name: string; choices: string[]; selected: string[] }) { return <fieldset className="match-choices"><legend>{title}</legend>{choices.map((choice) => <label key={choice}><input type="checkbox" name={name} value={choice} defaultChecked={selected.includes(choice)} />{choice}</label>)}</fieldset>; }
-function FeatureUnavailable({ title }: { title: string }) { return <main className="start-application"><p>ROLE OPS</p><h1>{title}</h1><a href="/dashboard">Return to the dashboard</a></main>; }
+function ChoiceSet({
+  title,
+  name,
+  choices,
+  selected,
+}: {
+  title: string;
+  name: string;
+  choices: string[];
+  selected: string[];
+}) {
+  return (
+    <fieldset className="match-choices">
+      <legend>{title}</legend>
+      {choices.map((choice) => (
+        <label key={choice}>
+          <input type="checkbox" name={name} value={choice} defaultChecked={selected.includes(choice)} />
+          {choice}
+        </label>
+      ))}
+    </fieldset>
+  );
+}
+function FeatureUnavailable({ title }: { title: string }) {
+  return (
+    <MessageSheet docket="TEAM MATCH" title={title} back={{ href: "/dashboard", label: "Return to the dashboard" }} />
+  );
+}

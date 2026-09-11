@@ -18,8 +18,7 @@ import { Wordmark } from "@/components/ui/wordmark";
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "How the Backathons at Herkeley portal works, how it was built, and the interface system behind it.",
+  description: "How the Backathons at Herkeley portal works, how it was built, and the interface system behind it.",
 };
 
 /** The product workflows, in the order a real participant meets them. */
@@ -110,18 +109,17 @@ export default function AboutPage() {
       </header>
 
       <article className="about-sheet">
-        <p className="about-docket">ABOUT THIS BUILD · ALL DATA SYNTHETIC</p>
+        <p className="about-docket">ABOUT THIS BUILD · SAMPLE DATA</p>
         <h1>A demonstration portal, built the way a real one would be.</h1>
         <p className="about-lede">
-          Backathons at Herkeley is a fictional organization. The event, the applicants, the reviews,
-          the teams, and the projects are all invented, and every screen is labeled as such. What is
-          not fictional is the engineering: this is a complete multi-role application portal with real
-          authentication, database-enforced authorization, and a tested workflow from application
-          through judging.
+          Backathons at Herkeley is a fictional organization. The event, the applicants, the reviews, the teams, and the
+          projects are all invented — this page is that disclosure, and the database marks the seeded event as sample
+          data. What is not fictional is the engineering: this is a complete multi-role application portal with real
+          authentication, database-enforced authorization, and a tested workflow from application through judging.
         </p>
         <p className="about-lede">
-          The name is a deliberate near-miss. It exists so this portal can never be mistaken for the
-          real organization whose problem shape inspired it.
+          The name is a deliberate near-miss. It exists so this portal can never be mistaken for the real organization
+          whose problem shape inspired it.
         </p>
 
         <section aria-labelledby="about-how">
@@ -157,55 +155,52 @@ export default function AboutPage() {
         <section aria-labelledby="about-trust">
           <h2 id="about-trust">Where the trust lives</h2>
           <p>
-            The interesting constraint in a portal like this is not drawing the screens — it is making
-            sure an applicant cannot read another applicant&rsquo;s answers, a judge cannot see a
-            project they were not assigned, and an organizer&rsquo;s blind review packet genuinely
-            withholds identity. Hiding those things in the interface is not a security boundary.
+            The interesting constraint in a portal like this is not drawing the screens — it is making sure an applicant
+            cannot read another applicant&rsquo;s answers, a judge cannot see a project they were not assigned, and an
+            organizer&rsquo;s blind review packet genuinely withholds identity. Hiding those things in the interface is
+            not a security boundary.
           </p>
           <p>
-            So authorization is enforced in Postgres with Row Level Security, and the database tests
-            assert the denials directly rather than through the UI. Service credentials stay
-            server-only; the browser gets a publishable key whose reach is bounded by the same
-            policies. The interface is a convenience over that boundary, never the boundary itself.
+            So authorization is enforced in Postgres with Row Level Security, and the database tests assert the denials
+            directly rather than through the UI. Service credentials stay server-only; the browser gets a publishable
+            key whose reach is bounded by the same policies. The interface is a convenience over that boundary, never
+            the boundary itself.
           </p>
         </section>
 
         <section aria-labelledby="about-interface">
           <h2 id="about-interface">The interface system</h2>
           <p>
-            The visual world is an event-operations binder. Organizers running a hackathon work from
-            a stack of paper — role tabs, checklists, stamped statuses, a docket strip along the
-            bottom — and the portal renders that literally rather than reaching for the default
-            floating-card dashboard.
+            The visual world is an event-operations binder. Organizers running a hackathon work from a stack of paper —
+            role tabs, checklists, stamped statuses, a docket strip along the bottom — and the portal renders that
+            literally rather than reaching for the default floating-card dashboard.
           </p>
           <ul className="about-notes">
             <li>
-              <strong>Structure.</strong> A navy control rail frames cool paper sheets. One sheet is
-              active and dominant; the other roles stay visibly queued behind it, so you never lose
-              track of the responsibilities you are not currently looking at.
+              <strong>Structure.</strong> A navy control rail frames cool paper sheets. One sheet is active and
+              dominant; the other roles stay visibly queued behind it, so you never lose track of the responsibilities
+              you are not currently looking at.
             </li>
             <li>
-              <strong>Color.</strong> Working blue marks the active responsibility and the primary
-              action; ink navy supplies the frame. Ddoski gold and brown carry warmth, and coral is
-              rationed to alerts and synthetic-data provenance. No status is communicated by color
-              alone — it is always written or shaped as well.
+              <strong>Color.</strong> Working blue marks the active responsibility and the primary action; ink navy
+              supplies the frame. Ddoski gold and brown carry warmth, and coral is rationed to alerts and the volunteer
+              role. No status is communicated by color alone — it is always written or shaped as well.
             </li>
             <li>
-              <strong>Type.</strong> Space Grotesk commands, Karla explains, Space Mono keeps the
-              dockets and stamps accountable, and Encode Sans Semi Condensed carries the active
-              sheet&rsquo;s headline where a narrower silhouette protects the composition.
+              <strong>Type.</strong> Space Grotesk commands, Karla explains, Space Mono keeps the dockets and stamps
+              accountable, and Encode Sans Semi Condensed carries the active sheet&rsquo;s headline where a narrower
+              silhouette protects the composition.
             </li>
             <li>
-              <strong>Motion.</strong> One rehearsed arrival per surface: the navy cover opens, the
-              role tabs seat into their slots, the active sheet is dealt onto the desk, and the status
-              stamp presses last. Everything after arrival is fast, quiet feedback. Under{" "}
-              <code>prefers-reduced-motion</code> every travel distance collapses to zero while the
-              fades and state changes remain.
+              <strong>Motion.</strong> One rehearsed arrival per surface: the navy cover opens, the role tabs seat into
+              their slots, the active sheet is dealt onto the desk, and the status stamp presses last. Everything after
+              arrival is fast, quiet feedback. Under <code>prefers-reduced-motion</code> every travel distance collapses
+              to zero while the fades and state changes remain.
             </li>
             <li>
-              <strong>Accessibility.</strong> WCAG 2.2 AA is the target: full keyboard operation, a
-              3px high-contrast focus ring, semantic forms and tables, live regions for status, and a
-              mobile layout that reorders the binder into a work packet rather than shrinking it.
+              <strong>Accessibility.</strong> WCAG 2.2 AA is the target: full keyboard operation, a 3px high-contrast
+              focus ring, semantic forms and tables, live regions for status, and a mobile layout that reorders the
+              binder into a work packet rather than shrinking it.
             </li>
           </ul>
         </section>
@@ -213,8 +208,8 @@ export default function AboutPage() {
         <section aria-labelledby="about-next">
           <h2 id="about-next">See it working</h2>
           <p>
-            Create an account to walk the applicant path end to end. Email verification is on, and the
-            portal seeds a labeled synthetic event so there is something to apply to.
+            Create an account to walk the applicant path end to end. Email verification is on, and the portal seeds a
+            sample event so there is something to apply to.
           </p>
           <div className="about-actions">
             <Link className="primary-button" href="/sign-up">
@@ -230,7 +225,6 @@ export default function AboutPage() {
       <footer className="about-footer">
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>
-        <span>Herkeley Build 2027 is synthetic demonstration data.</span>
       </footer>
     </main>
   );

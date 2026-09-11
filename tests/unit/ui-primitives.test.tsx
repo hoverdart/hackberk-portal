@@ -11,9 +11,23 @@ describe("reusable portal primitives", () => {
   });
 
   it("uses one semantic ordered feed for linked and completed work", () => {
-    render(<ActionFeed label="JUDGE" title="Queue" empty="Nothing assigned." items={[
-      { id: "1", title: "Project Atlas", detail: "Review the submitted build.", href: "/projects/1", meta: "Assigned", done: true },
-    ]} />);
+    render(
+      <ActionFeed
+        label="JUDGE"
+        title="Queue"
+        empty="Nothing assigned."
+        items={[
+          {
+            id: "1",
+            title: "Project Atlas",
+            detail: "Review the submitted build.",
+            href: "/projects/1",
+            meta: "Assigned",
+            done: true,
+          },
+        ]}
+      />,
+    );
 
     expect(screen.getByRole("heading", { name: "Queue" })).toBeVisible();
     expect(screen.getByRole("list")).toBeVisible();

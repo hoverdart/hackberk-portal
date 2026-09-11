@@ -54,12 +54,7 @@ export async function requireOrganizer(eventId?: string) {
   const user = await requireUser();
   const supabase = await createClient();
 
-  let query = supabase
-    .from("staff_members")
-    .select("event_id")
-    .eq("user_id", user.id)
-    .eq("role", "organizer")
-    .limit(1);
+  let query = supabase.from("staff_members").select("event_id").eq("user_id", user.id).eq("role", "organizer").limit(1);
   if (eventId) query = query.eq("event_id", eventId);
 
   const { data } = await query.maybeSingle();

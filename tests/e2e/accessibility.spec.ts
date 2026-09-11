@@ -13,7 +13,10 @@ import path from "node:path";
 async function settle(page: import("@playwright/test").Page) {
   await page
     .waitForFunction(
-      () => document.getAnimations().every((animation) => animation.playState === "finished" || animation.playState === "idle"),
+      () =>
+        document
+          .getAnimations()
+          .every((animation) => animation.playState === "finished" || animation.playState === "idle"),
       undefined,
       { timeout: 5_000 },
     )
@@ -27,7 +30,9 @@ test("public and portal surfaces have no serious axe violations", async ({ page 
     await page.goto(route);
     await settle(page);
     const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
-    expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""))).toEqual([]);
+    expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""))).toEqual(
+      [],
+    );
   }
 });
 
@@ -43,7 +48,9 @@ test("primary navigation works from the keyboard", async ({ page }) => {
 test("reduced-motion users receive near-instant transitions", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const duration = await page.getByRole("link", { name: "Start an application" }).evaluate((element) => Number.parseFloat(getComputedStyle(element).transitionDuration));
+  const duration = await page
+    .getByRole("link", { name: "Start an application" })
+    .evaluate((element) => Number.parseFloat(getComputedStyle(element).transitionDuration));
   expect(duration).toBeLessThan(0.02);
 });
 

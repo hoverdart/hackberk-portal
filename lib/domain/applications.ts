@@ -17,8 +17,25 @@ export type ApplicationRole = (typeof applicationRoles)[number];
  * database enforces which transitions are legal — see the status-transition
  * trigger in the migrations and the pgTAP tests that cover it.
  */
-export const applicationStatuses = ["draft", "submitted", "under_review", "accepted", "waitlisted", "rejected", "withdrawn"] as const;
+export const applicationStatuses = [
+  "draft",
+  "submitted",
+  "under_review",
+  "accepted",
+  "waitlisted",
+  "rejected",
+  "withdrawn",
+] as const;
 export type ApplicationStatus = (typeof applicationStatuses)[number];
+
+/**
+ * One wizard section, reduced to what the dashboard checklist may know about it.
+ *
+ * Deliberately just a title and a boolean. The dashboard shows whether a section
+ * is finished, never what was answered, so this type is the shape that enforces
+ * the promise: there is nowhere here to put an answer even by accident.
+ */
+export type SectionProgress = { key: string; title: string; complete: boolean };
 
 /**
  * What the interface needs to render one role's card.
@@ -26,22 +43,32 @@ export type ApplicationStatus = (typeof applicationStatuses)[number];
  * `id` is null and `status` is `"not_started"` when no row exists yet — the
  * applicant has simply never opened that role's form. That is a UI state rather
  * than a database state, which is why `"not_started"` is not in the enum above.
+ *
+ * `progress` is derived from `sections` rather than stored, so the seal on the
+ * dashboard and the ticks in the checklist cannot disagree.
  */
-export type ApplicationSummary = { id: string | null; role: ApplicationRole; status: ApplicationStatus | "not_started"; progress: number };
+export type ApplicationSummary = {
+  id: string | null;
+  role: ApplicationRole;
+  status: ApplicationStatus | "not_started";
+  progress: number;
+  sections: SectionProgress[];
+};
 
 /**
- * Role-specific copy. `words` are the three-word purpose printed on each role
- * tab; `tagline` is the one-line promise shown on a queued sheet. Kept here so
- * the shell, the tabs, and the queued sheets cannot drift apart.
+ * The three-word purpose printed on each role tab. Kept here rather than in the
+ * shell so the tabs and anything else naming a role cannot drift apart.
  */
-export const roleCopy: Record<ApplicationRole, { words: [string, string, string]; tagline: string }> = {
-  hacker: { words: ["BUILD", "LEARN", "COLLABORATE"], tagline: "Make an idea real." },
-  judge: { words: ["EVALUATE", "SUPPORT", "GIVE BACK"], tagline: "Help spot great ideas." },
-  mentor: { words: ["SHARE", "GUIDE", "EMPOWER"], tagline: "Guide builders forward." },
-  volunteer: { words: ["MAKE", "IT HAPPEN", "TOGETHER"], tagline: "Power the experience." },
+export const roleCopy: Record<ApplicationRole, { words: [string, string, string] }> = {
+  hacker: { words: ["BUILD", "LEARN", "COLLABORATE"] },
+  judge: { words: ["EVALUATE", "SUPPORT", "GIVE BACK"] },
+  mentor: { words: ["SHARE", "GUIDE", "EMPOWER"] },
+  volunteer: { words: ["MAKE", "IT HAPPEN", "TOGETHER"] },
 };
 
 /** Turn a stored status into display text: `under_review` becomes "Under review". */
 export function statusLabel(status: ApplicationSummary["status"]) {
-  return status === "not_started" ? "Not started" : status.replaceAll("_", " ").replace(/^./, (letter) => letter.toUpperCase());
+  return status === "not_started"
+    ? "Not started"
+    : status.replaceAll("_", " ").replace(/^./, (letter) => letter.toUpperCase());
 }

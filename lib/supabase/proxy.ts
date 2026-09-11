@@ -12,7 +12,7 @@ import { getPublicSupabaseConfig } from "@/lib/supabase/shared";
  * policies in Postgres. Forgetting to add a prefix here leaks nothing; it just
  * means the visitor reaches the page and gets redirected a moment later.
  */
-const protectedPrefixes = ["/dashboard", "/applications", "/teams", "/projects", "/ops", "/organizer"];
+const protectedPrefixes = ["/dashboard", "/applications", "/teams", "/projects", "/ops", "/profile", "/organizer"];
 
 /** Pages a signed-in user has no reason to see; they get sent to the dashboard. */
 const authPages = ["/sign-in", "/sign-up"];

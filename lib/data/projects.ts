@@ -15,10 +15,17 @@ import { createClient } from "@/lib/supabase/server";
  */
 export async function getProjectHome(userId: string, eventId: string) {
   const supabase = await createClient();
-  const { data: memberships } = await supabase.from("team_members").select("team_id,teams(id,name,event_id)").eq("user_id", userId);
-  const membership = (memberships ?? []).find((row) => (row.teams as unknown as { event_id: string })?.event_id === eventId);
+  const { data: memberships } = await supabase
+    .from("team_members")
+    .select("team_id,teams(id,name,event_id)")
+    .eq("user_id", userId);
+  const membership = (memberships ?? []).find(
+    (row) => (row.teams as unknown as { event_id: string })?.event_id === eventId,
+  );
   const teamId = membership?.team_id;
-  const { data: project } = teamId ? await supabase.from("projects").select("*").eq("team_id", teamId).maybeSingle() : { data: null };
+  const { data: project } = teamId
+    ? await supabase.from("projects").select("*").eq("team_id", teamId).maybeSingle()
+    : { data: null };
   return { membership, project };
 }
 
@@ -54,5 +61,22 @@ export async function getProjectLens(projectId: string, path?: string) {
 /** Map a file extension to a Shiki grammar, falling back to unhighlighted text. */
 function languageForPath(path: string) {
   const extension = path.split(".").pop()?.toLowerCase();
-  return ({ ts: "typescript", tsx: "tsx", js: "javascript", jsx: "jsx", py: "python", rs: "rust", go: "go", css: "css", html: "html", json: "json", md: "markdown", sql: "sql" } as Record<string, string>)[extension ?? ""] ?? "text";
+  return (
+    (
+      {
+        ts: "typescript",
+        tsx: "tsx",
+        js: "javascript",
+        jsx: "jsx",
+        py: "python",
+        rs: "rust",
+        go: "go",
+        css: "css",
+        html: "html",
+        json: "json",
+        md: "markdown",
+        sql: "sql",
+      } as Record<string, string>
+    )[extension ?? ""] ?? "text"
+  );
 }

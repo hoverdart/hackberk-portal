@@ -1,12 +1,14 @@
--- Clearly synthetic fixture data for local development and the hosted demo event.
+-- Sample event data for local development and the hosted demo deployment.
+-- The row keeps is_synthetic = true so the portal can tell sample data from a
+-- real cycle; the name is the event's name, not a disclaimer.
 insert into public.events (
   id, slug, name, tagline, venue, starts_at, ends_at,
   applications_open_at, applications_close_at,
   application_forms, application_rubric, project_rubric, is_active, is_synthetic
 ) values (
   '00000000-0000-4000-8000-000000000001',
-  'berkeley-build-2027-demo',
-  'Herkeley Build 2027 — Synthetic Demo',
+  'herkeley-build-2027',
+  'Herkeley Build 2027',
   'Ideas, people, possibilities.',
   'Herkeley · Pauley Ballroom',
   '2027-03-06 17:00:00-08',

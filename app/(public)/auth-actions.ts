@@ -87,7 +87,9 @@ export async function forgotPasswordAction(_: AuthActionState, formData: FormDat
   if (!parsed.success) return { status: "error", errors: { email: parsed.error.issues.map((issue) => issue.message) } };
   const origin = (await headers()).get("origin") ?? "http://localhost:3000";
   const supabase = await createClient();
-  await supabase.auth.resetPasswordForEmail(parsed.data, { redirectTo: `${origin}/auth/callback?next=/reset-password` });
+  await supabase.auth.resetPasswordForEmail(parsed.data, {
+    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+  });
   // Avoid revealing whether an account exists.
   return { status: "success", message: "If that account exists, a reset link is on its way." };
 }
@@ -101,7 +103,8 @@ export async function forgotPasswordAction(_: AuthActionState, formData: FormDat
  */
 export async function updatePasswordAction(_: AuthActionState, formData: FormData): Promise<AuthActionState> {
   const parsed = passwordSchema.safeParse(formData.get("password"));
-  if (!parsed.success) return { status: "error", errors: { password: parsed.error.issues.map((issue) => issue.message) } };
+  if (!parsed.success)
+    return { status: "error", errors: { password: parsed.error.issues.map((issue) => issue.message) } };
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password: parsed.data });
   if (error) return { status: "error", message: error.message };

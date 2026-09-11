@@ -29,9 +29,7 @@ export async function createClient() {
       getAll: () => cookieStore.getAll(),
       setAll(cookiesToSet) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options),
-          );
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
         } catch {
           // A pure Server Component render has no mutable response to attach
           // cookies to, and Next throws if you try. That is expected and safe to

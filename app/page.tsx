@@ -15,9 +15,35 @@ import { Wordmark } from "@/components/ui/wordmark";
 export default function HomePage() {
   return (
     <main className="landing">
-      <nav><Wordmark href={null} /><div><Link href="/about">About</Link><Link className="landing-signin" href="/sign-in">Sign in</Link><Link className="primary-button" href="/sign-up">Apply now</Link></div></nav>
-      <section><p className="landing-docket">APPLICATIONS · TEAMS · EVENT OPS</p><h1>Welcome to Herkeley’s Backathon!</h1><p>Apply in four roles, find your team, and keep every event-day handoff moving.</p><div><Link className="primary-button" href="/sign-up">Start an application</Link><Link className="landing-secondary" href="/sign-in">Sign in to your runbook <span aria-hidden>→</span></Link></div></section>
-      <footer><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><span>Herkeley Build 2027 is synthetic demonstration data.</span></footer>
+      <nav>
+        <Wordmark href={null} />
+        <div>
+          <Link href="/about">About</Link>
+          <Link className="landing-signin" href="/sign-in">
+            Sign in
+          </Link>
+          <Link className="primary-button" href="/sign-up">
+            Apply now
+          </Link>
+        </div>
+      </nav>
+      <section>
+        <p className="landing-docket">APPLICATIONS · TEAMS · EVENT OPS</p>
+        <h1>Welcome to Herkeley’s Backathon!</h1>
+        <p>Apply in four roles, find your team, and keep every event-day handoff moving.</p>
+        <div>
+          <Link className="primary-button" href="/sign-up">
+            Start an application
+          </Link>
+          <Link className="landing-secondary" href="/sign-in">
+            Or, sign in<span aria-hidden>→</span>
+          </Link>
+        </div>
+      </section>
+      <footer>
+        <Link href="/privacy">Privacy</Link>
+        <Link href="/terms">Terms</Link>
+      </footer>
     </main>
   );
 }

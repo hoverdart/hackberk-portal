@@ -1,0 +1,12 @@
+.next
+.next-e2e
+node_modules
+package-lock.json
+supabase/migrations
+test-results
+playwright-report
+
+# The stylesheet is authored as one dense, sectioned system and is read that
+# way; running Prettier over it would triple its length for no gain. Format it
+# deliberately, not as a side effect of formatting the TypeScript.
+app/globals.css

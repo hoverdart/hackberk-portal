@@ -25,8 +25,7 @@ export const metadata: Metadata = {
     default: "Backathons at Herkeley",
     template: "%s · Backathons at Herkeley",
   },
-  description:
-    "Apply, review, form teams, and run event operations for Backathons at Herkeley.",
+  description: "Apply, review, form teams, and run event operations for Backathons at Herkeley.",
 };
 
 export default function RootLayout({

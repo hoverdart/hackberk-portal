@@ -19,7 +19,12 @@ export function AuthShell({ children }: { children: ReactNode }) {
     <main className="auth-shell">
       <aside className="auth-rail">
         <Wordmark href="/" />
-        <div className="auth-rail-copy"><span>BUILD</span><span>PEOPLE</span><span>IDEAS</span><span>A BRIGHTER TOMORROW</span></div>
+        <div className="auth-rail-copy">
+          <span>BUILD</span>
+          <span>PEOPLE</span>
+          <span>IDEAS</span>
+          <span>A BRIGHTER TOMORROW</span>
+        </div>
         {/* Decorative but not meaningless, so it keeps a short alt rather than "". */}
         <Image src={tower} alt="Campanile line illustration" priority className="auth-tower" />
       </aside>

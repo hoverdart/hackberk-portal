@@ -26,7 +26,14 @@ export async function createMentorRequestAction(eventIdValue: string, formData: 
   const description = z.string().trim().min(10).max(1200).parse(formData.get("description"));
   const expertiseTags = formData.getAll("expertiseTags").map(String).slice(0, 12);
   const supabase = await createClient();
-  const { error } = await supabase.from("mentor_requests").insert({ event_id: eventId, requester_id: user.id, title, description, expertise_tags: expertiseTags, status: "open" });
+  const { error } = await supabase.from("mentor_requests").insert({
+    event_id: eventId,
+    requester_id: user.id,
+    title,
+    description,
+    expertise_tags: expertiseTags,
+    status: "open",
+  });
   revalidatePath("/ops");
   redirect(error ? "/ops?error=request" : "/ops?success=request");
 }
