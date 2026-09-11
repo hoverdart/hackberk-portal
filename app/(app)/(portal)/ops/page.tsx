@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   claimMentorRequestAction,
   createMentorRequestAction,
@@ -147,7 +148,9 @@ export default async function OpsPage({
                   </label>
                 ))}
               </fieldset>
-              <button className="primary-button">Send to mentor desk</button>
+              <Button variant="primary" type="submit">
+                Send to a mentor
+              </Button>
             </form>
           </section>
         ) : null}

@@ -1,3 +1,4 @@
+import { ButtonLink } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Download, Eye } from "lucide-react";
 import Link from "next/link";
 
@@ -43,10 +44,10 @@ export default async function OrganizerApplicationsPage({ searchParams }: PagePr
           <h1>Application queue</h1>
           <span>{queue.count.toLocaleString()} records · single-organizer blind grading</span>
         </div>
-        <Link className="export-link" href={`/organizer/applications/export?${exportQuery}`}>
+        <ButtonLink variant="secondary" size="sm" href={`/organizer/applications/export?${exportQuery}`}>
           <Download aria-hidden />
           Export CSV
-        </Link>
+        </ButtonLink>
       </header>
       <QueueFilters values={{ query, role, status: statusValue }} />
       {queue.error ? (

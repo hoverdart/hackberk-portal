@@ -1,9 +1,15 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import { AlertTriangle, Check, EyeOff, Save } from "lucide-react";
 import { useActionState, useState } from "react";
 
-import { decideApplicationAction, reportConflictAction, saveReviewAction } from "@/app/(app)/(organizer)/organizer/actions";
+import {
+  decideApplicationAction,
+  reportConflictAction,
+  saveReviewAction,
+} from "@/app/(app)/(organizer)/organizer/actions";
 import type { RubricCriterion } from "@/lib/reviews/rubric";
 import { initialReviewState } from "@/lib/validation/reviews";
 
@@ -161,30 +167,50 @@ export function ReviewWorkspace({
             {state.message}
           </p>
           <div className="rubric-actions">
-            <button type="button" onClick={() => setShowConflict(true)} disabled={locked || pending}>
-              <AlertTriangle aria-hidden />
+            <Button
+              variant="danger"
+              type="button"
+              icon={<AlertTriangle aria-hidden />}
+              onClick={() => setShowConflict(true)}
+              disabled={locked || pending}
+            >
               Report conflict
-            </button>
+            </Button>
             {/* The pressed button's value is what lands in the FormData, which
                 is how one action serves both intents. */}
-            <button type="submit" name="intent" value="save" disabled={locked || pending}>
-              <Save aria-hidden />
+            <Button type="submit" name="intent" value="save" icon={<Save aria-hidden />} disabled={locked || pending}>
               Save draft
-            </button>
-            <button type="submit" name="intent" value="submit" className="primary-button" disabled={locked || pending}>
-              <Check aria-hidden />
+            </Button>
+            <Button
+              variant="primary"
+              type="submit"
+              name="intent"
+              value="submit"
+              icon={<Check aria-hidden />}
+              disabled={locked || pending}
+            >
               {pending ? "Working…" : "Submit review"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
       {canDecide ? <DecisionBar applicationId={application.id} reviewCount={submittedReviewCount} /> : null}
       {showConflict ? (
-        <ConflictDialog
-          applicationId={application.id}
-          assignmentId={assignment.id}
-          close={() => setShowConflict(false)}
-        />
+        <Dialog
+          title="Report a conflict"
+          description="This hands the application back to the queue and records why, so the decision stays defensible later."
+          onClose={() => setShowConflict(false)}
+        >
+          <form action={reportConflictAction.bind(null, application.id, assignment.id)} className="dialog-form">
+            <label className="rubric-notes">
+              Why can’t you review this application?
+              <textarea name="reason" minLength={4} maxLength={1000} required rows={4} />
+            </label>
+            <Button variant="danger" type="submit">
+              Report conflict
+            </Button>
+          </form>
+        </Dialog>
       ) : null}
     </main>
   );
@@ -201,48 +227,19 @@ function DecisionBar({ applicationId, reviewCount }: { applicationId: string; re
             : "Blind review submitted. Choose the final status."}
         </strong>
       </div>
-      {(["accepted", "waitlisted", "rejected"] as const).map((decision) => (
+      {(
+        [
+          ["accepted", "Accept", "primary"],
+          ["waitlisted", "Waitlist", "secondary"],
+          ["rejected", "Reject", "danger"],
+        ] as const
+      ).map(([decision, label, variant]) => (
         <form key={decision} action={decideApplicationAction.bind(null, applicationId, decision)}>
-          <button type="submit" disabled={reviewCount < 1}>
-            {decision === "accepted" ? "Accept" : decision === "waitlisted" ? "Waitlist" : "Reject"}
-          </button>
+          <Button variant={variant} type="submit" disabled={reviewCount < 1}>
+            {label}
+          </Button>
         </form>
       ))}
     </aside>
-  );
-}
-
-function ConflictDialog({
-  applicationId,
-  assignmentId,
-  close,
-}: {
-  applicationId: string;
-  assignmentId: string;
-  close: () => void;
-}) {
-  return (
-    <div className="dialog-backdrop" onMouseDown={close}>
-      <form
-        action={reportConflictAction.bind(null, applicationId, assignmentId)}
-        className="confirmation-dialog"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <p>REVIEW INTEGRITY</p>
-        <h2>Report a conflict</h2>
-        <label className="rubric-notes">
-          Why can’t you review this application?
-          <textarea name="reason" minLength={4} maxLength={1000} required rows={4} />
-        </label>
-        <div>
-          <button type="button" onClick={close}>
-            Cancel
-          </button>
-          <button className="primary-button" type="submit">
-            Report conflict
-          </button>
-        </div>
-      </form>
-    </div>
   );
 }

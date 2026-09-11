@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
 import { startApplicationAction } from "@/app/(app)/(portal)/applications/actions";
@@ -57,9 +58,9 @@ function StartApplication({
       back={{ href: "/dashboard", label: "Back to all applications" }}
     >
       <form action={startApplicationAction.bind(null, event.id, role)}>
-        <button className="primary-button" type="submit">
+        <Button variant="primary" type="submit">
           Create {role} application
-        </button>
+        </Button>
       </form>
     </MessageSheet>
   );

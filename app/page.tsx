@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/ui/wordmark";
+import { ButtonLink } from "@/components/ui/button";
 
 /**
  * The public landing page.
@@ -22,9 +23,9 @@ export default function HomePage() {
           <Link className="landing-signin" href="/sign-in">
             Sign in
           </Link>
-          <Link className="primary-button" href="/sign-up">
+          <ButtonLink variant="primary" size="sm" href="/sign-up">
             Apply now
-          </Link>
+          </ButtonLink>
         </div>
       </nav>
       <section>
@@ -32,12 +33,12 @@ export default function HomePage() {
         <h1>Welcome to Herkeley’s Backathon!</h1>
         <p>Apply in four roles, find your team, and keep every event-day handoff moving.</p>
         <div>
-          <Link className="primary-button" href="/sign-up">
+          <ButtonLink variant="primary" href="/sign-up">
             Start an application
-          </Link>
-          <Link className="landing-secondary" href="/sign-in">
-            Or, sign in<span aria-hidden>→</span>
-          </Link>
+          </ButtonLink>
+          <ButtonLink variant="ghost" href="/sign-in" trailing={<span aria-hidden>→</span>}>
+            Sign in instead
+          </ButtonLink>
         </div>
       </section>
       <footer>

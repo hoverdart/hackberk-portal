@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
+import { ButtonLink } from "@/components/ui/button";
 
 /**
  * The single-message surface: empty states, dead ends and "not for you" pages.
@@ -36,15 +36,15 @@ export function MessageSheet({
         {children}
         {action ? (
           <p className="start-sheet__action">
-            <Link className="primary-button" href={action.href}>
+            <ButtonLink variant="primary" href={action.href}>
               {action.label}
-            </Link>
+            </ButtonLink>
           </p>
         ) : null}
         {back ? (
-          <Link className="start-sheet__back" href={back.href}>
+          <ButtonLink variant="ghost" href={back.href}>
             {back.label}
-          </Link>
+          </ButtonLink>
         ) : null}
       </article>
     </main>

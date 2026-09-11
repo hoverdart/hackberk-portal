@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { claimReviewAction } from "@/app/(app)/(organizer)/organizer/actions";
 import { ReviewWorkspace } from "@/components/organizer/review-workspace";
 import { requireOrganizer } from "@/lib/auth/guards";
@@ -40,9 +41,9 @@ export default async function ReviewPage({ params, searchParams }: PageProps) {
       >
         {workspace.assignments.length === 0 ? (
           <form action={claimReviewAction.bind(null, applicationId)}>
-            <button className="primary-button" type="submit">
-              Claim blind review
-            </button>
+            <Button variant="primary" type="submit">
+              Claim this review
+            </Button>
           </form>
         ) : (
           <p className="start-sheet__lede">The active organizer can report a conflict to return it to the queue.</p>

@@ -1,5 +1,5 @@
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Code2, GitFork as Github } from "lucide-react";
-import Link from "next/link";
 
 import { saveProjectAction } from "@/app/(app)/(portal)/projects/actions";
 import { requireApplicant } from "@/lib/auth/guards";
@@ -76,15 +76,19 @@ export default async function ProjectsPage({ searchParams }: { searchParams: Pro
             Demo URL <small>Optional</small>
             <input name="demoUrl" type="url" defaultValue={project?.demo_url ?? ""} />
           </label>
-          <button className="primary-button" type="submit">
-            {project ? "Save and open Lens" : "Create Project Lens"}
-          </button>
+          <Button variant="primary" type="submit">
+            {project ? "Save project" : "Add project"}
+          </Button>
         </form>
         {project ? (
-          <Link className="open-lens" href={`/projects/${project.id}`}>
-            <Code2 aria-hidden />
-            Open repository lens
-          </Link>
+          <ButtonLink
+            className="open-lens"
+            variant="ghost"
+            href={`/projects/${project.id}`}
+            icon={<Code2 aria-hidden />}
+          >
+            Browse the repository
+          </ButtonLink>
         ) : null}
       </section>
     </main>

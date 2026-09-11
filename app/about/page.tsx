@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Wordmark } from "@/components/ui/wordmark";
+import { ButtonLink } from "@/components/ui/button";
 
 /**
  * The About page.
@@ -102,9 +103,9 @@ export default function AboutPage() {
         <nav aria-label="Site">
           <Link href="/">Home</Link>
           <Link href="/sign-in">Sign in</Link>
-          <Link className="primary-button" href="/sign-up">
+          <ButtonLink variant="primary" size="sm" href="/sign-up">
             Apply now
-          </Link>
+          </ButtonLink>
         </nav>
       </header>
 
@@ -212,12 +213,12 @@ export default function AboutPage() {
             seeds a sample event so there is something to apply to.
           </p>
           <div className="about-actions">
-            <Link className="primary-button" href="/sign-up">
+            <ButtonLink variant="primary" href="/sign-up">
               Start an application
-            </Link>
-            <Link className="landing-secondary" href="/sign-in">
-              Sign in <span aria-hidden>→</span>
-            </Link>
+            </ButtonLink>
+            <ButtonLink variant="ghost" href="/sign-in" trailing={<span aria-hidden>→</span>}>
+              Sign in
+            </ButtonLink>
           </div>
         </section>
       </article>

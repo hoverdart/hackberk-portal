@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import { initialAuthState, type AuthActionState } from "@/lib/validation/auth";
+import { Button } from "@/components/ui/button";
 
 type AuthFormProps = {
   mode: "sign-in" | "sign-up" | "forgot" | "reset";
@@ -82,18 +83,26 @@ export function AuthForm({ mode, action }: AuthFormProps) {
         ) : null}
         {mode === "sign-up" ? (
           <div className="signup-actions">
-            <button className="primary-button" type="submit" name="accountType" value="applicant" disabled={pending}>
-              {pending ? "Working…" : "Create applicant account"}
-            </button>
-            <button className="organizer-signup" type="submit" name="accountType" value="organizer" disabled={pending}>
-              Create organizer test account
-            </button>
+            <Button variant="primary" full type="submit" name="accountType" value="applicant" disabled={pending}>
+              {pending ? "Working…" : "Create an applicant account"}
+            </Button>
+            <Button
+              variant="secondary"
+              full
+              size="sm"
+              type="submit"
+              name="accountType"
+              value="organizer"
+              disabled={pending}
+            >
+              Create an organizer account
+            </Button>
             <p>Test portal only. Organizer accounts can review and manage applications, not submit them.</p>
           </div>
         ) : (
-          <button className="primary-button" type="submit" disabled={pending}>
+          <Button variant="primary" full type="submit" disabled={pending}>
             {pending ? "Working…" : labels.submit}
-          </button>
+          </Button>
         )}
         {/* `aria-live` announces the result to a screen reader without moving
             focus, and the element is always present so the announcement fires

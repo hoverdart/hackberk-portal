@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { ArrowLeft, CalendarClock, ClipboardCheck, GitFork, LifeBuoy } from "lucide-react";
 import Link from "next/link";
 
@@ -185,7 +186,9 @@ export default async function OrganizerOperationsPage({
               Capacity
               <input name="capacity" type="number" min="1" max="500" required />
             </label>
-            <button className="primary-button">Publish shift</button>
+            <Button variant="primary" type="submit">
+              Add shift
+            </Button>
           </form>
           <section className="shift-roster" aria-labelledby="published-shifts-title">
             <div className="shift-roster__header">

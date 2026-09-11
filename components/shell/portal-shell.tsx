@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ViewTransition, type CSSProperties } from "react";
 
 import { StatusStamp } from "@/components/ui/status-stamp";
+import { ButtonLink } from "@/components/ui/button";
 import {
   roleCopy,
   statusLabel,
@@ -235,9 +236,14 @@ function ActiveSheet({
             <dd>In person</dd>
           </div>
         </dl>
-        <Link className="mobile-continue primary-button" href={`/applications/${role}`}>
-          {applicationActionLabel(application.status)} <span aria-hidden>→</span>
-        </Link>
+        <ButtonLink
+          variant="primary"
+          className="mobile-continue"
+          href={`/applications/${role}`}
+          trailing={<span aria-hidden>→</span>}
+        >
+          {applicationActionLabel(application.status)}
+        </ButtonLink>
       </header>
 
       <div className="active-sheet__body">
@@ -251,9 +257,9 @@ function ActiveSheet({
           <ChecklistRow key={section.key} index={index + 1} role={role} section={section} locked={locked} />
         ))}
         <div className="sheet-actions">
-          <Link className="primary-button" href={`/applications/${role}`}>
-            {applicationActionLabel(application.status)} <span aria-hidden>→</span>
-          </Link>
+          <ButtonLink variant="primary" href={`/applications/${role}`} trailing={<span aria-hidden>→</span>}>
+            {applicationActionLabel(application.status)}
+          </ButtonLink>
         </div>
         <footer className="sheet-footer">
           <span>GO BOLDER</span>

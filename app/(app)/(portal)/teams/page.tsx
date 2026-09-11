@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Check, Sparkles, UserPlus, Users } from "lucide-react";
 
 import {
@@ -88,9 +89,9 @@ export default async function TeamsPage({
               <input type="checkbox" name="optedIn" defaultChecked={data.profile?.opted_in ?? false} />
               Show me in Team Match and calculate candidates
             </label>
-            <button className="primary-button" type="submit">
+            <Button variant="primary" type="submit">
               Save matching profile
-            </button>
+            </Button>
           </form>
         </section>
         <section className="team-board">
@@ -121,7 +122,9 @@ export default async function TeamsPage({
                   Team name
                   <input name="name" minLength={2} maxLength={80} required />
                 </label>
-                <button className="primary-button">Create team</button>
+                <Button variant="primary" type="submit">
+                  Create team
+                </Button>
               </form>
             </article>
           )}
@@ -138,7 +141,9 @@ export default async function TeamsPage({
                     <button>Decline</button>
                   </form>
                   <form action={respondInvitationAction.bind(null, invitation.id, true)}>
-                    <button className="primary-button">Join team</button>
+                    <Button variant="primary" type="submit">
+                      Join team
+                    </Button>
                   </form>
                 </article>
               ))}

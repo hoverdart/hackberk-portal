@@ -130,7 +130,12 @@ export async function saveReviewAction(
     // This message used to be the only trace a failure left anywhere. A missing
     // database function made every submit fail for weeks and there was nothing
     // to read, because the error object was discarded here.
-    console.error("application_reviews upsert failed", { applicationId, assignmentId, code: error.code, message: error.message });
+    console.error("application_reviews upsert failed", {
+      applicationId,
+      assignmentId,
+      code: error.code,
+      message: error.message,
+    });
     return { status: "error", message: reviewWriteMessage(error.message) };
   }
   revalidatePath(`/organizer/applications/${applicationId}/review`);
@@ -142,8 +147,10 @@ export async function saveReviewAction(
 
 /** Turn the database's own words into something an organizer can act on. */
 function reviewWriteMessage(detail: string) {
-  if (detail.includes("Submitted reviews are immutable")) return "This review was already submitted and cannot be changed.";
-  if (detail.includes("Submitted reviews need scores")) return "Score every criterion and choose a recommendation before submitting.";
+  if (detail.includes("Submitted reviews are immutable"))
+    return "This review was already submitted and cannot be changed.";
+  if (detail.includes("Submitted reviews need scores"))
+    return "Score every criterion and choose a recommendation before submitting.";
   if (detail.includes("Rubric scores must be integers")) return "Scores must be whole numbers from 1 to 5.";
   return "The review could not be saved. Your entries are still on this page — try again.";
 }

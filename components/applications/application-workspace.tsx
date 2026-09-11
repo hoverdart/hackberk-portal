@@ -1,7 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import { Check, ChevronLeft, ChevronRight, Cloud, CloudOff, LockKeyhole } from "lucide-react";
-import type { KeyboardEvent, ReactNode, RefObject } from "react";
 import { useActionState, useEffect, useRef, useState } from "react";
 
 import {
@@ -567,30 +568,30 @@ function Submission({
   const action = submitApplicationAction.bind(null, applicationId, role);
   return (
     <>
-      <button
+      <Button
         ref={triggerRef}
+        variant="primary"
         type="button"
         className="submit-application"
         onClick={onRequestReview}
         disabled={progress < 100 || saving}
       >
-        {saving ? "Saving draft…" : "Review & submit"}
-      </button>
+        {saving ? "Saving…" : "Review and submit"}
+      </Button>
       {open ? (
-        <ConfirmationDialog
-          titleId="submit-title"
-          title={`Lock and submit this ${role} application?`}
-          description="Your answers become read-only after submission. You can still withdraw later."
+        <Dialog
+          title={`Submit this ${role} application?`}
+          description="Your answers become read-only once you submit. You can still withdraw later."
           cancelLabel="Keep editing"
           onClose={onClose}
           returnFocusRef={triggerRef}
         >
           <form action={action}>
-            <button type="submit" className="primary-button">
+            <Button variant="primary" type="submit">
               Submit application
-            </button>
+            </Button>
           </form>
-        </ConfirmationDialog>
+        </Dialog>
       ) : null}
     </>
   );
@@ -602,103 +603,25 @@ function Withdrawal({ applicationId, role }: { applicationId: string; role: Appl
   const action = withdrawApplicationAction.bind(null, applicationId, role);
   return (
     <>
-      <button ref={triggerRef} type="button" className="withdraw-button" onClick={() => setOpen(true)}>
+      <Button ref={triggerRef} variant="danger" type="button" onClick={() => setOpen(true)}>
         Withdraw application
-      </button>
+      </Button>
       {open ? (
-        <ConfirmationDialog
-          titleId="withdraw-title"
+        <Dialog
           title="Withdraw this application?"
           description="Organizers will no longer review it. This cannot be undone from the portal."
           cancelLabel="Keep application"
           onClose={() => setOpen(false)}
           returnFocusRef={triggerRef}
-          destructive
         >
           <form action={action}>
-            <button type="submit" className="withdraw-button">
+            <Button variant="danger" type="submit">
               Withdraw application
-            </button>
+            </Button>
           </form>
-        </ConfirmationDialog>
+        </Dialog>
       ) : null}
     </>
-  );
-}
-
-function ConfirmationDialog({
-  titleId,
-  title,
-  description,
-  cancelLabel,
-  onClose,
-  returnFocusRef,
-  destructive = false,
-  children,
-}: {
-  titleId: string;
-  title: string;
-  description: string;
-  cancelLabel: string;
-  onClose: () => void;
-  returnFocusRef: RefObject<HTMLButtonElement | null>;
-  destructive?: boolean;
-  children: ReactNode;
-}) {
-  const dialogRef = useRef<HTMLElement>(null);
-  const cancelRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    cancelRef.current?.focus();
-    const returnFocus = returnFocusRef.current;
-    return () => returnFocus?.focus();
-  }, [returnFocusRef]);
-
-  function trapFocus(event: KeyboardEvent<HTMLElement>) {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      onClose();
-      return;
-    }
-    if (event.key !== "Tab") return;
-    const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
-      "button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])",
-    );
-    if (!focusable?.length) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  }
-
-  return (
-    <div className="dialog-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={`${titleId}-description`}
-        className="confirmation-dialog"
-        onKeyDown={trapFocus}
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <p>{destructive ? "CONFIRM WITHDRAWAL" : "FINAL CHECK"}</p>
-        <h2 id={titleId}>{title}</h2>
-        <span id={`${titleId}-description`}>{description}</span>
-        <div>
-          <button ref={cancelRef} type="button" onClick={onClose}>
-            {cancelLabel}
-          </button>
-          {children}
-        </div>
-      </section>
-    </div>
   );
 }
 
